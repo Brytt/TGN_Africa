@@ -2,10 +2,25 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { adminPublications } from '../../data/adminContent'
+import AdminSelect from './AdminSelect'
+import TopicPicker from './TopicPicker'
 
 const types = ['All types', 'Article', 'Devotional', 'Bible Study', 'Sermon', 'Poem']
 const statuses = ['All statuses', 'Published', 'Draft', 'In review', 'Scheduled', 'Archived']
+const publicationTypes = types.filter((item) => item !== 'All types')
+const emptyPublication = {
+  title: '',
+  type: '',
+  author: '',
+  authorId: '',
+  topic: '',
+  topicId: '',
+  excerpt: '',
+  body: '',
+  status: 'Draft',
+  scheduledAt: '',
+  image: '',
+}
 const statusStyles = {
   Published: 'bg-emerald-50 text-emerald-600',
   Draft: 'bg-amber-50 text-amber-600',
@@ -15,18 +30,131 @@ const statusStyles = {
 }
 
 function SelectControl({ label, value, onChange, options }) {
+  return <AdminSelect label={label} value={value} onChange={onChange} options={options} />
+}
+
+function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false, topics = [], authorRole = 'Author' }) {
+  const [uploading, setUploading] = useState(false)
+  const fieldClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10'
+
+  const update = (field) => (event) => onChange((current) => ({ ...current, [field]: event.target.value }))
+  const uploadCover = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const form = new FormData()
+    form.set('file', file)
+    form.set('bucket', 'publication-media')
+    const response = await fetch('/api/admin/upload', { method: 'POST', body: form })
+    const result = await response.json()
+    setUploading(false)
+    if (!response.ok) return window.alert(result.error || 'Cover upload failed')
+    onChange((current) => ({ ...current, image: result.path }))
+  }
+
   return (
-    <label className="relative min-w-[145px]">
-      <span className="sr-only">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="w-full appearance-none rounded-full border border-slate-200 bg-white py-2.5 pl-4 pr-9 text-sm text-slate-600 outline-none focus:ring-2 focus:ring-indigo-600/20">
-        {options.map((option) => <option key={option}>{option}</option>)}
-      </select>
-      <span className="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[17px] text-slate-400">expand_more</span>
-    </label>
+    <form onSubmit={onSave} className="mx-auto max-w-[1180px]">
+      <div className="mb-6 flex flex-col justify-between gap-4 border-b border-slate-100 pb-6 sm:flex-row sm:items-center">
+        <div>
+          <button type="button" onClick={onCancel} className="mb-3 inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-midnight-navy">
+            <span className="material-symbols-outlined text-[17px]">arrow_back</span>Back to content
+          </button>
+          <h2 className="text-2xl font-semibold tracking-tight text-midnight-navy">{editing ? 'Edit publication' : 'Create publication'}</h2>
+          <p className="mt-1 text-sm text-slate-500">{editing ? 'Update this publication and its editorial details.' : 'Write and prepare a new piece for TGN Africa.'}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={onCancel} className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white hover:opacity-90">
+            <span className="material-symbols-outlined text-[18px]">save</span>{editing ? 'Save changes' : 'Save publication'}
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
+          <label className="block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
+            Publication title
+            <input required value={draft.title} onChange={update('title')} className={`${fieldClass} text-lg font-semibold`} placeholder="Enter a clear, compelling title" />
+          </label>
+
+          <label className="mt-6 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
+            Short introduction
+            <textarea value={draft.excerpt} onChange={update('excerpt')} rows={3} className={`${fieldClass} resize-y leading-6`} placeholder="A short summary readers will see in publication cards..." />
+          </label>
+
+          <div className="mt-6">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+              <label htmlFor="publication-body" className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Publication body</label>
+              <span className="text-xs text-slate-400">{draft.body.trim() ? draft.body.trim().split(/\s+/).length : 0} words</span>
+            </div>
+            <div className="overflow-hidden rounded-2xl border border-slate-200 focus-within:border-midnight-navy/40 focus-within:ring-2 focus-within:ring-midnight-navy/10">
+              <div className="flex items-center gap-1 border-b border-slate-100 bg-slate-50/70 px-3 py-2 text-slate-500" aria-label="Writing tools">
+                {[
+                  ['format_bold', 'Bold'],
+                  ['format_italic', 'Italic'],
+                  ['format_list_bulleted', 'Bulleted list'],
+                  ['format_quote', 'Quote'],
+                  ['link', 'Add link'],
+                ].map(([icon, label]) => (
+                  <button key={label} type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-white hover:text-midnight-navy" aria-label={label} title={label}>
+                    <span className="material-symbols-outlined text-[18px]">{icon}</span>
+                  </button>
+                ))}
+              </div>
+              <textarea id="publication-body" required value={draft.body} onChange={update('body')} rows={18} className="w-full resize-y px-5 py-5 text-[15px] leading-7 text-slate-800 outline-none placeholder:text-slate-400" placeholder="Begin writing your article, devotional, Bible study, sermon, or poem..." />
+            </div>
+          </div>
+        </section>
+
+        <aside className="space-y-5">
+          <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold text-midnight-navy">Publication details</h3>
+            <div className="mt-5 text-xs font-semibold text-slate-500">
+              <p>Type</p>
+              <AdminSelect required label="Publication type" value={draft.type} onChange={(value) => onChange((current) => ({ ...current, type: value }))} options={publicationTypes} placeholder="Select publication type" variant="field" />
+            </div>
+            <div className="mt-4 text-xs font-semibold text-slate-500">
+              <p>Status</p>
+              <AdminSelect label="Publication status" value={draft.status} onChange={(value) => onChange((current) => ({ ...current, status: value }))} options={['Draft', 'In review', 'Scheduled', 'Published']} variant="field" />
+            </div>
+            {draft.status === 'Scheduled' && <label className="mt-4 block text-xs font-semibold text-slate-500">Publish date and time<input required type="datetime-local" value={draft.scheduledAt || ''} onChange={update('scheduledAt')} className={fieldClass} /></label>}
+            <label className="mt-4 block text-xs font-semibold text-slate-500">
+              Author
+              <div className="relative mt-2">
+                <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">person</span>
+                <input readOnly value={draft.author} className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm font-medium text-slate-700 outline-none" aria-describedby="author-help" />
+              </div>
+              <span id="author-help" className="mt-2 block text-[11px] font-normal leading-4 text-slate-400">Automatically assigned from the signed-in account · {authorRole}</span>
+            </label>
+            <div className="mt-4 text-xs font-semibold text-slate-500">
+              <p>Topic</p>
+              <TopicPicker topics={topics} value={draft.topicId} onChange={(item) => onChange((current) => ({ ...current, topicId: item.value, topic: item.label }))} />
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold text-midnight-navy">Cover image</h3>
+            <p className="mt-1 text-xs leading-5 text-slate-400">Upload a JPG, PNG, or WebP cover image.</p>
+            <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:text-midnight-navy">
+              <span className="material-symbols-outlined text-[17px]">upload</span>{uploading ? 'Uploading…' : 'Upload cover'}
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadCover} disabled={uploading} className="hidden" />
+            </label>
+            <div className="mt-4 grid aspect-[16/9] place-items-center overflow-hidden rounded-2xl bg-midnight-navy/5">
+              {draft.image ? <img src={draft.image} alt="Cover preview" className="h-full w-full object-cover" /> : (
+                <span className="text-center text-slate-400">
+                  <span className="material-symbols-outlined block text-3xl">image</span>
+                  <span className="mt-1 block text-xs">Cover preview</span>
+                </span>
+              )}
+            </div>
+          </section>
+        </aside>
+      </div>
+    </form>
   )
 }
 
-export default function ContentManager() {
+export default function ContentManager({ initialPublications = [], topics = [], currentAuthor }) {
   const searchParams = useSearchParams()
   const menuRef = useRef(null)
   const [query, setQuery] = useState(searchParams.get('q') || '')
@@ -37,6 +165,12 @@ export default function ContentManager() {
   const [selected, setSelected] = useState([])
   const [activeMenu, setActiveMenu] = useState(null)
   const [notice, setNotice] = useState('')
+  const [editorOpen, setEditorOpen] = useState(false)
+  const newDraft = { ...emptyPublication, author: currentAuthor?.name || '', authorId: currentAuthor?.id || '' }
+  const [draft, setDraft] = useState(newDraft)
+  const [publications, setPublications] = useState(initialPublications)
+  const [editingId, setEditingId] = useState(null)
+  const [previewPublication, setPreviewPublication] = useState(null)
   const pageSize = 6
 
   useEffect(() => {
@@ -53,7 +187,7 @@ export default function ContentManager() {
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase()
-    const result = adminPublications.filter((item) => {
+    const result = publications.filter((item) => {
       const matchesSearch = !normalized || [item.title, item.author, item.id, item.topic, item.type].some((value) => value.toLowerCase().includes(normalized))
       return matchesSearch && (type === 'All types' || item.type === type) && (status === 'All statuses' || item.status === status)
     })
@@ -62,7 +196,7 @@ export default function ContentManager() {
       if (sort === 'Most viewed') return b.views - a.views
       return new Date(b.publishedAt) - new Date(a.publishedAt)
     })
-  }, [query, sort, status, type])
+  }, [publications, query, sort, status, type])
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, pageCount)
@@ -91,16 +225,107 @@ export default function ContentManager() {
     setSort('Newest first')
   }
 
+  const savePublication = async (event) => {
+    event.preventDefault()
+    const existing = publications.find((item) => item.id === editingId)
+    const response = await fetch(existing ? `/api/admin/publications/${editingId}` : '/api/admin/publications', {
+      method: existing ? 'PATCH' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(draft),
+    })
+    const result = await response.json()
+    if (!response.ok) return announce(result.error || 'Unable to save publication.')
+    const publication = existing ? {
+      ...existing,
+      ...draft,
+      image: draft.image || existing.image,
+    } : {
+      ...draft,
+      id: result.data.id,
+      publishedAt: new Date().toISOString(),
+      views: 0,
+      image: draft.image || '/images/publications/featured-study.jpg',
+    }
+    setPublications((current) => existing ? current.map((item) => item.id === editingId ? publication : item) : [publication, ...current])
+    setDraft(newDraft)
+    setEditingId(null)
+    setEditorOpen(false)
+    setQuery('')
+    setType('All types')
+    setStatus('All statuses')
+    announce(existing ? `“${publication.title}” was updated.` : `“${publication.title}” was saved as ${publication.status.toLowerCase()}.`)
+  }
+
+  const editPublication = (publication) => {
+    setDraft({ ...emptyPublication, ...publication })
+    setEditingId(publication.id)
+    setActiveMenu(null)
+    setEditorOpen(true)
+  }
+
+  const duplicatePublication = async (publication) => {
+    const payload = {
+      ...publication,
+      title: `${publication.title} — Copy`,
+      status: 'Draft',
+    }
+    const response = await fetch('/api/admin/publications', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    const result = await response.json()
+    if (!response.ok) return announce(result.error || 'Unable to duplicate publication.')
+    const copy = { ...payload, id: result.data.id, views: 0, publishedAt: new Date().toISOString() }
+    setPublications((current) => [copy, ...current])
+    announce(`A draft copy of “${publication.title}” was created.`)
+  }
+
+  const archivePublication = async (publication) => {
+    const response = await fetch(`/api/admin/publications/${publication.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'Archived' }) })
+    if (!response.ok) return announce((await response.json()).error || 'Unable to archive publication.')
+    setPublications((current) => current.map((item) => item.id === publication.id ? { ...item, status: 'Archived' } : item))
+    announce(`“${publication.title}” was archived.`)
+  }
+
+  const deletePublication = async (publication) => {
+    if (!window.confirm(`Delete “${publication.title}”? This will remove it from the content list.`)) return
+    const response = await fetch(`/api/admin/publications/${publication.id}`, { method: 'DELETE' })
+    if (!response.ok) return announce((await response.json()).error || 'Unable to delete publication.')
+    setPublications((current) => current.filter((item) => item.id !== publication.id))
+    announce(`“${publication.title}” was deleted.`)
+  }
+
+  const bulkAction = async (action) => {
+    const targets = publications.filter((item) => selected.includes(item.id))
+    if (action === 'Delete' && !window.confirm(`Delete ${targets.length} selected publications?`)) return
+    const responses = await Promise.all(targets.map((item) => fetch(`/api/admin/publications/${item.id}`, {
+      method: action === 'Delete' ? 'DELETE' : 'PATCH',
+      headers: action === 'Delete' ? undefined : { 'Content-Type': 'application/json' },
+      body: action === 'Delete' ? undefined : JSON.stringify({ status: 'Archived' }),
+    })))
+    if (responses.some((response) => !response.ok)) return announce(`Some publications could not be ${action.toLowerCase()}d.`)
+    setPublications((current) => action === 'Delete'
+      ? current.filter((item) => !selected.includes(item.id))
+      : current.map((item) => selected.includes(item.id) ? { ...item, status: 'Archived' } : item))
+    setSelected([])
+    announce(`${targets.length} publications ${action === 'Delete' ? 'deleted' : 'archived'}.`)
+  }
+
+  if (editorOpen) {
+    return (
+      <main className="admin-scroll min-h-0 flex-1 overflow-y-auto px-6 pb-10 pt-6 xl:px-10">
+        <PublicationEditor draft={draft} onChange={setDraft} editing={Boolean(editingId)} topics={topics} authorRole={currentAuthor?.role} onCancel={() => { setEditorOpen(false); setEditingId(null); setDraft(newDraft) }} onSave={savePublication} />
+      </main>
+    )
+  }
+
   return (
     <main className="admin-scroll min-h-0 flex-1 overflow-y-auto px-6 pb-8 pt-6 xl:px-10">
       <div className="mx-auto max-w-[1180px]">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-indigo-600">Publishing library</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Publishing library</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">All content</h2>
             <p className="mt-1 text-sm text-slate-500">Review and organize every TGN Africa publication.</p>
           </div>
-          <button type="button" onClick={() => announce('The new publication editor is planned for a future phase.')} className="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-3 text-sm font-medium text-white hover:bg-indigo-700">
+          <button type="button" disabled={!currentAuthor} onClick={() => { setEditingId(null); setDraft(newDraft); setEditorOpen(true) }} className="inline-flex items-center justify-center gap-2 rounded-full bg-midnight-navy px-5 py-3 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40">
             <span className="material-symbols-outlined text-[19px]">add</span>New publication
           </button>
         </div>
@@ -138,7 +363,7 @@ export default function ContentManager() {
               <p className="text-sm font-medium text-indigo-700">{selected.length} publication{selected.length === 1 ? '' : 's'} selected</p>
               <div className="flex flex-wrap gap-2">
                 {['Archive', 'Delete'].map((action) => (
-                  <button key={action} type="button" onClick={() => announce(`${action} is a non-persistent prototype action.`)} className={`rounded-full px-3 py-1.5 text-xs font-medium ${action === 'Delete' ? 'bg-white text-red-600' : 'bg-white text-slate-600'}`}>{action}</button>
+                  <button key={action} type="button" onClick={() => bulkAction(action)} className={`rounded-full px-3 py-1.5 text-xs font-medium ${action === 'Delete' ? 'bg-white text-red-600' : 'bg-white text-slate-600'}`}>{action}</button>
                 ))}
                 <button type="button" onClick={() => setSelected([])} className="rounded-full px-3 py-1.5 text-xs font-medium text-indigo-600">Clear</button>
               </div>
@@ -187,9 +412,12 @@ export default function ContentManager() {
                       </button>
                       {activeMenu === item.id && (
                         <div ref={menuRef} className="absolute right-8 top-12 z-20 w-40 rounded-2xl border border-slate-100 bg-white p-2 text-left shadow-xl">
-                          {['Preview', 'Edit', 'Duplicate', 'Archive', 'Delete'].map((action) => (
-                            <button key={action} type="button" onClick={() => announce(`${action} “${item.title}” — prototype only.`)} className={`block w-full rounded-xl px-3 py-2 text-sm hover:bg-slate-50 ${action === 'Delete' ? 'text-red-500' : 'text-slate-600'}`}>{action}</button>
-                          ))}
+                          <button type="button" onClick={() => { setPreviewPublication(item); setActiveMenu(null) }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[17px]">visibility</span>Preview</button>
+                          <button type="button" onClick={() => editPublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[17px]">edit</span>Edit</button>
+                          <button type="button" onClick={() => duplicatePublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[17px]">content_copy</span>Duplicate</button>
+                          <button type="button" disabled={item.status === 'Archived'} onClick={() => archivePublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40"><span className="material-symbols-outlined text-[17px]">archive</span>Archive</button>
+                          <div className="my-1 border-t border-slate-100" />
+                          <button type="button" onClick={() => deletePublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-red-500 hover:bg-red-50"><span className="material-symbols-outlined text-[17px]">delete</span>Delete</button>
                         </div>
                       )}
                     </td>
@@ -225,6 +453,28 @@ export default function ContentManager() {
           )}
         </section>
       </div>
+      {previewPublication && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-midnight-navy/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="publication-preview-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setPreviewPublication(null) }}>
+          <article className="admin-scroll max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
+            <div className="relative aspect-[16/7] overflow-hidden bg-slate-100">
+              <img src={previewPublication.image} alt="" className="h-full w-full object-cover" />
+              <button type="button" onClick={() => setPreviewPublication(null)} className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-slate-600 shadow" aria-label="Close preview"><span className="material-symbols-outlined">close</span></button>
+            </div>
+            <div className="p-6 md:p-9">
+              <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy/55">
+                <span>{previewPublication.type}</span><span>·</span><span>{previewPublication.topic}</span><span className={`ml-auto rounded-full px-3 py-1 normal-case tracking-normal ${statusStyles[previewPublication.status]}`}>{previewPublication.status}</span>
+              </div>
+              <h2 id="publication-preview-title" className="mt-5 font-display text-4xl leading-tight text-midnight-navy">{previewPublication.title}</h2>
+              <p className="mt-3 text-sm text-slate-500">By {previewPublication.author} · {previewPublication.publishedAt}</p>
+              {previewPublication.excerpt && <p className="mt-7 border-l-2 border-midnight-navy/20 pl-5 text-lg leading-8 text-slate-600">{previewPublication.excerpt}</p>}
+              <div className="mt-8 whitespace-pre-wrap text-[15px] leading-8 text-slate-700">{previewPublication.body || 'This publication does not have article body content yet. Select Edit to add the full text.'}</div>
+              <div className="mt-8 flex justify-end border-t border-slate-100 pt-5">
+                <button type="button" onClick={() => { setPreviewPublication(null); editPublication(previewPublication) }} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white"><span className="material-symbols-outlined text-[18px]">edit</span>Edit publication</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      )}
     </main>
   )
 }

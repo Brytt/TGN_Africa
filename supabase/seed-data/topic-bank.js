@@ -1,4 +1,4 @@
-// Generated from the TGN Topic Bank Google Sheet. Do not edit by hand.
+// Generated seed data from the TGN Topic Bank Google Sheet. Do not edit by hand.
 export const topicBank = [
   {
     "title": "Scripture, Bible Reading, and Biblical Interpretation",

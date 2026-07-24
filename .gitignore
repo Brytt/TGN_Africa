@@ -1,8 +1,10 @@
 node_modules
 .next
+.next-dev
 dist
 .DS_Store
 .env
 .env.local
 *.log
 .vercel
+supabase/.temp

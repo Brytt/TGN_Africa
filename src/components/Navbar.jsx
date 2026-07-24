@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { navItems, topicGroups } from '../data/content'
-import { topicSlugByTitle } from '../data/topicBank.generated'
+
+const topicSlugByTitle = Object.fromEntries(topicGroups.flatMap((group) => group.topics).map((title) => [
+  title,
+  title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+]))
 
 const searchItems = [
   ...topicGroups.flatMap((group) => group.topics.map((topic) => ({ label: topic, type: 'Topic', href: `/topics/${topicSlugByTitle[topic]}` }))),

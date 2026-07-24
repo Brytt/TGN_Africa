@@ -17,6 +17,36 @@ npm install
 npm run dev
 ```
 
+## Supabase setup
+
+The application now reads and writes publications, authors, topics, settings,
+comments, reactions, bookmarks, reminders, and analytics through Supabase.
+
+1. Authenticate and link the Supabase CLI:
+
+```bash
+npx supabase login
+npx supabase link --project-ref eiltvtbrbtfhegrvlgdb
+```
+
+2. Apply the schema and import the starter records:
+
+```bash
+npx supabase db push
+npm run supabase:seed
+```
+
+3. Create a user in Supabase Authentication, then promote it once:
+
+```bash
+npm run supabase:promote-admin -- you@example.com
+```
+
+4. Restart the Next.js development server and sign in at `/admin/login`.
+
+Keep `SUPABASE_SECRET_KEY` server-only. Never add a `NEXT_PUBLIC_` prefix to it.
+Rotate any secret that has been pasted into chat, logs, or source control.
+
 Production build:
 
 ```bash

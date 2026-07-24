@@ -1,3 +1,4 @@
+// Starter records used only by the Supabase seed script.
 export const adminPublications = [
   {
     id: 'TGN-0318',

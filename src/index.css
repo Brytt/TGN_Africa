@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #1a1a1a;
+  background: #ffffff;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background: #ffffff;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #0d2240;
+  outline-offset: 4px;
+}
+
+::selection {
+  color: #ffffff;
+  background: #0d2240;
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-editorial px-6 md:px-10 xl:px-0;
+  }
+
+  .eyebrow {
+    @apply font-body text-[11px] font-semibold uppercase tracking-[0.28em];
+  }
+
+  .editorial-button {
+    @apply inline-flex items-center justify-center border border-transparent px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-500;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+.editorial-image {
+  filter: saturate(0.9) contrast(1.02);
+}
+
+.book-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-app {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+.admin-app *,
+.admin-app *::before,
+.admin-app *::after {
+  box-sizing: border-box;
+}
+
+.admin-scroll {
+  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-width: thin;
+}
+
+.admin-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.admin-stat-orange {
+  color: #f97316;
+  background: #fff7ed;
+}
+
+.admin-stat-purple {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.admin-stat-green {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.admin-dot-pattern {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  width: 35px;
+  height: 35px;
+  opacity: 0.35;
+  background-image: radial-gradient(currentColor 2px, transparent 2px);
+  background-size: 9px 9px;
+}
+
+.admin-dots-orange {
+  color: #f97316;
+}
+
+.admin-dots-purple {
+  color: #7c3aed;
+}
+
+.admin-dots-green {
+  color: #059669;
+}
+
+.admin-task-lavender {
+  background: #f4f3fd;
+}
+
+.admin-task-mint {
+  background: #ecfdf5;
+}
+
+.admin-task-peach {
+  background: #fff7ed;
+}
+
+.admin-task-card::after {
+  position: absolute;
+  top: -2rem;
+  right: -2rem;
+  width: 8rem;
+  height: 8rem;
+  content: '';
+  border-radius: 999px;
+  background: rgb(255 255 255 / 45%);
+  filter: blur(18px);
+}
+
+.admin-app button:focus-visible,
+.admin-app a:focus-visible,
+.admin-app input:focus-visible,
+.admin-app select:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

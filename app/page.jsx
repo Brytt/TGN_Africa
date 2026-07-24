@@ -6,18 +6,20 @@ import LatestPublications from '../src/components/LatestPublications'
 import Mission from '../src/components/Mission'
 import Navbar from '../src/components/Navbar'
 import ResourceGateway from '../src/components/ResourceGateway'
+import { getAuthors, getPublications } from '../src/lib/data'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [publications, authors] = await Promise.all([getPublications({ limit: 6 }), getAuthors()])
   return (
     <div className="min-h-screen overflow-x-hidden bg-parchment-ivory text-charcoal-text">
       <AnnouncementBar />
       <Navbar />
       <main>
         <Hero />
-        <LatestPublications />
+        <LatestPublications publications={publications} />
         <Mission />
         <ResourceGateway />
-        <AfricanVoices />
+        <AfricanVoices contributors={authors.slice(0, 3)} />
       </main>
       <Footer />
     </div>

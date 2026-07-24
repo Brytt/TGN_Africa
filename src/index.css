@@ -167,7 +167,7 @@ a:focus-visible {
 .admin-app a:focus-visible,
 .admin-app input:focus-visible,
 .admin-app select:focus-visible {
-  outline: 2px solid #4f46e5;
+  outline: 2px solid #0d2240;
   outline-offset: 2px;
 }
 
@@ -183,5 +183,54 @@ a:focus-visible {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+    size: A4 landscape;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  .admin-shell > aside,
+  .admin-shell > div > header,
+  .admin-report-toolbar,
+  .admin-report-control {
+    display: none !important;
+  }
+
+  .admin-shell,
+  .admin-shell > div,
+  .admin-report {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .admin-report {
+    max-width: none !important;
+  }
+
+  .admin-report > section,
+  .admin-report article {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .admin-print-header,
+  .admin-print-footer {
+    display: block !important;
+  }
+
+  main.admin-scroll {
+    overflow: visible !important;
+    padding: 0 !important;
+    background: #ffffff !important;
   }
 }

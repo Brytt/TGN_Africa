@@ -4,7 +4,7 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 export default [
-  { ignores: ['dist', '.next'] },
+  { ignores: ['dist', '.next', '.next-dev'] },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],
@@ -28,6 +28,12 @@ export default [
       '@next/next/no-img-element': 'off',
       '@next/next/no-page-custom-font': 'off',
       'no-unused-vars': ['error', { varsIgnorePattern: '^(motion|[A-Z_])' }],
+    },
+  },
+  {
+    files: ['*.config.js'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 ]

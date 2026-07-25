@@ -17,15 +17,15 @@ const navGroups = [
   {
     label: 'Manage',
     items: [
-      { label: 'Authors', icon: 'group', href: '/admin/authors' },
-      { label: 'Topics', icon: 'category', href: '/admin/topics' },
+      { label: 'Authors', icon: 'group', href: '/admin/authors', access: 'super' },
+      { label: 'Topics', icon: 'category', href: '/admin/topics', access: 'super' },
       { label: 'My account', icon: 'manage_accounts', href: '/admin/account' },
-      { label: 'Settings', icon: 'settings', href: '/admin/settings' },
+      { label: 'Settings', icon: 'settings', href: '/admin/settings', access: 'contributor' },
     ],
   },
 ]
 
-export default function AdminShell({ children, profile }) {
+export default function AdminShell({ children, profile, authorTier = 'Author' }) {
   const pathname = usePathname()
   const router = useRouter()
   const searchRef = useRef(null)
@@ -44,6 +44,9 @@ export default function AdminShell({ children, profile }) {
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
   const isDashboard = pathname === '/admin' || pathname === '/admin/analytics'
+  const isSuperAuthor = profile?.role === 'admin' || authorTier === 'Super Author'
+  const isContributingAuthor = authorTier === 'Contributing Author'
+  const canSeeItem = (item) => !item.access || (item.access === 'super' && isSuperAuthor) || (item.access === 'contributor' && (isSuperAuthor || isContributingAuthor))
   const pageDetails = pathname.startsWith('/admin/content')
     ? { eyebrow: 'Publishing', title: 'Content library', icon: 'article' }
     : pathname.startsWith('/admin/comments')
@@ -149,7 +152,7 @@ export default function AdminShell({ children, profile }) {
               {navGroups.map((group) => (
                 <div key={group.label} className="flex flex-col gap-1 sm:flex-row xl:flex-col">
                   {sidebarExpanded && <p className="hidden px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400 xl:block">{group.label}</p>}
-                  {group.items.map((item) => {
+                  {group.items.filter(canSeeItem).map((item) => {
                     const active = item.href && (pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href)))
                     const itemClass = `group flex h-11 items-center gap-3 rounded-xl px-3 transition-colors sm:w-11 sm:justify-center sm:px-0 xl:w-full ${sidebarExpanded ? 'xl:justify-start xl:px-3' : 'xl:justify-center xl:px-0'}`
                     if (item.disabled) {
@@ -234,9 +237,11 @@ export default function AdminShell({ children, profile }) {
                   </div>
                 )}
               </div>
-              <Link href="/admin/settings" prefetch={false} onMouseEnter={() => router.prefetch('/admin/settings')} className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-500 transition-colors hover:border-midnight-navy/20 hover:text-midnight-navy sm:flex" title="Settings" aria-label="Settings">
-                <span className="material-symbols-outlined text-[20px]">settings</span>
-              </Link>
+              {(isSuperAuthor || isContributingAuthor) && (
+                <Link href="/admin/settings" prefetch={false} onMouseEnter={() => router.prefetch('/admin/settings')} className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-500 transition-colors hover:border-midnight-navy/20 hover:text-midnight-navy sm:flex" title="Settings" aria-label="Settings">
+                  <span className="material-symbols-outlined text-[20px]">settings</span>
+                </Link>
+              )}
               <div className="relative" ref={notificationsRef}>
                 <button type="button" onClick={() => setNotificationsOpen((value) => !value)} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-600 hover:bg-slate-50" aria-label="Notifications" aria-expanded={notificationsOpen}>
                   <span className="material-symbols-outlined text-[20px]">notifications</span>
@@ -254,7 +259,7 @@ export default function AdminShell({ children, profile }) {
                   <span className="grid h-9 w-9 place-items-center rounded-full bg-midnight-navy/10 text-sm font-semibold text-midnight-navy">{displayName.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</span>
                   <span className="hidden text-left 2xl:block">
                     <span className="block text-xs font-semibold text-slate-900">{displayName}</span>
-                    <span className="block text-[11px] capitalize text-slate-500">{profile?.role || 'staff'}</span>
+                    <span className="block text-[11px] text-slate-500">{authorTier}</span>
                   </span>
                   <span className="material-symbols-outlined text-[18px] text-slate-400">expand_more</span>
                 </button>

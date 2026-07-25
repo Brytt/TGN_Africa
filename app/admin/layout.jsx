@@ -1,5 +1,5 @@
 import AdminShell from '../../src/components/admin/AdminShell'
-import { getCurrentProfile } from '../../src/lib/data'
+import { getCurrentAuthor, getCurrentProfile } from '../../src/lib/data'
 
 export const metadata = {
   title: {
@@ -11,10 +11,11 @@ export const metadata = {
 
 export default async function AdminLayout({ children }) {
   let profile = null
+  let currentAuthor = null
   try {
-    profile = await getCurrentProfile()
+    ;[profile, currentAuthor] = await Promise.all([getCurrentProfile(), getCurrentAuthor()])
   } catch {
     // Login and database setup screens must remain renderable before seeding.
   }
-  return <AdminShell profile={profile}>{children}</AdminShell>
+  return <AdminShell profile={profile} authorTier={currentAuthor?.role || 'Author'}>{children}</AdminShell>
 }

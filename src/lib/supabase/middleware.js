@@ -22,9 +22,14 @@ export async function updateSession(request) {
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
   let role = null
+  let authorTier = null
   if (user && pathname.startsWith('/admin')) {
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
     role = profile?.role
+    if (role !== 'admin') {
+      const { data: author } = await supabase.from('authors').select('editorial_role').eq('profile_id', user.id).maybeSingle()
+      authorTier = author?.editorial_role
+    }
   }
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !user) {
     const url = request.nextUrl.clone()
@@ -46,6 +51,20 @@ export async function updateSession(request) {
   if (pathname.startsWith('/admin') && pathname !== '/admin/login' && user && !['admin', 'editor', 'author'].includes(role)) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+  const superOnlyPath = pathname.startsWith('/admin/authors') || pathname.startsWith('/admin/topics')
+  const settingsPath = pathname.startsWith('/admin/settings')
+  const isSuperAuthor = role === 'admin' || authorTier === 'Super Author'
+  const isContributingAuthor = authorTier === 'Contributing Author'
+  if (user && superOnlyPath && !isSuperAuthor) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin'
+    return NextResponse.redirect(url)
+  }
+  if (user && settingsPath && !isSuperAuthor && !isContributingAuthor) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin'
     return NextResponse.redirect(url)
   }
   return response

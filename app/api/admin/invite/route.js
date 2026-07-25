@@ -8,16 +8,15 @@ export async function POST(request) {
   if (auth.error) return auth.error
   const body = await request.json()
   const email = String(body.email || '').trim().toLowerCase()
-  const role = String(body.role || '')
   const displayName = String(body.displayName || '').trim()
   if (!email || !email.includes('@') || !displayName) return failure('A valid name and email address are required.')
-  if (!['admin', 'editor', 'author'].includes(role)) return failure('Invalid staff role')
+  const role = 'author'
   const admin = createAdminClient()
   const origin = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
     data: {
       display_name: displayName,
-      invited_role: role,
+      invited_role: 'author',
       onboarding_required: true,
     },
     redirectTo: new URL('/account/reset-password', origin).toString(),
@@ -29,17 +28,15 @@ export async function POST(request) {
     role,
   })
   if (profileError) return failure(profileError)
-  if (['admin', 'editor', 'author'].includes(role)) {
-    const name = displayName || email.split('@')[0]
-    const { error: authorError } = await admin.from('authors').upsert({
-      profile_id: data.user.id,
-      slug: `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${data.user.id.slice(0, 8)}`,
-      name,
-      email,
-      editorial_role: role === 'author' ? 'Author' : role === 'editor' ? 'Editor & Author' : 'Administrator & Author',
-      status: 'active',
-    }, { onConflict: 'email' })
-    if (authorError) return failure(authorError)
-  }
+  const name = displayName || email.split('@')[0]
+  const { error: authorError } = await admin.from('authors').upsert({
+    profile_id: data.user.id,
+    slug: `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${data.user.id.slice(0, 8)}`,
+    name,
+    email,
+    editorial_role: 'Author',
+    status: 'active',
+  }, { onConflict: 'email' })
+  if (authorError) return failure(authorError)
   return NextResponse.json({ success: true })
 }

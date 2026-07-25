@@ -3,14 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import AdminSelect from './AdminSelect'
 
-const authorRoles = ['Author', 'Senior Author', 'Contributing Author', 'Pastor & Author', 'Theologian', 'Bible Teacher', 'Editor']
+const authorRoles = ['Author', 'Contributing Author', 'Super Author']
 
 const emptyAuthor = {
   name: '',
   email: '',
   phone: '',
   dateOfBirth: '',
-  role: '',
+  role: 'Author',
   qualification: '',
   church: '',
   denomination: '',

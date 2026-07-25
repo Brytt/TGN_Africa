@@ -7,11 +7,11 @@ export default function Footer() {
         <div className="flex flex-col justify-between gap-16 lg:flex-row">
           <div className="max-w-md">
             <a href="#top" className="inline-flex items-center gap-4 text-white">
-              <span className="relative block size-16 overflow-hidden rounded-2xl bg-white">
+              <span className="relative block h-24 w-[76px]">
                 <img
-                  src="/images/brand/tgn-africa-logo.jpg"
+                  src="/images/brand/tgn-africa-logo-transparent.png"
                   alt=""
-                  className="absolute inset-0 h-full w-full scale-[1.34] object-cover"
+                  className="absolute inset-0 h-full w-full object-contain"
                 />
               </span>
               <span>

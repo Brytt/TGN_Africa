@@ -70,11 +70,11 @@ export default function Navbar() {
       <div className="page-shell flex h-20 items-center justify-between md:h-24">
         <div className="flex min-w-0 items-center gap-7 xl:gap-10">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
-            <span className="relative block size-12 overflow-hidden rounded-xl border border-midnight-navy/10 bg-white md:size-14">
+            <span className="relative block h-16 w-14 md:h-[72px] md:w-16">
               <img
-                src="/images/brand/tgn-africa-logo.jpg"
+                src="/images/brand/tgn-africa-logo-transparent.png"
                 alt=""
-                className="absolute inset-0 h-full w-full scale-[1.34] object-cover"
+                className="absolute inset-0 h-full w-full object-contain"
               />
             </span>
             <span className="hidden 2xl:block">

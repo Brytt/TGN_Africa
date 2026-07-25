@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from '../../../app/auth/actions'
 
@@ -23,7 +24,7 @@ const navGroups = [
   },
 ]
 
-export default function AdminShell({ children, initialSearchResults = [], profile }) {
+export default function AdminShell({ children, profile }) {
   const pathname = usePathname()
   const router = useRouter()
   const searchRef = useRef(null)
@@ -35,6 +36,8 @@ export default function AdminShell({ children, initialSearchResults = [], profil
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [sidebarExpanded, setSidebarExpanded] = useState(true)
   const [query, setQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [searching, setSearching] = useState(false)
   const pageDetails = pathname.startsWith('/admin/content')
     ? { eyebrow: 'Publishing', title: 'Content library', icon: 'article' }
     : pathname.startsWith('/admin/comments')
@@ -46,14 +49,6 @@ export default function AdminShell({ children, initialSearchResults = [], profil
         : pathname.startsWith('/admin/settings')
           ? { eyebrow: 'Administration', title: 'Platform settings', icon: 'settings' }
           : { eyebrow: 'Performance', title: 'Analytics & reports', icon: 'monitoring' }
-
-  const results = useMemo(() => {
-    const normalized = query.trim().toLowerCase()
-    if (!normalized) return initialSearchResults.slice(0, 4)
-    return initialSearchResults
-      .filter((item) => [item.title, item.author, item.type, item.topic].some((value) => value.toLowerCase().includes(normalized)))
-      .slice(0, 5)
-  }, [initialSearchResults, query])
 
   useEffect(() => {
     const closeMenus = (event) => {
@@ -74,6 +69,32 @@ export default function AdminShell({ children, initialSearchResults = [], profil
     }
   }, [])
 
+  useEffect(() => {
+    const normalized = query.trim()
+    if (!searchOpen || normalized.length < 2) {
+      setSearchResults([])
+      setSearching(false)
+      return undefined
+    }
+    const controller = new AbortController()
+    const timeout = window.setTimeout(async () => {
+      setSearching(true)
+      try {
+        const response = await fetch(`/api/admin/publications?q=${encodeURIComponent(normalized)}`, { signal: controller.signal })
+        const result = await response.json()
+        if (response.ok) setSearchResults(result.data || [])
+      } catch (error) {
+        if (error.name !== 'AbortError') setSearchResults([])
+      } finally {
+        if (!controller.signal.aborted) setSearching(false)
+      }
+    }, 250)
+    return () => {
+      window.clearTimeout(timeout)
+      controller.abort()
+    }
+  }, [query, searchOpen])
+
   const goToContent = (title = '') => {
     const suffix = title ? `?q=${encodeURIComponent(title)}` : ''
     setSearchOpen(false)
@@ -89,7 +110,7 @@ export default function AdminShell({ children, initialSearchResults = [], profil
         <aside className={`relative z-40 flex shrink-0 items-center justify-between border-b border-midnight-navy/10 bg-white px-5 py-4 transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[248px]' : 'xl:w-[88px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
             <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
-              <a href="/admin" className="flex min-w-0 items-center gap-3" aria-label="TGN Admin home">
+              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3" aria-label="TGN Admin home">
                 <span className="relative h-16 w-14 shrink-0 transition-opacity hover:opacity-90">
                   <img
                     src="/images/brand/tgn-africa-logo-transparent.png"
@@ -103,7 +124,7 @@ export default function AdminShell({ children, initialSearchResults = [], profil
                     <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">Editorial</span>
                   </span>
                 )}
-              </a>
+              </Link>
               {sidebarExpanded && (
                 <button type="button" onClick={() => setSidebarExpanded(false)} className="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50 hover:text-midnight-navy xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
                   <span className="material-symbols-outlined text-[19px]">left_panel_close</span>
@@ -132,10 +153,10 @@ export default function AdminShell({ children, initialSearchResults = [], profil
                       )
                     }
                     return (
-                      <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)} title={!sidebarExpanded ? item.label : undefined} className={`${itemClass} ${active ? 'bg-midnight-navy text-white shadow-sm' : 'text-slate-500 hover:bg-midnight-navy/5 hover:text-midnight-navy'}`} aria-current={active ? 'page' : undefined} aria-label={item.label}>
+                      <Link key={item.label} href={item.href} prefetch={false} onMouseEnter={() => router.prefetch(item.href)} onFocus={() => router.prefetch(item.href)} onClick={() => setMobileOpen(false)} title={!sidebarExpanded ? item.label : undefined} className={`${itemClass} ${active ? 'bg-midnight-navy text-white shadow-sm' : 'text-slate-500 hover:bg-midnight-navy/5 hover:text-midnight-navy'}`} aria-current={active ? 'page' : undefined} aria-label={item.label}>
                         <span className="material-symbols-outlined shrink-0 text-[21px]">{item.icon}</span>
                         <span className={`text-sm font-medium sm:hidden ${sidebarExpanded ? 'xl:block' : 'xl:hidden'}`}>{item.label}</span>
-                      </a>
+                      </Link>
                     )
                   })}
                 </div>
@@ -189,7 +210,9 @@ export default function AdminShell({ children, initialSearchResults = [], profil
                 />
                 {searchOpen && (
                   <div className="absolute right-0 top-[calc(100%+10px)] w-[min(390px,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
-                    {results.length ? results.map((item) => (
+                    {searching ? (
+                      <p className="px-3 py-5 text-center text-sm text-slate-400">Searching…</p>
+                    ) : searchResults.length ? searchResults.map((item) => (
                       <button key={item.id} type="button" onClick={() => goToContent(item.title)} className="flex w-full items-center gap-3 rounded-xl p-3 text-left hover:bg-slate-50">
                         <img src={item.image} alt="" className="h-9 w-9 rounded-xl object-cover" />
                         <span className="min-w-0">
@@ -197,14 +220,14 @@ export default function AdminShell({ children, initialSearchResults = [], profil
                           <span className="block text-xs text-slate-400">{item.type} · {item.author}</span>
                         </span>
                       </button>
-                    )) : <p className="px-3 py-5 text-center text-sm text-slate-400">No content found.</p>}
+                    )) : <p className="px-3 py-5 text-center text-sm text-slate-400">{query.trim().length < 2 ? 'Type at least two letters to search.' : 'No content found.'}</p>}
                     <button type="button" onClick={() => goToContent(query)} className="mt-1 w-full rounded-xl bg-midnight-navy/5 px-3 py-2.5 text-sm font-medium text-midnight-navy hover:bg-midnight-navy/10">View all content</button>
                   </div>
                 )}
               </div>
-              <a href="/admin/settings" className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-500 transition-colors hover:border-midnight-navy/20 hover:text-midnight-navy sm:flex" title="Settings" aria-label="Settings">
+              <Link href="/admin/settings" prefetch={false} onMouseEnter={() => router.prefetch('/admin/settings')} className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-500 transition-colors hover:border-midnight-navy/20 hover:text-midnight-navy sm:flex" title="Settings" aria-label="Settings">
                 <span className="material-symbols-outlined text-[20px]">settings</span>
-              </a>
+              </Link>
               <div className="relative" ref={notificationsRef}>
                 <button type="button" onClick={() => setNotificationsOpen((value) => !value)} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-600 hover:bg-slate-50" aria-label="Notifications" aria-expanded={notificationsOpen}>
                   <span className="material-symbols-outlined text-[20px]">notifications</span>

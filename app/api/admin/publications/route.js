@@ -4,6 +4,29 @@ import { failure, requireStaff } from '../../../../src/lib/http'
 const slugify = (value) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const statusValue = (value) => value.toLowerCase().replaceAll(' ', '_')
 
+export async function GET(request) {
+  const auth = await requireStaff()
+  if (auth.error) return auth.error
+  const query = new URL(request.url).searchParams.get('q')?.trim() || ''
+  if (query.length < 2) return NextResponse.json({ data: [] })
+  const { data, error } = await auth.supabase
+    .from('publications')
+    .select('id, title, publication_type, cover_path, author:authors(name)')
+    .ilike('title', `%${query}%`)
+    .order('updated_at', { ascending: false })
+    .limit(5)
+  if (error) return failure(error)
+  return NextResponse.json({
+    data: (data || []).map((item) => ({
+      id: item.id,
+      title: item.title,
+      type: item.publication_type,
+      author: item.author?.name || 'TGN Africa',
+      image: item.cover_path || '/images/publications/featured-study.jpg',
+    })),
+  })
+}
+
 export async function POST(request) {
   const auth = await requireStaff()
   if (auth.error) return auth.error

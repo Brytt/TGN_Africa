@@ -142,7 +142,11 @@ export async function getAuthors({ admin = false } = {}) {
 
 export async function getTopicTree() {
   const supabase = await createClient()
-  const { data, error } = await supabase.from('topics').select('*').order('sort_order').order('title')
+  const { data, error } = await supabase
+    .from('topics')
+    .select('id, title, slug, level, parent_id, sort_order')
+    .order('sort_order')
+    .order('title')
   if (error) return schemaFallback(error, [])
   const rows = data || []
   const children = new Map()

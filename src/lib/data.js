@@ -133,6 +133,7 @@ export async function getAuthors({ admin = false } = {}) {
   let query = supabase
     .from('authors')
     .select('*, publications:publications(count)')
+    .is('deleted_at', null)
     .order('name')
   if (!admin) query = query.eq('status', 'active')
   const { data, error } = await query

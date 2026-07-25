@@ -26,6 +26,7 @@ export async function PUT(request) {
     bio: String(body.bio || '').trim() || null,
     expertise: String(body.expertise || '').trim() || null,
     website: String(body.website || '').trim() || null,
+    avatar_path: String(body.image || '').trim() || null,
   }
   const authorUpdate = await auth.supabase.from('authors').update(authorValues).eq('profile_id', auth.user.id)
   if (authorUpdate.error) return failure(authorUpdate.error)

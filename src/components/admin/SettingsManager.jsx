@@ -95,7 +95,9 @@ export default function SettingsManager({ initialValues = {}, limited = false })
       }
       setInvite({ displayName: '', email: '' })
       setNoticeType('success')
-      setNotice(`Invitation sent to ${invite.email}. They will be asked to create a password and complete their profile.`)
+      setNotice(result.restored
+        ? `Invitation sent to ${invite.email}. Their previous author details have been restored for review.`
+        : `Invitation sent to ${invite.email}. They will be asked to create a password and complete their profile.`)
     } catch {
       setNoticeType('error')
       setNotice('Unable to reach the invitation service. Please check your connection and try again.')

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/browser'
 
@@ -8,6 +8,7 @@ const inputClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4
 
 export default function AccountSettings({ initialProfile = {}, email = '', onboarding = false }) {
   const router = useRouter()
+  const photoInput = useRef(null)
   const [profile, setProfile] = useState({
     displayName: initialProfile.name || initialProfile.displayName || '',
     phone: initialProfile.phone || '',
@@ -20,11 +21,29 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
     bio: initialProfile.bio || '',
     expertise: initialProfile.expertise || '',
     website: initialProfile.website || '',
+    image: initialProfile.image || '',
   })
   const [profileNotice, setProfileNotice] = useState('')
   const [passwordNotice, setPasswordNotice] = useState('')
   const [saving, setSaving] = useState(false)
   const update = (field) => (event) => setProfile((current) => ({ ...current, [field]: event.target.value }))
+
+  const uploadPhoto = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    setProfileNotice('Uploading profile picture…')
+    const form = new FormData()
+    form.set('file', file)
+    form.set('bucket', 'author-avatars')
+    const response = await fetch('/api/admin/upload', { method: 'POST', body: form })
+    const result = await response.json()
+    if (!response.ok) {
+      setProfileNotice(result.error || 'Unable to upload profile picture.')
+      return
+    }
+    setProfile((current) => ({ ...current, image: result.path }))
+    setProfileNotice('Picture uploaded. Save your profile to keep this change.')
+  }
 
   const saveProfile = async (event) => {
     event.preventDefault()
@@ -77,6 +96,16 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
         <form onSubmit={saveProfile} className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
           <div><h3 className="font-semibold text-midnight-navy">Profile details</h3><p className="mt-1 text-xs text-slate-400">These details identify you throughout the editorial platform.</p></div>
           {profileNotice && <p role="status" className="mt-5 rounded-xl bg-midnight-navy/5 px-4 py-3 text-sm text-midnight-navy">{profileNotice}</p>}
+          <div className="mt-5 flex items-center gap-4 rounded-2xl bg-slate-50 p-4">
+            {profile.image
+              ? <img src={profile.image} alt="Profile" className="h-20 w-20 rounded-2xl object-cover" />
+              : <span className="grid h-20 w-20 place-items-center rounded-2xl bg-midnight-navy/10 text-2xl font-bold text-midnight-navy">{profile.displayName.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase() || 'A'}</span>}
+            <div>
+              <input ref={photoInput} type="file" accept="image/png,image/jpeg,image/webp" onChange={uploadPhoto} className="hidden" />
+              <button type="button" onClick={() => photoInput.current?.click()} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-midnight-navy">Upload profile picture</button>
+              <p className="mt-2 text-[11px] text-slate-400">JPG, PNG or WebP. Use a square portrait.</p>
+            </div>
+          </div>
           <div className="mt-5 grid gap-5 md:grid-cols-2">
             <label className="text-xs font-semibold text-slate-500">Full name<input required value={profile.displayName} onChange={update('displayName')} className={inputClass} /></label>
             <label className="text-xs font-semibold text-slate-500">Email address<input readOnly value={email} className={`${inputClass} bg-slate-50 text-slate-500`} /></label>

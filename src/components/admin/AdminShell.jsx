@@ -19,6 +19,7 @@ const navGroups = [
     items: [
       { label: 'Authors', icon: 'group', href: '/admin/authors' },
       { label: 'Topics', icon: 'category', href: '/admin/topics' },
+      { label: 'My account', icon: 'manage_accounts', href: '/admin/account' },
       { label: 'Settings', icon: 'settings', href: '/admin/settings' },
     ],
   },
@@ -38,6 +39,11 @@ export default function AdminShell({ children, profile }) {
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
+  const displayName = profile?.display_name?.trim() || 'Editorial user'
+  const firstName = displayName.split(/\s+/)[0]
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+  const isDashboard = pathname === '/admin' || pathname === '/admin/analytics'
   const pageDetails = pathname.startsWith('/admin/content')
     ? { eyebrow: 'Publishing', title: 'Content library', icon: 'article' }
     : pathname.startsWith('/admin/comments')
@@ -48,7 +54,9 @@ export default function AdminShell({ children, profile }) {
         ? { eyebrow: 'Taxonomy', title: 'Topic bank', icon: 'category' }
         : pathname.startsWith('/admin/settings')
           ? { eyebrow: 'Administration', title: 'Platform settings', icon: 'settings' }
-          : { eyebrow: 'Performance', title: 'Analytics & reports', icon: 'monitoring' }
+          : pathname.startsWith('/admin/account')
+            ? { eyebrow: 'Account', title: 'Profile and security', icon: 'manage_accounts' }
+            : { eyebrow: 'Performance', title: `${greeting}, ${firstName}`, icon: 'monitoring' }
 
   useEffect(() => {
     const closeMenus = (event) => {
@@ -187,6 +195,7 @@ export default function AdminShell({ children, profile }) {
                   <span>Admin</span><span>/</span><span className="text-midnight-navy/60">{pageDetails.eyebrow}</span>
                 </div>
                 <h1 className="truncate text-xl font-semibold tracking-tight text-midnight-navy">{pageDetails.title}</h1>
+                {isDashboard && <p className="mt-0.5 hidden text-xs text-slate-400 md:block">Welcome back, {displayName}. Here is your editorial overview.</p>}
               </div>
               <span className="ml-2 hidden h-8 w-px bg-slate-100 2xl:block" />
               <span className="hidden items-center gap-2 text-xs text-slate-400 2xl:flex">
@@ -242,16 +251,16 @@ export default function AdminShell({ children, profile }) {
               </div>
               <div className="relative hidden sm:block" ref={profileRef}>
                 <button type="button" onClick={() => setProfileOpen((value) => !value)} className="flex items-center gap-3 rounded-full border border-slate-100 p-1 pr-3 hover:bg-slate-50" aria-expanded={profileOpen}>
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-midnight-navy/10 text-sm font-semibold text-midnight-navy">{(profile?.display_name || 'Admin').split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</span>
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-midnight-navy/10 text-sm font-semibold text-midnight-navy">{displayName.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</span>
                   <span className="hidden text-left 2xl:block">
-                    <span className="block text-xs font-semibold text-slate-900">{profile?.display_name || 'Editorial user'}</span>
+                    <span className="block text-xs font-semibold text-slate-900">{displayName}</span>
                     <span className="block text-[11px] capitalize text-slate-500">{profile?.role || 'staff'}</span>
                   </span>
                   <span className="material-symbols-outlined text-[18px] text-slate-400">expand_more</span>
                 </button>
                 {profileOpen && (
                   <div className="absolute right-0 top-[calc(100%+10px)] w-52 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
-                    <button type="button" className="w-full rounded-xl px-3 py-2.5 text-left text-sm text-slate-600 hover:bg-slate-50">Profile settings</button>
+                    <Link href="/admin/account" onClick={() => setProfileOpen(false)} className="block w-full rounded-xl px-3 py-2.5 text-left text-sm text-slate-600 hover:bg-slate-50">Profile settings</Link>
                     <a href="/" className="block rounded-xl px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50">View public site</a>
                     <form action={signOut}><button className="w-full rounded-xl px-3 py-2.5 text-left text-sm text-red-500 hover:bg-red-50">Sign out</button></form>
                   </div>

@@ -29,6 +29,8 @@ function Toggle({ checked, onChange, label, description }) {
 export default function SettingsManager({ initialValues = {} }) {
   const [settings, setSettings] = useState({ ...initialSettings, ...initialValues })
   const [notice, setNotice] = useState('')
+  const [noticeType, setNoticeType] = useState('success')
+  const [inviting, setInviting] = useState(false)
   const [invite, setInvite] = useState({ displayName: '', email: '', role: 'editor' })
   const fieldClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-midnight-navy/30 focus:ring-2 focus:ring-midnight-navy/10'
   const update = (field) => (event) => setSettings((current) => ({ ...current, [field]: event.target.value }))
@@ -42,20 +44,30 @@ export default function SettingsManager({ initialValues = {} }) {
     })
     const result = await response.json()
     if (!response.ok) {
+      setNoticeType('error')
       setNotice(result.error || 'Unable to save settings.')
       return
     }
+    setNoticeType('success')
     setNotice('Settings saved successfully.')
     window.setTimeout(() => setNotice(''), 3000)
   }
 
   const inviteStaff = async (event) => {
     event.preventDefault()
+    setInviting(true)
+    setNotice('')
     const response = await fetch('/api/admin/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(invite) })
     const result = await response.json()
-    if (!response.ok) return setNotice(result.error || 'Unable to send invitation.')
+    setInviting(false)
+    if (!response.ok) {
+      setNoticeType('error')
+      setNotice(result.error || 'Unable to send invitation.')
+      return
+    }
     setInvite({ displayName: '', email: '', role: 'editor' })
-    setNotice('Staff invitation sent successfully.')
+    setNoticeType('success')
+    setNotice(`Invitation sent to ${invite.email}. They will be asked to create a password and complete their profile.`)
   }
 
   return (
@@ -65,7 +77,7 @@ export default function SettingsManager({ initialValues = {} }) {
           <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Administration</p><h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Settings</h2><p className="mt-1 text-sm text-slate-500">Configure the editorial platform and publishing workflow.</p></div>
           <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"><span className="material-symbols-outlined text-[18px]">save</span>Save settings</button>
         </div>
-        {notice && <div role="status" className="mb-5 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{notice}</div>}
+        {notice && <div role="status" className={`mb-5 rounded-2xl px-4 py-3 text-sm ${noticeType === 'error' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}>{notice}</div>}
 
         <div className="space-y-6">
           <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
@@ -74,7 +86,7 @@ export default function SettingsManager({ initialValues = {} }) {
               <label className="text-xs font-semibold text-slate-500">Name<input value={invite.displayName} onChange={(event) => setInvite((current) => ({ ...current, displayName: event.target.value }))} className={fieldClass} placeholder="Full name" /></label>
               <label className="text-xs font-semibold text-slate-500">Email<input type="email" value={invite.email} onChange={(event) => setInvite((current) => ({ ...current, email: event.target.value }))} className={fieldClass} placeholder="staff@example.com" /></label>
               <div className="text-xs font-semibold text-slate-500"><p>Role</p><AdminSelect variant="field" label="Staff role" value={invite.role} onChange={(value) => setInvite((current) => ({ ...current, role: value }))} options={[{ value: 'editor', label: 'Editor' }, { value: 'author', label: 'Author' }, { value: 'admin', label: 'Administrator' }]} /></div>
-              <button type="button" onClick={inviteStaff} disabled={!invite.email || !invite.displayName} className="rounded-full bg-midnight-navy px-5 py-3 text-sm font-medium text-white disabled:opacity-40">Send invite</button>
+              <button type="button" onClick={inviteStaff} disabled={inviting || !invite.email || !invite.displayName} className="rounded-full bg-midnight-navy px-5 py-3 text-sm font-medium text-white disabled:opacity-40">{inviting ? 'Sending…' : 'Send invite'}</button>
             </div>
           </section>
 

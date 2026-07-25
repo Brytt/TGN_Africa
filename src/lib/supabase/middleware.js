@@ -32,6 +32,12 @@ export async function updateSession(request) {
     url.searchParams.set('next', pathname)
     return NextResponse.redirect(url)
   }
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && user?.user_metadata?.onboarding_required === true) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/account/onboarding'
+    url.search = ''
+    return NextResponse.redirect(url)
+  }
   if (pathname === '/admin/login' && user) {
     const url = request.nextUrl.clone()
     url.pathname = ['admin', 'editor', 'author'].includes(role) ? '/admin' : '/'

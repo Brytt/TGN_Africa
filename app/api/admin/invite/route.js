@@ -1,17 +1,26 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '../../../../src/lib/supabase/admin'
 import { failure, requireStaff } from '../../../../src/lib/http'
+/* global process */
 
 export async function POST(request) {
   const auth = await requireStaff(['admin'])
   if (auth.error) return auth.error
-  const { email, role, displayName } = await request.json()
+  const body = await request.json()
+  const email = String(body.email || '').trim().toLowerCase()
+  const role = String(body.role || '')
+  const displayName = String(body.displayName || '').trim()
+  if (!email || !email.includes('@') || !displayName) return failure('A valid name and email address are required.')
   if (!['admin', 'editor', 'author'].includes(role)) return failure('Invalid staff role')
   const admin = createAdminClient()
-  const origin = new URL(request.url).origin
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
-    data: { display_name: displayName },
-    redirectTo: `${origin}/account/reset-password`,
+    data: {
+      display_name: displayName,
+      invited_role: role,
+      onboarding_required: true,
+    },
+    redirectTo: new URL('/account/reset-password', origin).toString(),
   })
   if (error) return failure(error)
   const { error: profileError } = await admin.from('profiles').upsert({

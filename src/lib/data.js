@@ -20,7 +20,7 @@ const PUBLICATION_SELECT = `
   id, legacy_id, slug, title, subtitle, excerpt, body, publication_type,
   body_format, import_metadata, scripture, cover_path, status, reading_time_minutes, scheduled_at,
   published_at, created_at, updated_at,
-  author:authors(id, name, slug, avatar_path, linkedin_url, instagram_url, facebook_url),
+  author:authors(id, name, slug, avatar_path),
   topic:topics(id, title, slug, level)
 `
 
@@ -115,25 +115,35 @@ export async function getPublicationBySlug(slug) {
     .eq('status', 'published')
     .maybeSingle()
   if (error) return schemaFallback(error, null)
-  return data ? mapPublication(data) : null
+  if (!data) return null
+  const { data: social } = data.author?.id
+    ? await supabase.from('authors').select('linkedin_url, instagram_url, facebook_url').eq('id', data.author.id).maybeSingle()
+    : { data: null }
+  return mapPublication({
+    ...data,
+    author: social ? { ...data.author, ...social } : data.author,
+  })
 }
 
 export async function getArticleInteractions(publicationId) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const [comments, likes, liked, bookmarked] = await Promise.all([
+  let [comments, likes, liked, bookmarked] = await Promise.all([
     supabase.from('comments').select('id, body, author_name, created_at, parent_id, parent:comments!parent_id(id, author_name), comment_likes(user_id)').eq('publication_id', publicationId).eq('status', 'approved').order('created_at'),
     supabase.from('likes').select('*', { count: 'exact', head: true }).eq('publication_id', publicationId),
     user ? supabase.from('likes').select('publication_id').eq('publication_id', publicationId).eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
     user ? supabase.from('bookmarks').select('publication_id').eq('publication_id', publicationId).eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
   ])
+  if (comments.error && (comments.error.message?.includes('parent_id') || comments.error.message?.includes('comment_likes'))) {
+    comments = await supabase.from('comments').select('id, body, author_name, created_at').eq('publication_id', publicationId).eq('status', 'approved').order('created_at')
+  }
   return {
     userId: user?.id || null,
     comments: (comments.data || []).map((comment) => ({
       id: comment.id,
       body: comment.body,
       name: comment.author_name || 'TGN Reader',
-      parentId: comment.parent_id,
+      parentId: comment.parent_id || null,
       replyingTo: comment.parent?.author_name || '',
       likeCount: comment.comment_likes?.length || 0,
       liked: Boolean(user && comment.comment_likes?.some((like) => like.user_id === user.id)),
@@ -227,10 +237,18 @@ export async function getSettings() {
 
 export async function getModerationComments() {
   const supabase = await createClient()
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('comments')
     .select('id, body, author_name, status, created_at, parent:comments!parent_id(id, author_name, body), comment_likes(user_id), publication:publications(id, title, slug)')
     .order('created_at', { ascending: false })
+  if (error && (error.message?.includes('parent_id') || error.message?.includes('comment_likes'))) {
+    const fallback = await supabase
+      .from('comments')
+      .select('id, body, author_name, status, created_at, publication:publications(id, title, slug)')
+      .order('created_at', { ascending: false })
+    data = fallback.data
+    error = fallback.error
+  }
   if (error) return schemaFallback(error, [])
   return data || []
 }

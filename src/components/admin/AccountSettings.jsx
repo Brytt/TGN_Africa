@@ -63,7 +63,9 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
       setProfileNotice(result.error || 'Unable to update your profile.')
       return
     }
-    setProfileNotice('Your profile has been updated.')
+    setProfileNotice(result.socialProfilesSaved === false
+      ? 'Your profile was updated. Social links will be saved after the database upgrade is completed.'
+      : 'Your profile has been updated.')
     router.refresh()
     if (onboarding) router.replace('/admin')
   }

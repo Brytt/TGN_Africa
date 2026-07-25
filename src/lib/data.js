@@ -6,14 +6,13 @@ function isSchemaNotReady(error) {
 }
 
 function schemaFallback(error, fallback) {
-  if (isSchemaNotReady(error)) {
-    console.error(
-      'Supabase schema is not installed. Apply the migrations in supabase/migrations before loading database content.',
-      error.message,
-    )
-    return fallback
-  }
-  throw error
+  console.error(
+    isSchemaNotReady(error)
+      ? 'Supabase schema is not installed. Apply the migrations in supabase/migrations before loading database content.'
+      : 'A Supabase read failed; rendering the safe fallback instead.',
+    error?.message || error,
+  )
+  return fallback
 }
 
 const PUBLICATION_SELECT = `

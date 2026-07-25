@@ -25,13 +25,20 @@ export async function PUT(request) {
     country: String(body.country || '').trim() || null,
     bio: String(body.bio || '').trim() || null,
     expertise: String(body.expertise || '').trim() || null,
-    linkedin_url: String(body.linkedin || '').trim() || null,
-    instagram_url: String(body.instagram || '').trim() || null,
-    facebook_url: String(body.facebook || '').trim() || null,
     avatar_path: String(body.image || '').trim() || null,
   }
   const authorUpdate = await auth.supabase.from('authors').update(authorValues).eq('profile_id', auth.user.id)
   if (authorUpdate.error) return failure(authorUpdate.error)
+  const socialUpdate = await auth.supabase.from('authors').update({
+    linkedin_url: String(body.linkedin || '').trim() || null,
+    instagram_url: String(body.instagram || '').trim() || null,
+    facebook_url: String(body.facebook || '').trim() || null,
+  }).eq('profile_id', auth.user.id)
+  const socialSchemaMissing = socialUpdate.error && (
+    socialUpdate.error.message?.includes('linkedin_url') ||
+    socialUpdate.error.code === 'PGRST204'
+  )
+  if (socialUpdate.error && !socialSchemaMissing) return failure(socialUpdate.error)
 
   const { error: authError } = await auth.supabase.auth.updateUser({
     data: {
@@ -42,5 +49,5 @@ export async function PUT(request) {
   })
   if (authError) return failure(authError)
 
-  return NextResponse.json({ success: true, displayName })
+  return NextResponse.json({ success: true, displayName, socialProfilesSaved: !socialUpdate.error })
 }

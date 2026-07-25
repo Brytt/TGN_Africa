@@ -11,7 +11,10 @@ export async function POST(request) {
     const text = String(body || '').trim()
     if (!text || text.length > 4000) return NextResponse.json({ error: 'Comment must be between 1 and 4,000 characters.' }, { status: 400 })
     const { data: profile } = await supabase.from('profiles').select('display_name').eq('id', user.id).single()
-    const { error } = await supabase.from('comments').insert({ publication_id: publicationId, user_id: user.id, author_name: profile?.display_name || 'TGN Reader', parent_id: parentId || null, body: text, status: 'pending' })
+    let { error } = await supabase.from('comments').insert({ publication_id: publicationId, user_id: user.id, author_name: profile?.display_name || 'TGN Reader', parent_id: parentId || null, body: text, status: 'pending' })
+    if (error && parentId && (error.message?.includes('parent_id') || error.code === 'PGRST204')) {
+      ;({ error } = await supabase.from('comments').insert({ publication_id: publicationId, user_id: user.id, author_name: profile?.display_name || 'TGN Reader', body: text, status: 'pending' }))
+    }
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
     return NextResponse.json({ pending: true })
   }
@@ -20,6 +23,9 @@ export async function POST(request) {
     const key = { comment_id: commentId, user_id: user.id }
     const { data: existing } = await supabase.from('comment_likes').select('comment_id').match(key).maybeSingle()
     const result = existing ? await supabase.from('comment_likes').delete().match(key) : await supabase.from('comment_likes').insert(key)
+    if (result.error?.message?.includes('comment_likes') || result.error?.code === 'PGRST205') {
+      return NextResponse.json({ error: 'Comment likes are temporarily unavailable.' }, { status: 503 })
+    }
     if (result.error) return NextResponse.json({ error: result.error.message }, { status: 400 })
     return NextResponse.json({ active: !existing })
   }

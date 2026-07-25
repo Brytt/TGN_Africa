@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import AdminSelect from './AdminSelect'
+import { createClient } from '../../lib/supabase/browser'
 
 const initialSettings = {
   siteName: 'The Gospel Network Africa',
@@ -57,17 +58,50 @@ export default function SettingsManager({ initialValues = {}, limited = false })
     event.preventDefault()
     setInviting(true)
     setNotice('')
-    const response = await fetch('/api/admin/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(invite) })
-    const result = await response.json()
-    setInviting(false)
-    if (!response.ok) {
+
+    const supabase = createClient()
+    const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession()
+    if (sessionError || !sessionData.session) {
+      await supabase.auth.signOut({ scope: 'local' })
+      setInviting(false)
       setNoticeType('error')
-      setNotice(result.error || 'Unable to send invitation.')
+      setNotice('Your session could not be verified. Redirecting you to sign in again…')
+      window.setTimeout(() => {
+        window.location.assign('/admin/login?reason=session-expired')
+      }, 900)
       return
     }
-    setInvite({ displayName: '', email: '' })
-    setNoticeType('success')
-    setNotice(`Invitation sent to ${invite.email}. They will be asked to create a password and complete their profile.`)
+
+    try {
+      const response = await fetch('/api/admin/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invite),
+      })
+      const result = await response.json()
+      if (!response.ok) {
+        if (response.status === 401 && result.code === 'INVALID_SESSION') {
+          await supabase.auth.signOut({ scope: 'local' })
+          setNoticeType('error')
+          setNotice('Your session is no longer valid. Redirecting you to sign in again…')
+          window.setTimeout(() => {
+            window.location.assign('/admin/login?reason=session-expired')
+          }, 900)
+          return
+        }
+        setNoticeType('error')
+        setNotice(result.error || 'Unable to send invitation.')
+        return
+      }
+      setInvite({ displayName: '', email: '' })
+      setNoticeType('success')
+      setNotice(`Invitation sent to ${invite.email}. They will be asked to create a password and complete their profile.`)
+    } catch {
+      setNoticeType('error')
+      setNotice('Unable to reach the invitation service. Please check your connection and try again.')
+    } finally {
+      setInviting(false)
+    }
   }
 
   return (

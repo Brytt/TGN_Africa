@@ -27,6 +27,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef(null)
+  const topicsMenuRef = useRef(null)
 
   useEffect(() => {
     const closeOnResize = () => {
@@ -40,11 +41,24 @@ export default function Navbar() {
     if (searchOpen) searchInputRef.current?.focus()
 
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setSearchOpen(false)
+      if (event.key === 'Escape') {
+        setSearchOpen(false)
+        setTopicsOpen(false)
+      }
     }
     window.addEventListener('keydown', closeOnEscape)
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [searchOpen])
+
+  useEffect(() => {
+    const closeTopicsOutside = (event) => {
+      if (window.innerWidth >= 1024 && topicsMenuRef.current && !topicsMenuRef.current.contains(event.target)) {
+        setTopicsOpen(false)
+      }
+    }
+    document.addEventListener('pointerdown', closeTopicsOutside)
+    return () => document.removeEventListener('pointerdown', closeTopicsOutside)
+  }, [])
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
   const suggestions = normalizedQuery
@@ -54,27 +68,53 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-midnight-navy/10 bg-white/95 backdrop-blur-xl">
       <div className="page-shell flex h-20 items-center justify-between md:h-24">
-        <div className="hidden items-center gap-8 lg:flex xl:gap-11">
+        <div className="flex min-w-0 items-center gap-7 xl:gap-10">
+          <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
+            <span className="relative block size-12 overflow-hidden rounded-xl border border-midnight-navy/10 bg-white md:size-14">
+              <img
+                src="/images/brand/tgn-africa-logo.jpg"
+                alt=""
+                className="absolute inset-0 h-full w-full scale-[1.34] object-cover"
+              />
+            </span>
+            <span className="hidden 2xl:block">
+              <span className="block text-[13px] font-extrabold uppercase tracking-[0.13em] text-midnight-navy">TGN Africa</span>
+              <span className="mt-0.5 block text-[8px] font-bold uppercase tracking-[0.16em] text-midnight-navy/45">The Gospel Network</span>
+            </span>
+          </a>
+
+          <div className="hidden items-center gap-8 lg:flex xl:gap-11">
             {navItems.map((item) => (
               item.label === 'Topic' ? (
-                <div key={item.label} className="group">
+                <div key={item.label} ref={topicsMenuRef}>
                   <button
                     type="button"
+                    onClick={() => {
+                      setTopicsOpen((value) => !value)
+                      setSearchOpen(false)
+                    }}
                     className="flex items-center gap-1.5 text-[14px] font-bold uppercase tracking-[0.16em] text-midnight-navy transition-opacity hover:opacity-55"
                     aria-haspopup="true"
+                    aria-expanded={topicsOpen}
+                    aria-controls="desktop-topics-menu"
                   >
                     Topic
-                    <span className="material-symbols-outlined text-[17px] transition-transform group-hover:rotate-180">keyboard_arrow_down</span>
+                    <span className={`material-symbols-outlined text-[17px] transition-transform ${topicsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
 
-                  <div className="pointer-events-none absolute left-0 right-0 top-full border-y border-midnight-navy/10 bg-white opacity-0 shadow-[0_24px_55px_rgba(13,34,64,0.10)] transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+                  <div
+                    id="desktop-topics-menu"
+                    className={`absolute left-0 right-0 top-full border-y border-midnight-navy/10 bg-white shadow-[0_24px_55px_rgba(13,34,64,0.10)] transition-all duration-200 ${
+                      topicsOpen ? 'pointer-events-auto visible opacity-100' : 'pointer-events-none invisible opacity-0'
+                    }`}
+                  >
                     <div className="page-shell py-9">
                       <div className="mb-7 flex items-end justify-between border-b border-midnight-navy/10 pb-5">
                         <div>
                           <span className="eyebrow text-[9px] text-midnight-navy/45">Topic Bank</span>
                           <p className="mt-1 font-display text-2xl text-midnight-navy">Explore theological resources</p>
                         </div>
-                        <a href="/topics" className="text-[10px] font-bold uppercase tracking-[0.16em] text-midnight-navy">
+                        <a href="/topics" onClick={() => setTopicsOpen(false)} className="text-[10px] font-bold uppercase tracking-[0.16em] text-midnight-navy">
                           View all topics →
                         </a>
                       </div>
@@ -86,7 +126,11 @@ export default function Navbar() {
                             <ul className="space-y-3">
                               {group.topics.map((topic) => (
                                 <li key={topic}>
-                                  <a href={`/topics/${topicSlugByTitle[topic]}`} className="block text-[15px] leading-5 text-midnight-navy transition-opacity hover:opacity-55">
+                                  <a
+                                    href={`/topics/${topicSlugByTitle[topic]}`}
+                                    onClick={() => setTopicsOpen(false)}
+                                    className="block text-[15px] leading-5 text-midnight-navy transition-opacity hover:opacity-55"
+                                  >
                                     {topic}
                                   </a>
                                 </li>
@@ -108,12 +152,16 @@ export default function Navbar() {
                 </a>
               )
             ))}
+          </div>
         </div>
 
         <div className="ml-auto flex items-center gap-3 md:gap-5">
           <button
             type="button"
-            onClick={() => setSearchOpen((value) => !value)}
+            onClick={() => {
+              setSearchOpen((value) => !value)
+              setTopicsOpen(false)
+            }}
             className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-midnight-navy transition-opacity hover:opacity-55"
             aria-label={searchOpen ? 'Close search' : 'Open search'}
             aria-expanded={searchOpen}

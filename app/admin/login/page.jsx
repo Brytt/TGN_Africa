@@ -8,7 +8,9 @@ export default async function AdminLoginPage({ searchParams }) {
     <main className="grid min-h-screen place-items-center bg-slate-50 px-6 py-12 font-sans">
       <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-7 shadow-xl md:p-9">
         <a href="/" className="inline-flex items-center gap-3 text-midnight-navy">
-          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-midnight-navy text-white"><span className="material-symbols-outlined">auto_stories</span></span>
+          <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-midnight-navy/10 bg-white">
+            <img src="/images/brand/tgn-africa-logo.jpg" alt="" className="absolute inset-0 h-full w-full scale-[1.34] object-cover" />
+          </span>
           <span><span className="block font-bold">TGN Africa</span><span className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Editorial platform</span></span>
         </a>
         <h1 className="mt-8 text-3xl font-semibold text-midnight-navy">Welcome back</h1>

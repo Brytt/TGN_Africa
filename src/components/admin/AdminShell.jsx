@@ -90,8 +90,12 @@ export default function AdminShell({ children, initialSearchResults = [], profil
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
             <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:justify-center'}`}>
               <a href="/admin" className="flex min-w-0 items-center gap-3" aria-label="TGN Admin home">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-midnight-navy text-white shadow-sm transition-opacity hover:opacity-90">
-                  <span className="material-symbols-outlined text-[25px]">auto_stories</span>
+                <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-midnight-navy/10 bg-white shadow-sm transition-opacity hover:opacity-90">
+                  <img
+                    src="/images/brand/tgn-africa-logo.jpg"
+                    alt=""
+                    className="absolute inset-0 h-full w-full scale-[1.34] object-cover"
+                  />
                 </span>
                 {sidebarExpanded && (
                   <span className="hidden min-w-0 xl:block">

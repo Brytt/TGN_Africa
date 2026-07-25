@@ -6,8 +6,18 @@ export default function Footer() {
       <div className="page-shell">
         <div className="flex flex-col justify-between gap-16 lg:flex-row">
           <div className="max-w-md">
-            <a href="#top" className="font-display text-3xl uppercase tracking-[0.18em] text-white">
-              The Gospel Network
+            <a href="#top" className="inline-flex items-center gap-4 text-white">
+              <span className="relative block size-16 overflow-hidden rounded-2xl bg-white">
+                <img
+                  src="/images/brand/tgn-africa-logo.jpg"
+                  alt=""
+                  className="absolute inset-0 h-full w-full scale-[1.34] object-cover"
+                />
+              </span>
+              <span>
+                <span className="block font-display text-2xl uppercase tracking-[0.14em]">The Gospel Network</span>
+                <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.2em] text-white/50">Africa</span>
+              </span>
             </a>
             <p className="mt-7 leading-7 text-parchment-ivory/55">
               Equipping the African church through the proclamation of the gospel and the defense of biblical truth with resources that are contextually relevant and scripturally sound.

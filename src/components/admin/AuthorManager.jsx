@@ -76,7 +76,7 @@ export default function AuthorManager({ initialAuthors = [] }) {
     const response = await fetch(`/api/admin/authors/${author.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...author, role: nextRole }),
+      body: JSON.stringify({ action: 'changeRole', role: nextRole }),
     })
     if (!response.ok) return setNotice((await response.json()).error || 'Unable to change author role.')
     setAuthors((current) => current.map((item) => item.id === author.id ? { ...item, role: nextRole } : item))

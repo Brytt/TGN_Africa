@@ -8,6 +8,25 @@ export async function PATCH(request, { params }) {
   if (auth.error) return auth.error
   const { id } = await params
   const body = await request.json()
+  if (body.action === 'changeRole') {
+    if (!['Author', 'Contributing Author', 'Super Author'].includes(body.role)) return failure('Invalid author role.')
+    const { data: author, error } = await auth.supabase
+      .from('authors')
+      .update({ editorial_role: body.role })
+      .eq('id', id)
+      .select('profile_id')
+      .maybeSingle()
+    if (error) return failure(error)
+    if (!author) return failure('Author not found.', 404)
+    if (author.profile_id) {
+      const { error: profileError } = await auth.supabase
+        .from('profiles')
+        .update({ role: body.role === 'Super Author' ? 'admin' : 'author' })
+        .eq('id', author.profile_id)
+      if (profileError) return failure(profileError)
+    }
+    return NextResponse.json({ success: true })
+  }
   const { error } = await auth.supabase.from('authors').update(authorRow(body)).eq('id', id)
   if (error) return failure(error)
   const { data: author, error: authorError } = await auth.supabase.from('authors').select('profile_id, editorial_role').eq('id', id).maybeSingle()

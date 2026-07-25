@@ -88,7 +88,7 @@ export default function AdminShell({ children, initialSearchResults = [], profil
       <div className="admin-shell flex min-h-screen w-full flex-col overflow-hidden bg-white xl:h-screen xl:min-h-0 xl:flex-row">
         <aside className={`relative z-40 flex shrink-0 items-center justify-between border-b border-midnight-navy/10 bg-white px-5 py-4 transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[248px]' : 'xl:w-[88px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
-            <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:justify-center'}`}>
+            <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
               <a href="/admin" className="flex min-w-0 items-center gap-3" aria-label="TGN Admin home">
                 <span className="relative h-16 w-14 shrink-0 transition-opacity hover:opacity-90">
                   <img
@@ -107,6 +107,11 @@ export default function AdminShell({ children, initialSearchResults = [], profil
               {sidebarExpanded && (
                 <button type="button" onClick={() => setSidebarExpanded(false)} className="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50 hover:text-midnight-navy xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
                   <span className="material-symbols-outlined text-[19px]">left_panel_close</span>
+                </button>
+              )}
+              {!sidebarExpanded && (
+                <button type="button" onClick={() => setSidebarExpanded(true)} className="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50 hover:text-midnight-navy xl:flex" aria-label="Expand sidebar" title="Expand sidebar">
+                  <span className="material-symbols-outlined text-[19px]">left_panel_open</span>
                 </button>
               )}
             </div>
@@ -139,11 +144,6 @@ export default function AdminShell({ children, initialSearchResults = [], profil
           </div>
 
           <div className={`flex items-center gap-1 xl:flex-col ${sidebarExpanded ? 'xl:items-stretch' : 'xl:items-center'}`}>
-            {!sidebarExpanded && (
-              <button type="button" onClick={() => setSidebarExpanded(true)} className="hidden h-11 w-11 items-center justify-center rounded-xl text-slate-500 hover:bg-midnight-navy/5 hover:text-midnight-navy xl:flex" aria-label="Show sidebar text" title="Show icon and text">
-                <span className="material-symbols-outlined text-[20px]">left_panel_open</span>
-              </button>
-            )}
             <a href="/" className={`flex h-11 items-center gap-3 rounded-xl text-slate-500 transition-colors hover:bg-midnight-navy/5 hover:text-midnight-navy ${sidebarExpanded ? 'xl:px-3' : 'w-11 justify-center'}`} aria-label="View public website">
               <span className="material-symbols-outlined shrink-0 text-[21px]">open_in_new</span>
               {sidebarExpanded && <span className="hidden text-sm font-medium xl:block">View website</span>}

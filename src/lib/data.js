@@ -77,7 +77,9 @@ export function mapAuthor(row) {
 
 export async function getPublications({ admin = false, limit } = {}) {
   const supabase = await createClient()
-  await supabase.rpc('publish_due_publications')
+  // Keep public reads to one database round trip. Publishing scheduled work is
+  // handled when staff load the editorial workspace.
+  if (admin) await supabase.rpc('publish_due_publications')
   let query = supabase
     .from('publications')
     .select(PUBLICATION_SELECT)
@@ -87,6 +89,7 @@ export async function getPublications({ admin = false, limit } = {}) {
   if (limit) query = query.limit(limit)
   const { data, error } = await query
   if (error) return schemaFallback(error, [])
+  if (!admin) return (data || []).map(mapPublication)
   const ids = (data || []).map((row) => row.id)
   const metrics = ids.length
     ? await supabase.from('publication_metrics').select('id, views, likes, comments').in('id', ids)

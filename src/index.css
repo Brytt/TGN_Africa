@@ -234,3 +234,51 @@ a:focus-visible {
     background: #ffffff !important;
   }
 }
+.reveal-section {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+}
+
+.reveal-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-background {
+  animation: hero-settle 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-reveal {
+  animation: hero-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-delay-1 {
+  animation-delay: 100ms;
+}
+
+.hero-delay-2 {
+  animation-delay: 220ms;
+}
+
+.hero-delay-3 {
+  animation-delay: 340ms;
+}
+
+@keyframes hero-settle {
+  from { transform: scale(1.04); }
+  to { transform: scale(1); }
+}
+
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

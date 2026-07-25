@@ -101,12 +101,12 @@ export default function AuthorManager({ initialAuthors = [] }) {
   }
 
   const removeAuthor = async (author) => {
-    if (!window.confirm(`Remove ${author.name} from the author directory and release their login? Their profile details will be kept if they are invited again.`)) return
+    if (!window.confirm(`Permanently delete ${author.name}, their author profile and login account? This cannot be undone.`)) return
     const response = await fetch(`/api/admin/authors/${author.id}`, { method: 'DELETE' })
     if (!response.ok) return setNotice((await response.json()).error || 'Unable to remove author.')
     setAuthors((current) => current.filter((item) => item.id !== author.id))
     setActiveMenu(null)
-    setNotice(`${author.name} was removed. Their email can now be invited again and their previous profile details will be restored.`)
+    setNotice(`${author.name} was permanently deleted. Their email can now be invited as a completely new account.`)
     window.setTimeout(() => setNotice(''), 3000)
   }
 

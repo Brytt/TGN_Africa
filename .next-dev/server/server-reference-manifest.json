@@ -1,5 +1,58 @@
 {
-  "node": {},
+  "node": {
+    "0055c94fe25a8e3cfc595a9698d97a61bc492a8ac9": {
+      "workers": {
+        "app/admin/settings/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fodamebrightk%2FDownloads%2Ftgn-africa-react%2Fapp%2Fauth%2Factions.js%22%2C%5B%7B%22id%22%3A%220055c94fe25a8e3cfc595a9698d97a61bc492a8ac9%22%2C%22exportedName%22%3A%22signOut%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240d210496aabaa2733eff0f7c6d9a255a80487b425%22%2C%22exportedName%22%3A%22signIn%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240e997cdcb78175021b390aa742c38df92655f0eda%22%2C%22exportedName%22%3A%22signUp%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240ff8adbc51388aa7347bbda9f084d91ef8cbb00d5%22%2C%22exportedName%22%3A%22requestPasswordReset%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/settings/page": "action-browser"
+      },
+      "filename": "app/auth/actions.js",
+      "exportedName": "signOut"
+    },
+    "40d210496aabaa2733eff0f7c6d9a255a80487b425": {
+      "workers": {
+        "app/admin/settings/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fodamebrightk%2FDownloads%2Ftgn-africa-react%2Fapp%2Fauth%2Factions.js%22%2C%5B%7B%22id%22%3A%220055c94fe25a8e3cfc595a9698d97a61bc492a8ac9%22%2C%22exportedName%22%3A%22signOut%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240d210496aabaa2733eff0f7c6d9a255a80487b425%22%2C%22exportedName%22%3A%22signIn%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240e997cdcb78175021b390aa742c38df92655f0eda%22%2C%22exportedName%22%3A%22signUp%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240ff8adbc51388aa7347bbda9f084d91ef8cbb00d5%22%2C%22exportedName%22%3A%22requestPasswordReset%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/settings/page": "action-browser"
+      },
+      "filename": "app/auth/actions.js",
+      "exportedName": "signIn"
+    },
+    "40e997cdcb78175021b390aa742c38df92655f0eda": {
+      "workers": {
+        "app/admin/settings/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fodamebrightk%2FDownloads%2Ftgn-africa-react%2Fapp%2Fauth%2Factions.js%22%2C%5B%7B%22id%22%3A%220055c94fe25a8e3cfc595a9698d97a61bc492a8ac9%22%2C%22exportedName%22%3A%22signOut%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240d210496aabaa2733eff0f7c6d9a255a80487b425%22%2C%22exportedName%22%3A%22signIn%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240e997cdcb78175021b390aa742c38df92655f0eda%22%2C%22exportedName%22%3A%22signUp%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240ff8adbc51388aa7347bbda9f084d91ef8cbb00d5%22%2C%22exportedName%22%3A%22requestPasswordReset%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/settings/page": "action-browser"
+      },
+      "filename": "app/auth/actions.js",
+      "exportedName": "signUp"
+    },
+    "40ff8adbc51388aa7347bbda9f084d91ef8cbb00d5": {
+      "workers": {
+        "app/admin/settings/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fodamebrightk%2FDownloads%2Ftgn-africa-react%2Fapp%2Fauth%2Factions.js%22%2C%5B%7B%22id%22%3A%220055c94fe25a8e3cfc595a9698d97a61bc492a8ac9%22%2C%22exportedName%22%3A%22signOut%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240d210496aabaa2733eff0f7c6d9a255a80487b425%22%2C%22exportedName%22%3A%22signIn%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240e997cdcb78175021b390aa742c38df92655f0eda%22%2C%22exportedName%22%3A%22signUp%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%2C%7B%22id%22%3A%2240ff8adbc51388aa7347bbda9f084d91ef8cbb00d5%22%2C%22exportedName%22%3A%22requestPasswordReset%22%2C%22filename%22%3A%22app%2Fauth%2Factions.js%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/settings/page": "action-browser"
+      },
+      "filename": "app/auth/actions.js",
+      "exportedName": "requestPasswordReset"
+    }
+  },
   "edge": {},
   "encryptionKey": "qsBa2P2EHyXotl0uxvU7DgRBIGOQvmkib0UeC9D6r+E="
 }

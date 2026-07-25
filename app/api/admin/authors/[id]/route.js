@@ -34,20 +34,12 @@ export async function DELETE(_request, { params }) {
   if (!author) return failure('Author not found.', 404)
   if (author.profile_id === auth.user.id) return failure('You cannot remove your own administrator account.', 409)
 
-  // Keep the contributor details and publication relationships so they can be
-  // restored if this email is invited again.
-  const { error: archiveError } = await admin
-    .from('authors')
-    .update({ status: 'inactive', deleted_at: new Date().toISOString() })
-    .eq('id', id)
-  if (archiveError) return failure(archiveError)
-
   if (author.profile_id) {
     const { error: authError } = await admin.auth.admin.deleteUser(author.profile_id)
-    if (authError) {
-      await admin.from('authors').update({ deleted_at: null }).eq('id', id)
-      return failure(authError)
-    }
+    if (authError) return failure(authError)
   }
+
+  const { error: deleteError } = await admin.from('authors').delete().eq('id', id)
+  if (deleteError) return failure(deleteError)
   return NextResponse.json({ success: true })
 }

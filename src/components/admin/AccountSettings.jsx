@@ -25,6 +25,7 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
   })
   const [profileNotice, setProfileNotice] = useState('')
   const [passwordNotice, setPasswordNotice] = useState('')
+  const [passwordOpen, setPasswordOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const update = (field) => (event) => setProfile((current) => ({ ...current, [field]: event.target.value }))
 
@@ -123,13 +124,23 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
           <button disabled={saving} className="mt-6 rounded-full bg-midnight-navy px-6 py-3 text-sm font-medium text-white disabled:opacity-50">{saving ? 'Saving…' : onboarding ? 'Save and continue' : 'Save profile'}</button>
         </form>
 
-        {!onboarding && (
+        {!onboarding && !passwordOpen && (
+          <section className="h-fit rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
+            <div><h3 className="font-semibold text-midnight-navy">Password and security</h3><p className="mt-1 text-xs leading-5 text-slate-400">Open the secure form only when you need to replace your current password.</p></div>
+            <button type="button" onClick={() => setPasswordOpen(true)} className="mt-6 w-full rounded-full border border-midnight-navy px-5 py-3 text-sm font-medium text-midnight-navy">Reset password</button>
+          </section>
+        )}
+
+        {!onboarding && passwordOpen && (
           <form onSubmit={changePassword} className="h-fit rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
-            <div><h3 className="font-semibold text-midnight-navy">Change password</h3><p className="mt-1 text-xs leading-5 text-slate-400">Use at least eight characters and keep your account password private.</p></div>
+            <div className="flex items-start justify-between gap-4">
+              <div><h3 className="font-semibold text-midnight-navy">Reset password</h3><p className="mt-1 text-xs leading-5 text-slate-400">Use at least eight characters and keep your account password private.</p></div>
+              <button type="button" onClick={() => { setPasswordOpen(false); setPasswordNotice('') }} className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-slate-400 hover:bg-slate-50" aria-label="Close reset password form"><span className="material-symbols-outlined text-[19px]">close</span></button>
+            </div>
             {passwordNotice && <p role="status" className="mt-5 rounded-xl bg-midnight-navy/5 px-4 py-3 text-sm text-midnight-navy">{passwordNotice}</p>}
             <label className="mt-5 block text-xs font-semibold text-slate-500">New password<input required name="password" type="password" minLength={8} className={inputClass} /></label>
             <label className="mt-4 block text-xs font-semibold text-slate-500">Confirm new password<input required name="confirmation" type="password" minLength={8} className={inputClass} /></label>
-            <button className="mt-6 w-full rounded-full border border-midnight-navy bg-midnight-navy px-5 py-3 text-sm font-medium text-white">Change password</button>
+            <button className="mt-6 w-full rounded-full border border-midnight-navy bg-midnight-navy px-5 py-3 text-sm font-medium text-white">Reset password</button>
           </form>
         )}
       </div>

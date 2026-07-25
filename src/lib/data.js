@@ -20,7 +20,7 @@ const PUBLICATION_SELECT = `
   id, legacy_id, slug, title, subtitle, excerpt, body, publication_type,
   body_format, import_metadata, scripture, cover_path, status, reading_time_minutes, scheduled_at,
   published_at, created_at, updated_at,
-  author:authors(id, name, slug, avatar_path),
+  author:authors(id, name, slug, avatar_path, linkedin_url, instagram_url, facebook_url),
   topic:topics(id, title, slug, level)
 `
 
@@ -39,6 +39,11 @@ export function mapPublication(row) {
     author: row.author?.name || 'TGN Africa',
     authorSlug: row.author?.slug,
     authorImage: row.author?.avatar_path,
+    authorSocials: {
+      linkedin: row.author?.linkedin_url || '',
+      instagram: row.author?.instagram_url || '',
+      facebook: row.author?.facebook_url || '',
+    },
     topicId: row.topic?.id,
     topic: row.topic?.title || 'Uncategorized',
     topicSlug: row.topic?.slug,
@@ -69,7 +74,9 @@ export function mapAuthor(row) {
     country: row.country || '',
     bio: row.bio || '',
     expertise: row.expertise || '',
-    website: row.website || '',
+    linkedin: row.linkedin_url || '',
+    instagram: row.instagram_url || '',
+    facebook: row.facebook_url || '',
     image: row.avatar_path || '',
     status: row.status === 'active' ? 'Active' : 'Inactive',
     publications: Number(row.publications?.[0]?.count || 0),
@@ -115,14 +122,22 @@ export async function getArticleInteractions(publicationId) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const [comments, likes, liked, bookmarked] = await Promise.all([
-    supabase.from('comments').select('id, body, author_name, created_at').eq('publication_id', publicationId).eq('status', 'approved').order('created_at'),
+    supabase.from('comments').select('id, body, author_name, created_at, parent_id, parent:comments!parent_id(id, author_name), comment_likes(user_id)').eq('publication_id', publicationId).eq('status', 'approved').order('created_at'),
     supabase.from('likes').select('*', { count: 'exact', head: true }).eq('publication_id', publicationId),
     user ? supabase.from('likes').select('publication_id').eq('publication_id', publicationId).eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
     user ? supabase.from('bookmarks').select('publication_id').eq('publication_id', publicationId).eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
   ])
   return {
     userId: user?.id || null,
-    comments: (comments.data || []).map((comment) => ({ id: comment.id, body: comment.body, name: comment.author_name || 'TGN Reader' })),
+    comments: (comments.data || []).map((comment) => ({
+      id: comment.id,
+      body: comment.body,
+      name: comment.author_name || 'TGN Reader',
+      parentId: comment.parent_id,
+      replyingTo: comment.parent?.author_name || '',
+      likeCount: comment.comment_likes?.length || 0,
+      liked: Boolean(user && comment.comment_likes?.some((like) => like.user_id === user.id)),
+    })),
     likeCount: likes.count || 0,
     liked: Boolean(liked.data),
     bookmarked: Boolean(bookmarked.data),
@@ -214,7 +229,7 @@ export async function getModerationComments() {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('comments')
-    .select('id, body, author_name, status, created_at, publication:publications(id, title)')
+    .select('id, body, author_name, status, created_at, parent:comments!parent_id(id, author_name, body), comment_likes(user_id), publication:publications(id, title, slug)')
     .order('created_at', { ascending: false })
   if (error) return schemaFallback(error, [])
   return data || []

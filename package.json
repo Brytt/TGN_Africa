@@ -15,6 +15,7 @@
     "supabase:seed": "node scripts/seed-supabase.mjs",
     "supabase:import-wordpress": "node scripts/import-wordpress.mjs",
     "supabase:promote-admin": "node scripts/promote-admin.mjs"
+    ,"supabase:provision-authors": "node scripts/provision-author-logins.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

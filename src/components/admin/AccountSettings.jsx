@@ -20,7 +20,9 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
     country: initialProfile.country || '',
     bio: initialProfile.bio || '',
     expertise: initialProfile.expertise || '',
-    website: initialProfile.website || '',
+    linkedin: initialProfile.linkedin || '',
+    instagram: initialProfile.instagram || '',
+    facebook: initialProfile.facebook || '',
     image: initialProfile.image || '',
   })
   const [profileNotice, setProfileNotice] = useState('')
@@ -118,7 +120,9 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
             <label className="text-xs font-semibold text-slate-500">Area of expertise<input value={profile.expertise} onChange={update('expertise')} className={inputClass} /></label>
             <label className="text-xs font-semibold text-slate-500">City<input value={profile.city} onChange={update('city')} className={inputClass} /></label>
             <label className="text-xs font-semibold text-slate-500">Country<input value={profile.country} onChange={update('country')} className={inputClass} /></label>
-            <label className="text-xs font-semibold text-slate-500 md:col-span-2">Website<input type="url" value={profile.website} onChange={update('website')} className={inputClass} placeholder="https://" /></label>
+            <label className="text-xs font-semibold text-slate-500">LinkedIn profile<input type="url" value={profile.linkedin} onChange={update('linkedin')} className={inputClass} placeholder="https://linkedin.com/in/..." /></label>
+            <label className="text-xs font-semibold text-slate-500">Instagram profile<input type="url" value={profile.instagram} onChange={update('instagram')} className={inputClass} placeholder="https://instagram.com/..." /></label>
+            <label className="text-xs font-semibold text-slate-500 md:col-span-2">Facebook profile<input type="url" value={profile.facebook} onChange={update('facebook')} className={inputClass} placeholder="https://facebook.com/..." /></label>
             <label className="text-xs font-semibold text-slate-500 md:col-span-2">Biography<textarea value={profile.bio} onChange={update('bio')} rows={4} className={`${inputClass} resize-y`} /></label>
           </div>
           <button disabled={saving} className="mt-6 rounded-full bg-midnight-navy px-6 py-3 text-sm font-medium text-white disabled:opacity-50">{saving ? 'Saving…' : onboarding ? 'Save and continue' : 'Save profile'}</button>

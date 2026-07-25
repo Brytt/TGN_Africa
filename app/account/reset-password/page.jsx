@@ -24,7 +24,15 @@ export default function ResetPasswordPage() {
       return
     }
     const supabase = createClient()
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
+      data: {
+        ...currentUser?.user_metadata,
+        password_change_required: false,
+        temporary_password_expires_at: null,
+      },
+    })
     if (updateError) setError(updateError.message)
     else {
       const { data: { user } } = await supabase.auth.getUser()

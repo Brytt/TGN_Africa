@@ -25,7 +25,9 @@ export async function PUT(request) {
     country: String(body.country || '').trim() || null,
     bio: String(body.bio || '').trim() || null,
     expertise: String(body.expertise || '').trim() || null,
-    website: String(body.website || '').trim() || null,
+    linkedin_url: String(body.linkedin || '').trim() || null,
+    instagram_url: String(body.instagram || '').trim() || null,
+    facebook_url: String(body.facebook || '').trim() || null,
     avatar_path: String(body.image || '').trim() || null,
   }
   const authorUpdate = await auth.supabase.from('authors').update(authorValues).eq('profile_id', auth.user.id)

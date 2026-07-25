@@ -19,7 +19,9 @@ function authorRow(body) {
     country: body.country || null,
     bio: body.bio || null,
     expertise: body.expertise || null,
-    website: body.website || null,
+    linkedin_url: body.linkedin || null,
+    instagram_url: body.instagram || null,
+    facebook_url: body.facebook || null,
     avatar_path: body.image || null,
     status: (body.status || 'Active').toLowerCase(),
   }

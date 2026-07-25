@@ -25,7 +25,7 @@ const navGroups = [
   },
 ]
 
-export default function AdminShell({ children, profile, authorTier = 'Author' }) {
+export default function AdminShell({ children, profile, authorTier = 'Author', dateOfBirth = '' }) {
   const pathname = usePathname()
   const router = useRouter()
   const searchRef = useRef(null)
@@ -43,24 +43,11 @@ export default function AdminShell({ children, profile, authorTier = 'Author' })
   const firstName = displayName.split(/\s+/)[0]
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
-  const isDashboard = pathname === '/admin' || pathname === '/admin/analytics'
+  const today = new Date()
+  const isBirthday = Boolean(dateOfBirth && Number(dateOfBirth.slice(5, 7)) === today.getMonth() + 1 && Number(dateOfBirth.slice(8, 10)) === today.getDate())
   const isSuperAuthor = profile?.role === 'admin' || authorTier === 'Super Author'
   const isContributingAuthor = authorTier === 'Contributing Author'
   const canSeeItem = (item) => !item.access || (item.access === 'super' && isSuperAuthor) || (item.access === 'contributor' && (isSuperAuthor || isContributingAuthor))
-  const pageDetails = pathname.startsWith('/admin/content')
-    ? { eyebrow: 'Publishing', title: 'Content library', icon: 'article' }
-    : pathname.startsWith('/admin/comments')
-      ? { eyebrow: 'Community', title: 'Comment moderation', icon: 'forum' }
-    : pathname.startsWith('/admin/authors')
-      ? { eyebrow: 'Contributors', title: 'Author directory', icon: 'group' }
-      : pathname.startsWith('/admin/topics')
-        ? { eyebrow: 'Taxonomy', title: 'Topic bank', icon: 'category' }
-        : pathname.startsWith('/admin/settings')
-          ? { eyebrow: 'Administration', title: 'Platform settings', icon: 'settings' }
-          : pathname.startsWith('/admin/account')
-            ? { eyebrow: 'Account', title: 'Profile and security', icon: 'manage_accounts' }
-            : { eyebrow: 'Performance', title: `${greeting}, ${firstName}`, icon: 'monitoring' }
-
   useEffect(() => {
     const closeMenus = (event) => {
       if (event.key === 'Escape') {
@@ -187,18 +174,18 @@ export default function AdminShell({ children, profile, authorTier = 'Author' })
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="relative z-30 border-b border-midnight-navy/10 bg-white px-6 py-4 xl:px-10">
+          <header className="sticky top-0 z-30 border-b border-midnight-navy/10 bg-gradient-to-r from-[#f4f7ff] via-white to-[#fff8e8] px-6 py-4 shadow-[0_8px_30px_rgba(15,28,75,0.04)] xl:px-10">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-midnight-navy/5 text-midnight-navy">
-                <span className="material-symbols-outlined text-[22px]">{pageDetails.icon}</span>
+              <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-midnight-navy text-white'}`}>
+                <span className="material-symbols-outlined text-[22px]">{isBirthday ? 'cake' : 'waving_hand'}</span>
               </span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                  <span>Admin</span><span>/</span><span className="text-midnight-navy/60">{pageDetails.eyebrow}</span>
+                  <span>TGN Africa Admin</span><span>/</span><span className="text-midnight-navy/60">{authorTier}</span>
                 </div>
-                <h1 className="truncate text-xl font-semibold tracking-tight text-midnight-navy">{pageDetails.title}</h1>
-                {isDashboard && <p className="mt-0.5 hidden text-xs text-slate-400 md:block">Welcome back, {displayName}. Here is your editorial overview.</p>}
+                <h1 className="truncate text-xl font-semibold tracking-tight text-midnight-navy">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
+                <p className="mt-0.5 hidden text-xs text-slate-400 md:block">{isBirthday ? 'Wishing you a joyful celebration from the editorial team. 🎈' : 'Welcome to your editorial workspace.'}</p>
               </div>
               <span className="ml-2 hidden h-8 w-px bg-slate-100 2xl:block" />
               <span className="hidden items-center gap-2 text-xs text-slate-400 2xl:flex">

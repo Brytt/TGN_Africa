@@ -17,5 +17,5 @@ export default async function AdminLayout({ children }) {
   } catch {
     // Login and database setup screens must remain renderable before seeding.
   }
-  return <AdminShell profile={profile} authorTier={currentAuthor?.role || 'Author'}>{children}</AdminShell>
+  return <AdminShell profile={profile} authorTier={currentAuthor?.role || 'Author'} dateOfBirth={currentAuthor?.dateOfBirth}>{children}</AdminShell>
 }

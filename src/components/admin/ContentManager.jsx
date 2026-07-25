@@ -29,6 +29,25 @@ const statusStyles = {
   Archived: 'bg-slate-100 text-slate-500',
 }
 
+function plainText(value = '') {
+  if (typeof document === 'undefined') return value.replace(/<[^>]*>/g, ' ')
+  const parser = new DOMParser()
+  return (parser.parseFromString(value, 'text/html').body.textContent || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+function paginationItems(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, index) => index + 1)
+  const pages = new Set([1, total, current - 1, current, current + 1])
+  if (current <= 3) [2, 3, 4, 5].forEach((page) => pages.add(page))
+  if (current >= total - 2) [total - 4, total - 3, total - 2, total - 1].forEach((page) => pages.add(page))
+  const sorted = [...pages].filter((page) => page > 0 && page <= total).sort((a, b) => a - b)
+  return sorted.flatMap((page, index) => index && page - sorted[index - 1] > 1 ? ['…', page] : [page])
+}
+
 function SelectControl({ label, value, onChange, options }) {
   return <AdminSelect label={label} value={value} onChange={onChange} options={options} />
 }
@@ -441,10 +460,10 @@ export default function ContentManager({ initialPublications = [], topics = [], 
               <button type="button" disabled={safePage === 1} onClick={() => setPage((current) => Math.max(1, current - 1))} className="flex items-center gap-1 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600 disabled:cursor-not-allowed disabled:opacity-40">
                 <span className="material-symbols-outlined text-[17px]">arrow_back</span>Previous
               </button>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => (
-                  <button key={number} type="button" onClick={() => setPage(number)} className={`h-9 w-9 rounded-full text-sm ${safePage === number ? 'bg-indigo-600 font-medium text-white' : 'text-slate-500 hover:bg-slate-50'}`} aria-current={safePage === number ? 'page' : undefined}>{number}</button>
-                ))}
+              <div className="flex items-center gap-1" aria-label={`Page ${safePage} of ${pageCount}`}>
+                {paginationItems(safePage, pageCount).map((number, index) => number === '…'
+                  ? <span key={`ellipsis-${index}`} className="grid h-9 w-7 place-items-center text-sm text-slate-400">…</span>
+                  : <button key={number} type="button" onClick={() => setPage(number)} className={`h-9 min-w-9 rounded-full px-2 text-sm ${safePage === number ? 'bg-indigo-600 font-medium text-white' : 'text-slate-500 hover:bg-slate-50'}`} aria-label={`Page ${number}`} aria-current={safePage === number ? 'page' : undefined}>{number}</button>)}
               </div>
               <button type="button" disabled={safePage === pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))} className="flex items-center gap-1 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600 disabled:cursor-not-allowed disabled:opacity-40">
                 Next<span className="material-symbols-outlined text-[17px]">arrow_forward</span>
@@ -455,19 +474,20 @@ export default function ContentManager({ initialPublications = [], topics = [], 
       </div>
       {previewPublication && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-midnight-navy/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="publication-preview-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setPreviewPublication(null) }}>
-          <article className="admin-scroll max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
-            <div className="relative aspect-[16/7] overflow-hidden bg-slate-100">
+          <article className="admin-scroll max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl">
+            <div className="relative aspect-[16/6] overflow-hidden bg-slate-100">
               <img src={previewPublication.image} alt="" className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-midnight-navy/65 via-transparent to-transparent" />
               <button type="button" onClick={() => setPreviewPublication(null)} className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-slate-600 shadow" aria-label="Close preview"><span className="material-symbols-outlined">close</span></button>
             </div>
-            <div className="p-6 md:p-9">
+            <div className="mx-auto max-w-3xl p-6 md:p-10">
               <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy/55">
                 <span>{previewPublication.type}</span><span>·</span><span>{previewPublication.topic}</span><span className={`ml-auto rounded-full px-3 py-1 normal-case tracking-normal ${statusStyles[previewPublication.status]}`}>{previewPublication.status}</span>
               </div>
-              <h2 id="publication-preview-title" className="mt-5 font-display text-4xl leading-tight text-midnight-navy">{previewPublication.title}</h2>
+              <h2 id="publication-preview-title" className="mt-5 font-display text-4xl leading-[1.08] tracking-tight text-midnight-navy md:text-5xl">{plainText(previewPublication.title)}</h2>
               <p className="mt-3 text-sm text-slate-500">By {previewPublication.author} · {previewPublication.publishedAt}</p>
-              {previewPublication.excerpt && <p className="mt-7 border-l-2 border-midnight-navy/20 pl-5 text-lg leading-8 text-slate-600">{previewPublication.excerpt}</p>}
-              <div className="mt-8 whitespace-pre-wrap text-[15px] leading-8 text-slate-700">{previewPublication.body || 'This publication does not have article body content yet. Select Edit to add the full text.'}</div>
+              {previewPublication.excerpt && <p className="mt-8 rounded-2xl bg-midnight-navy/[0.04] p-5 text-lg leading-8 text-slate-600">{plainText(previewPublication.excerpt)}</p>}
+              <div className="mt-8 whitespace-pre-wrap font-display text-[1.12rem] leading-8 text-slate-700">{plainText(previewPublication.body) || 'This publication does not have article body content yet. Select Edit to add the full text.'}</div>
               <div className="mt-8 flex justify-end border-t border-slate-100 pt-5">
                 <button type="button" onClick={() => { setPreviewPublication(null); editPublication(previewPublication) }} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white"><span className="material-symbols-outlined text-[18px]">edit</span>Edit publication</button>
               </div>

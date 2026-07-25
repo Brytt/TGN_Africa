@@ -37,6 +37,19 @@ export async function updateSession(request) {
     url.searchParams.set('next', pathname)
     return NextResponse.redirect(url)
   }
+  const temporaryExpiry = user?.user_metadata?.temporary_password_expires_at
+  if (user?.user_metadata?.password_change_required === true && pathname.startsWith('/admin') && pathname !== '/admin/login') {
+    const url = request.nextUrl.clone()
+    if (temporaryExpiry && new Date(temporaryExpiry) <= new Date()) {
+      await supabase.auth.signOut()
+      url.pathname = '/admin/login'
+      url.searchParams.set('error', 'Your temporary password has expired. Ask an administrator for a new one.')
+    } else {
+      url.pathname = '/account/reset-password'
+      url.search = ''
+    }
+    return NextResponse.redirect(url)
+  }
   if (pathname.startsWith('/admin') && pathname !== '/admin/login' && user?.user_metadata?.onboarding_required === true) {
     const url = request.nextUrl.clone()
     url.pathname = '/account/onboarding'

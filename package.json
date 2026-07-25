@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "eslint .",
     "supabase:seed": "node scripts/seed-supabase.mjs",
+    "supabase:import-wordpress": "node scripts/import-wordpress.mjs",
     "supabase:promote-admin": "node scripts/promote-admin.mjs"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "next": "^15.5.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "sanitize-html": "^2.17.6",
     "three": "^0.179.1"
   },
   "devDependencies": {

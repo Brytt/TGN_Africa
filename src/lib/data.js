@@ -18,7 +18,7 @@ function schemaFallback(error, fallback) {
 
 const PUBLICATION_SELECT = `
   id, legacy_id, slug, title, subtitle, excerpt, body, publication_type,
-  scripture, cover_path, status, reading_time_minutes, scheduled_at,
+  body_format, import_metadata, scripture, cover_path, status, reading_time_minutes, scheduled_at,
   published_at, created_at, updated_at,
   author:authors(id, name, slug, avatar_path),
   topic:topics(id, title, slug, level)
@@ -33,6 +33,7 @@ export function mapPublication(row) {
     subtitle: row.subtitle || '',
     excerpt: row.excerpt || '',
     body: row.body || '',
+    bodyFormat: row.body_format || 'plain',
     type: row.publication_type,
     authorId: row.author?.id,
     author: row.author?.name || 'TGN Africa',

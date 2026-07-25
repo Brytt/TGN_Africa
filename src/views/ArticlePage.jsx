@@ -69,7 +69,9 @@ export default function ArticlePage({ article, related = [], initialComments = [
               </div>
             </div>
             {article.excerpt && <p className="mt-10 text-xl leading-8 text-midnight-navy/70">{article.excerpt}</p>}
-            <div className="article-prose mt-8 whitespace-pre-wrap font-display text-[1.22rem] leading-[1.72] text-charcoal-text/85">{article.body}</div>
+            {article.bodyFormat === 'html'
+              ? <div className="article-prose article-prose-html mt-8 font-display text-[1.22rem] leading-[1.72] text-charcoal-text/85" dangerouslySetInnerHTML={{ __html: article.body }} />
+              : <div className="article-prose mt-8 whitespace-pre-wrap font-display text-[1.22rem] leading-[1.72] text-charcoal-text/85">{article.body}</div>}
             <section className="mt-14 border-t border-midnight-navy/10 pt-10 font-sans">
               <h2 className="text-2xl font-semibold text-midnight-navy">Conversation</h2>
               {message && <p className="mt-4 rounded-xl bg-surface-container-low p-3 text-sm text-midnight-navy">{message}</p>}

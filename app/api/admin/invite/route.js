@@ -12,6 +12,13 @@ export async function POST(request) {
   if (!email || !email.includes('@') || !displayName) return failure('A valid name and email address are required.')
   const role = 'author'
   const admin = createAdminClient()
+  const { data: existingAuthor, error: existingAuthorError } = await admin
+    .from('authors')
+    .select('id, profile_id')
+    .eq('email', email)
+    .maybeSingle()
+  if (existingAuthorError) return failure(existingAuthorError)
+  if (existingAuthor?.profile_id) return failure('This author already has an account. Use password reset instead.', 409)
   const origin = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin
   const invitationCallback = new URL('/auth/callback', origin)
   invitationCallback.searchParams.set('next', '/account/reset-password')
@@ -34,14 +41,17 @@ export async function POST(request) {
     return failure(profileError)
   }
   const name = displayName || email.split('@')[0]
-  const { error: authorError } = await admin.from('authors').insert({
-    profile_id: data.user.id,
-    slug: `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${data.user.id.slice(0, 8)}`,
-    name,
-    email,
-    editorial_role: 'Author',
-    status: 'active',
-  })
+  const authorWrite = existingAuthor
+    ? admin.from('authors').update({ profile_id: data.user.id, name, status: 'active' }).eq('id', existingAuthor.id)
+    : admin.from('authors').insert({
+        profile_id: data.user.id,
+        slug: `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${data.user.id.slice(0, 8)}`,
+        name,
+        email,
+        editorial_role: 'Author',
+        status: 'active',
+      })
+  const { error: authorError } = await authorWrite
   if (authorError) {
     await admin.auth.admin.deleteUser(data.user.id)
     return failure(authorError)

@@ -171,6 +171,46 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+.article-prose-html > * + * {
+  margin-top: 1.35em;
+}
+
+.article-prose-html h2,
+.article-prose-html h3,
+.article-prose-html h4 {
+  color: #0d2240;
+  font-family: var(--font-sans, sans-serif);
+  font-weight: 650;
+  line-height: 1.2;
+  margin-top: 2em;
+}
+
+.article-prose-html h2 { font-size: 1.65em; }
+.article-prose-html h3 { font-size: 1.35em; }
+.article-prose-html ul { list-style: disc; padding-left: 1.5em; }
+.article-prose-html ol { list-style: decimal; padding-left: 1.5em; }
+.article-prose-html li + li { margin-top: 0.45em; }
+.article-prose-html a { color: #0d2240; text-decoration: underline; }
+.article-prose-html blockquote {
+  border-left: 3px solid #0d2240;
+  color: rgb(13 34 64 / 72%);
+  font-style: italic;
+  padding-left: 1.25em;
+}
+.article-prose-html img {
+  height: auto;
+  margin: 2em auto;
+  max-width: 100%;
+}
+.article-prose-html figure { margin: 2em 0; }
+.article-prose-html figcaption {
+  color: rgb(13 34 64 / 55%);
+  font-family: var(--font-sans, sans-serif);
+  font-size: 0.72em;
+  margin-top: 0.6em;
+  text-align: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

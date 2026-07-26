@@ -54,6 +54,23 @@ a:focus-visible {
   }
 }
 
+@keyframes contributor-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 0.5rem)); }
+}
+
+.contributor-marquee {
+  animation: contributor-scroll 42s linear infinite;
+}
+
+.contributor-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contributor-marquee { animation: none; width: auto; }
+}
+
 .editorial-image {
   filter: saturate(0.9) contrast(1.02);
 }

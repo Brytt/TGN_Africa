@@ -6,6 +6,7 @@ import LatestPublications from '../src/components/LatestPublications'
 import Mission from '../src/components/Mission'
 import Navbar from '../src/components/Navbar'
 import ResourceGateway from '../src/components/ResourceGateway'
+import VisionMission from '../src/components/VisionMission'
 import { getAuthors, getPublications } from '../src/lib/data'
 
 export default async function HomePage() {
@@ -18,8 +19,9 @@ export default async function HomePage() {
         <Hero />
         <LatestPublications publications={publications} />
         <Mission />
+        <VisionMission />
         <ResourceGateway />
-        <AfricanVoices contributors={authors.slice(0, 3)} />
+        <AfricanVoices contributors={authors} />
       </main>
       <Footer />
     </div>

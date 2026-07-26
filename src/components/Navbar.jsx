@@ -93,7 +93,7 @@ export default function Navbar() {
                       setTopicsOpen((value) => !value)
                       setSearchOpen(false)
                     }}
-                    className="flex items-center gap-1 text-[12px] font-medium text-black transition-opacity hover:opacity-55"
+                    className="flex items-center gap-1 text-[13px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={topicsOpen}
                     aria-controls="desktop-topics-menu"
@@ -146,7 +146,7 @@ export default function Navbar() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-[12px] font-medium text-black transition-opacity hover:opacity-55"
+                  className="text-[13px] font-medium text-black transition-opacity hover:opacity-55"
                 >
                   {item.label}
                 </a>
@@ -162,7 +162,7 @@ export default function Navbar() {
               setSearchOpen((value) => !value)
               setTopicsOpen(false)
             }}
-            className="flex items-center gap-2 text-[11px] font-medium text-black transition-opacity hover:opacity-55"
+            className="flex items-center gap-2 text-[12px] font-medium text-black transition-opacity hover:opacity-55"
             aria-label={searchOpen ? 'Close search' : 'Open search'}
             aria-expanded={searchOpen}
           >

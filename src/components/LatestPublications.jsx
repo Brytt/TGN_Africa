@@ -9,7 +9,7 @@ export default function LatestPublications({ publications = [] }) {
   const [activeFilter, setActiveFilter] = useState('All')
   const extraCategories = publications.map((item) => item.type).filter((type) => !publicationCategories.includes(type))
   const filters = [...publicationCategories, ...new Set(extraCategories)]
-  const displayed = useMemo(() => (activeFilter === 'All' ? publications : publications.filter((item) => item.type === activeFilter)).slice(0, 16), [activeFilter, publications])
+  const displayed = useMemo(() => (activeFilter === 'All' ? publications : publications.filter((item) => item.type === activeFilter)).slice(0, 12), [activeFilter, publications])
 
   return (
     <section id="latest" className="bg-[#f7f7f6] py-16 font-sans md:py-24">

@@ -39,6 +39,17 @@ function plainText(value = '') {
     .trim()
 }
 
+function formatPublishedDate(value) {
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '—'
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(date)
+}
+
 function paginationItems(current, total) {
   if (total <= 7) return Array.from({ length: total }, (_, index) => index + 1)
   const pages = new Set([1, total, current - 1, current, current + 1])
@@ -423,7 +434,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
                     <td className="py-3.5 pr-4">{item.author}</td>
                     <td className="py-3.5 pr-4"><span className="inline-block max-w-[140px] truncate align-bottom">{item.topic}</span></td>
                     <td className="py-3.5 pr-4"><span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-medium ${statusStyles[item.status]}`}>{item.status}</span></td>
-                    <td className="whitespace-nowrap py-3.5 pr-4">{item.publishedAt}</td>
+                    <td className="whitespace-nowrap py-3.5 pr-4 tabular-nums" title={item.publishedAt || undefined}>{formatPublishedDate(item.publishedAt)}</td>
                     <td className="py-3.5 pr-4 text-right tabular-nums">{item.views ? item.views.toLocaleString() : '—'}</td>
                     <td className="relative py-3.5 text-center">
                       <button type="button" onClick={() => setActiveMenu(activeMenu === item.id ? null : item.id)} className="grid h-8 w-8 place-items-center rounded-full border border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600" aria-label={`Actions for ${item.title}`} aria-expanded={activeMenu === item.id}>
@@ -485,7 +496,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
                 <span>{previewPublication.type}</span><span>·</span><span>{previewPublication.topic}</span><span className={`ml-auto rounded-full px-3 py-1 normal-case tracking-normal ${statusStyles[previewPublication.status]}`}>{previewPublication.status}</span>
               </div>
               <h2 id="publication-preview-title" className="mt-5 font-display text-4xl leading-[1.08] tracking-tight text-midnight-navy md:text-5xl">{plainText(previewPublication.title)}</h2>
-              <p className="mt-3 text-sm text-slate-500">By {previewPublication.author} · {previewPublication.publishedAt}</p>
+              <p className="mt-3 text-sm text-slate-500">By {previewPublication.author} · {formatPublishedDate(previewPublication.publishedAt)}</p>
               {previewPublication.excerpt && <p className="mt-8 rounded-2xl bg-midnight-navy/[0.04] p-5 text-lg leading-8 text-slate-600">{plainText(previewPublication.excerpt)}</p>}
               <div className="mt-8 whitespace-pre-wrap font-display text-[1.12rem] leading-8 text-slate-700">{plainText(previewPublication.body) || 'This publication does not have article body content yet. Select Edit to add the full text.'}</div>
               <div className="mt-8 flex justify-end border-t border-slate-100 pt-5">

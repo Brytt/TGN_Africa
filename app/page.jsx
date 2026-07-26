@@ -9,7 +9,7 @@ import ResourceGateway from '../src/components/ResourceGateway'
 import { getAuthors, getPublications } from '../src/lib/data'
 
 export default async function HomePage() {
-  const [publications, authors] = await Promise.all([getPublications({ limit: 6 }), getAuthors()])
+  const [publications, authors] = await Promise.all([getPublications({ summary: true }), getAuthors()])
   return (
     <div className="min-h-screen overflow-x-hidden bg-parchment-ivory text-charcoal-text">
       <AnnouncementBar />

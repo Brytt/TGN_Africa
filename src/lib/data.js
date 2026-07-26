@@ -23,6 +23,14 @@ const PUBLICATION_SELECT = `
   topic:topics(id, title, slug, level)
 `
 
+const PUBLICATION_SUMMARY_SELECT = `
+  id, legacy_id, slug, title, subtitle, excerpt, publication_type,
+  scripture, cover_path, status, reading_time_minutes, scheduled_at,
+  published_at, created_at, updated_at,
+  author:authors(id, name, slug, avatar_path),
+  topic:topics(id, title, slug, level)
+`
+
 export function mapPublication(row) {
   return {
     id: row.id,
@@ -82,14 +90,14 @@ export function mapAuthor(row) {
   }
 }
 
-export async function getPublications({ admin = false, limit } = {}) {
+export async function getPublications({ admin = false, limit, summary = false } = {}) {
   const supabase = await createClient()
   // Keep public reads to one database round trip. Publishing scheduled work is
   // handled when staff load the editorial workspace.
   if (admin) await supabase.rpc('publish_due_publications')
   let query = supabase
     .from('publications')
-    .select(PUBLICATION_SELECT)
+    .select(summary ? PUBLICATION_SUMMARY_SELECT : PUBLICATION_SELECT)
     .order('published_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
   if (!admin) query = query.eq('status', 'published')

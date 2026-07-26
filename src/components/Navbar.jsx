@@ -67,10 +67,10 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-midnight-navy/10 bg-white/95 backdrop-blur-xl">
-      <div className="page-shell flex h-20 items-center justify-between md:h-24">
+      <div className="page-shell flex h-16 items-center justify-between md:h-[72px]">
         <div className="flex min-w-0 items-center gap-7 xl:gap-10">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
-            <span className="relative block h-16 w-14 md:h-[72px] md:w-16">
+            <span className="relative block h-12 w-11 md:h-14 md:w-12">
               <img
                 src="/images/brand/tgn-africa-logo-transparent.png"
                 alt=""
@@ -83,7 +83,7 @@ export default function Navbar() {
             </span>
           </a>
 
-          <div className="hidden items-center gap-8 lg:flex xl:gap-11">
+          <div className="hidden items-center gap-7 lg:flex xl:gap-9">
             {navItems.map((item) => (
               item.label === 'Topic' ? (
                 <div key={item.label} ref={topicsMenuRef}>
@@ -93,7 +93,7 @@ export default function Navbar() {
                       setTopicsOpen((value) => !value)
                       setSearchOpen(false)
                     }}
-                    className="flex items-center gap-1.5 text-[14px] font-bold uppercase tracking-[0.16em] text-midnight-navy transition-opacity hover:opacity-55"
+                    className="flex items-center gap-1 text-[12px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={topicsOpen}
                     aria-controls="desktop-topics-menu"
@@ -146,7 +146,7 @@ export default function Navbar() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-[14px] font-bold uppercase tracking-[0.16em] text-midnight-navy transition-opacity hover:opacity-55"
+                  className="text-[12px] font-medium text-black transition-opacity hover:opacity-55"
                 >
                   {item.label}
                 </a>
@@ -162,7 +162,7 @@ export default function Navbar() {
               setSearchOpen((value) => !value)
               setTopicsOpen(false)
             }}
-            className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-midnight-navy transition-opacity hover:opacity-55"
+            className="flex items-center gap-2 text-[11px] font-medium text-black transition-opacity hover:opacity-55"
             aria-label={searchOpen ? 'Close search' : 'Open search'}
             aria-expanded={searchOpen}
           >
@@ -171,7 +171,7 @@ export default function Navbar() {
           </button>
           <a
             href="/topics"
-            className="hidden border border-midnight-navy bg-midnight-navy px-5 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-white hover:text-midnight-navy xl:inline-flex"
+            className="hidden border border-black bg-black px-4 py-2.5 text-[10px] font-semibold text-white transition-colors hover:bg-white hover:text-black xl:inline-flex"
           >
             Explore resources
           </a>
@@ -258,7 +258,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setTopicsOpen((value) => !value)}
-                    className="flex w-full items-center justify-between py-4 text-base font-extrabold uppercase tracking-[0.14em]"
+                    className="flex w-full items-center justify-between py-4 text-sm font-medium text-black"
                     aria-expanded={topicsOpen}
                   >
                     Topic
@@ -294,7 +294,7 @@ export default function Navbar() {
                   key={item.label}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="border-b border-midnight-navy/10 py-4 text-base font-extrabold uppercase tracking-[0.14em]"
+                  className="border-b border-midnight-navy/10 py-4 text-sm font-medium text-black"
                 >
                   {item.label}
                 </a>

@@ -67,8 +67,18 @@ a:focus-visible {
   animation-play-state: paused;
 }
 
+@keyframes hero-quote-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-quote-transition {
+  animation: hero-quote-enter 700ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .contributor-marquee { animation: none; width: auto; }
+  .contributor-marquee,
+  .hero-quote-transition { animation: none; }
 }
 
 .editorial-image {

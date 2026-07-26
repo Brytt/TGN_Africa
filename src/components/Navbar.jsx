@@ -66,7 +66,7 @@ export default function Navbar() {
     : searchItems.slice(-3)
 
   return (
-    <nav className="relative z-50 border-b border-black/10 bg-white">
+    <nav className="sticky top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
       <div className="page-shell relative flex h-16 items-center justify-between md:h-[72px]">
         <div className="flex min-w-0 items-center gap-7 xl:gap-10">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
@@ -104,37 +104,38 @@ export default function Navbar() {
 
                   <div
                     id="desktop-topics-menu"
-                    className={`absolute left-0 right-0 top-full overflow-hidden border border-black/10 bg-[#f7f7f6] shadow-[0_28px_70px_rgba(0,0,0,0.16)] transition-all duration-200 ${
+                    className={`absolute left-1/2 top-full w-screen -translate-x-1/2 border-y border-midnight-navy/15 bg-gradient-to-b from-[#f3f6fb] to-white shadow-[0_26px_60px_rgba(13,34,64,0.14)] transition-all duration-200 ${
                       topicsOpen ? 'pointer-events-auto visible opacity-100' : 'pointer-events-none invisible opacity-0'
                     }`}
                   >
-                    <div>
-                      <div className="flex items-center justify-between bg-midnight-navy px-7 py-5 text-white">
+                    <div className="page-shell py-8">
+                      <div className="mb-7 flex items-end justify-between border-b border-midnight-navy/15 pb-5">
                         <div className="flex items-center gap-4">
-                          <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10"><span className="material-symbols-outlined text-[20px]">library_books</span></span>
-                          <div><span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/45">Topic Bank</span><p className="mt-0.5 font-display text-xl">Explore Scripture, doctrine, church, and life</p></div>
+                          <span className="grid h-11 w-11 place-items-center rounded-full bg-midnight-navy text-white"><span className="material-symbols-outlined text-[20px]">library_books</span></span>
+                          <div><span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-midnight-navy/45">Topic Bank</span><p className="mt-1 font-display text-2xl text-midnight-navy">Explore theological resources</p></div>
                         </div>
-                        <a href="/topics" onClick={() => setTopicsOpen(false)} className="rounded-full border border-white/20 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.13em] text-white transition-colors hover:bg-white hover:text-midnight-navy">
+                        <a href="/topics" onClick={() => setTopicsOpen(false)} className="inline-flex items-center gap-2 border-b border-midnight-navy pb-1 text-[10px] font-semibold uppercase tracking-[0.13em] text-midnight-navy">
                           View all topics →
                         </a>
                       </div>
 
-                      <div className="grid grid-cols-4 gap-px bg-black/10 p-px">
+                      <div className="grid grid-cols-4 gap-0">
                         {topicGroups.map((group, groupIndex) => (
-                          <section key={group.label} className="min-h-[275px] bg-white p-5">
-                            <div className="mb-5 flex items-start justify-between gap-3 border-b border-black/10 pb-4">
-                              <p className="text-[10px] font-semibold uppercase leading-4 tracking-[0.12em] text-black">{group.label}</p>
-                              <span className="text-[10px] tabular-nums text-black/25">{String(groupIndex + 1).padStart(2, '0')}</span>
+                          <section key={group.label} className="min-h-[245px] border-l border-midnight-navy/10 px-6 first:border-l-0 first:pl-0 last:pr-0">
+                            <div className="mb-4 flex items-start justify-between gap-3">
+                              <p className="text-[10px] font-semibold uppercase leading-4 tracking-[0.13em] text-midnight-navy">{group.label}</p>
+                              <span className="text-[10px] tabular-nums text-midnight-navy/25">{String(groupIndex + 1).padStart(2, '0')}</span>
                             </div>
-                            <ul className="space-y-1">
+                            <div className="mb-4 h-0.5 w-8 bg-heritage-gold" />
+                            <ul className="space-y-2.5">
                               {group.topics.map((topic) => (
                                 <li key={topic}>
                                   <a
                                     href={`/topics/${topicSlugByTitle[topic]}`}
                                     onClick={() => setTopicsOpen(false)}
-                                    className="group/topic flex items-start justify-between gap-3 rounded-lg px-2 py-2 text-[12px] leading-[1.35] text-black/60 transition-colors hover:bg-midnight-navy/5 hover:text-black"
+                                    className="group/topic flex items-start justify-between gap-3 text-[13px] leading-[1.35] text-midnight-navy/65 transition-colors hover:text-midnight-navy"
                                   >
-                                    <span>{topic}</span><span className="shrink-0 opacity-0 transition-opacity group-hover/topic:opacity-100">→</span>
+                                    <span>{topic}</span><span className="shrink-0 text-heritage-gold opacity-0 transition-opacity group-hover/topic:opacity-100">→</span>
                                   </a>
                                 </li>
                               ))}

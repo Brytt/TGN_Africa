@@ -1,9 +1,11 @@
 import Reveal from './Reveal'
 
 const roleRank = { 'Super Author': 3, 'Contributing Author': 2, Author: 1 }
+const authorPriority = (author) => /\bkwesi\s+sena\b/i.test(author.name) ? 2 : /\b(michael|mike)\b/i.test(author.name) ? 1 : 0
 
 export default function AfricanVoices({ contributors = [] }) {
   const ranked = [...contributors].sort((a, b) =>
+    authorPriority(b) - authorPriority(a) ||
     (roleRank[b.role] || 0) - (roleRank[a.role] || 0) ||
     (b.publications || 0) - (a.publications || 0) ||
     a.name.localeCompare(b.name),
@@ -29,7 +31,7 @@ export default function AfricanVoices({ contributors = [] }) {
               <span className="min-w-0"><span className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-midnight-navy/45">#{(index % ranked.length) + 1} · {contributor.role}</span><strong className="mt-1 block truncate text-base text-black">{contributor.name}</strong></span>
             </div>
             <p className="mt-4 line-clamp-3 min-h-[60px] text-xs leading-5 text-black/55">{contributor.bio || 'Author profile biography coming soon.'}</p>
-            <div className="mt-5 flex items-center justify-between border-t border-black/10 pt-4 text-[10px] text-black/45"><span>{contributor.publications || 0} publications</span><span>{[contributor.location, contributor.country].filter(Boolean).join(', ')}</span></div>
+            <div className="mt-5 flex items-center justify-between border-t border-black/10 pt-4 text-[10px] text-black/45"><span>{contributor.publications || 0} publications</span><a href={`/authors/${contributor.slug}`} className="font-semibold text-midnight-navy">View profile →</a></div>
           </article>
         ))}
       </div>}

@@ -67,7 +67,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-midnight-navy/10 bg-white/95 backdrop-blur-xl">
-      <div className="page-shell flex h-16 items-center justify-between md:h-[72px]">
+      <div className="page-shell relative flex h-16 items-center justify-between md:h-[72px]">
         <div className="flex min-w-0 items-center gap-7 xl:gap-10">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
             <span className="relative block h-12 w-11 md:h-14 md:w-12">
@@ -83,7 +83,7 @@ export default function Navbar() {
             </span>
           </a>
 
-          <div className="hidden items-center gap-7 lg:flex xl:gap-9">
+          <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 lg:flex xl:gap-9">
             {navItems.map((item) => (
               item.label === 'Topic' ? (
                 <div key={item.label} ref={topicsMenuRef}>

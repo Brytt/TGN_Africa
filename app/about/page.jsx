@@ -24,15 +24,22 @@ export default async function AboutPage() {
   return <div className="min-h-screen bg-white text-charcoal-text">
     <AnnouncementBar /><Navbar />
     <main>
-      <header className="border-b border-black/10 py-16 md:py-24"><div className="page-shell"><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/40">About TGN Africa</p><h1 className="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,6rem)] leading-[0.95] text-black">Ancient truth.<br /><em>African voices.</em></h1><p className="mt-8 max-w-2xl text-lg leading-8 text-black/55">The Gospel Network Africa is an editorial and theological network serving the African church with gospel-centered, contextually faithful resources.</p></div></header>
+      <header className="border-b border-black/10 py-12 md:py-16"><div className="page-shell"><h1 className="text-4xl font-semibold tracking-tight text-black md:text-5xl">About Us</h1></div></header>
+
+      <section className="py-12 md:py-20"><div className="page-shell grid gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <aside className="h-fit border-t border-black/15 pt-4 lg:sticky lg:top-24"><nav className="space-y-3 text-sm"><a href="#overview" className="block font-semibold text-black">Overview</a><a href="#mission-vision" className="block text-black/50 hover:text-black">Mission and vision</a><a href="#resources" className="block text-black/50 hover:text-black">Our resources</a><a href="#contributors" className="block text-black/50 hover:text-black">Founder and contributors</a><a href="#faith" className="block text-black/50 hover:text-black">Statement of faith</a></nav></aside>
+        <div id="overview"><p className="font-display text-[clamp(2.4rem,5vw,4.7rem)] font-medium leading-[1.02] text-black">Biblical truth is not foreign to Africa. It is <em>good news for Africa.</em></p><div className="mt-10 max-w-3xl space-y-6 text-base leading-8 text-black/65"><p>The Gospel Network Africa is an editorial and theological network serving the African church with gospel-centered, contextually faithful resources.</p><p>We believe the deepest and most enduring needs of the church are met through the faithful proclamation of Jesus Christ and the careful teaching of Scripture. Our work brings together pastors, scholars, and writers who know the communities they serve.</p><p>Every publication exists to help readers know the truth, live the gospel, and strengthen the local church.</p></div>
+          <section id="resources" className="mt-14 border-t border-black/10 pt-9"><h2 className="text-2xl font-semibold text-black">Our Resources</h2><div className="mt-6 grid gap-5 sm:grid-cols-2">{[['Articles', 'Biblical and theological writing addressing doctrine, Christian life, church, and culture.'], ['Bible studies', 'Careful engagement with Scripture for personal reading, discipleship, and church teaching.'], ['Sermons', 'Gospel-centered preaching and pastoral instruction for the African church.'], ['Devotionals and poems', 'Shorter reflections that unite truth, worship, prayer, and Christian imagination.']].map(([title, text]) => <article key={title} className="border-t border-black/15 pt-4"><h3 className="font-semibold text-black">{title}</h3><p className="mt-2 text-sm leading-6 text-black/55">{text}</p></article>)}</div></section>
+        </div>
+      </div></section>
+
+      <div id="mission-vision"><VisionMission /></div>
 
       <section className="py-14 md:py-20"><div className="page-shell">
-        <div className="mb-8 max-w-2xl"><p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-black/40">Leadership and contributors</p><h2 className="mt-3 text-3xl font-semibold text-black md:text-4xl">People behind the network</h2></div>
+        <div className="mb-8 max-w-2xl"><p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-black/40">Our team</p><h2 className="mt-3 text-3xl font-semibold text-black md:text-4xl">Founder and contributors</h2></div>
         {founder && <Person person={founder} label="Founder" />}
         <div id="contributors">{contributors.map((person) => <Person key={person.id} person={person} label={person.role || 'Contributor'} />)}</div>
       </div></section>
-
-      <VisionMission />
 
       <section id="faith" className="bg-[#f7f7f6] py-16 md:py-20"><div className="page-shell grid gap-10 lg:grid-cols-[0.65fr_1.35fr]"><div><p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-black/40">What we believe</p><h2 className="mt-3 font-display text-4xl text-black">Statement of Faith</h2></div><div className="grid gap-5 sm:grid-cols-2">{[
         ['Scripture', 'We believe the Bible is God’s inspired, trustworthy, and sufficient Word, the final authority for faith and life.'],

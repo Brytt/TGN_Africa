@@ -22,9 +22,11 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
   const [page, setPage] = useState(1)
   const filters = [...categories, ...new Set(articles.map((article) => article.type).filter((type) => !categories.includes(type)))]
   const filtered = useMemo(() => activeFilter === 'All' ? articles : articles.filter((article) => article.type === activeFilter), [activeFilter, articles])
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const featured = filtered.slice(0, 2)
+  const recent = filtered.slice(2)
+  const pageCount = Math.max(1, Math.ceil(recent.length / PAGE_SIZE))
   const safePage = Math.min(page, pageCount)
-  const visible = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const visible = recent.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
 
   useEffect(() => setPage(1), [activeFilter])
   const goToPage = (nextPage) => {
@@ -40,6 +42,12 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
           <div className="page-shell">
             <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-black/40">TGN Africa library</p>
             <h1 className="mt-3 text-4xl font-semibold tracking-[-0.025em] text-black md:text-5xl">Publications</h1>
+            {featured.length > 0 && <div className="mt-10 grid gap-5 lg:grid-cols-[minmax(0,2.15fr)_minmax(280px,0.85fr)]">
+              {featured.map((article, index) => <a key={article.id} href={`/articles/${article.slug}`} className={`group overflow-hidden border border-black/10 bg-white ${index === 0 ? 'grid md:grid-cols-[1.2fr_0.8fr]' : 'flex flex-col'}`}>
+                <img src={article.image} alt="" className={`w-full object-cover transition-transform duration-500 group-hover:scale-[1.02] ${index === 0 ? 'h-full min-h-[300px]' : 'aspect-[16/9]'}`} />
+                <div className="flex flex-1 flex-col p-5 md:p-6"><p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-black/40">{article.type}</p><h2 className={`${index === 0 ? 'mt-8 text-2xl' : 'mt-4 text-xl'} font-semibold leading-tight text-black`}>{article.title}</h2>{article.subtitle && <p className="mt-2 text-sm font-medium text-black/60">{article.subtitle}</p>}<p className="mt-4 line-clamp-4 text-xs leading-5 text-black/55">{article.excerpt}</p><div className="mt-auto flex items-center gap-2 pt-7">{article.authorImage && <img src={article.authorImage} alt="" className="h-7 w-7 rounded-full object-cover" />}<span className="text-[10px] text-black/55">{article.author} · {article.date}</span></div></div>
+              </a>)}
+            </div>}
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 border-y border-black/10 py-4" aria-label="Filter publications">
               {filters.map((filter) => <button key={filter} onClick={() => setActiveFilter(filter)} className={`text-[11px] font-medium text-black ${activeFilter === filter ? 'underline decoration-2 underline-offset-[17px]' : 'opacity-45 hover:opacity-75'}`}>{filter}</button>)}
             </div>
@@ -66,10 +74,10 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
               <button type="button" disabled={safePage === pageCount} onClick={() => goToPage(safePage + 1)} className="ml-2 rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-medium text-black disabled:opacity-30">Next →</button>
             </nav>}
 
-            <div className="mt-12 grid gap-8 border-t border-black/10 pt-8 md:grid-cols-2">
-              <div><p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/40">Authors</p><div className="mt-3 flex flex-wrap gap-2">{authors.map((author) => <span key={author.id} className="rounded-full bg-white px-3 py-1.5 text-xs text-black/65">{author.name}</span>)}</div></div>
-              <div><p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/40">Main topics</p><div className="mt-3 flex flex-wrap gap-2">{topics.map((topic) => <a key={topic.id} href={`/topics/${topic.slug}`} className="rounded-full bg-white px-3 py-1.5 text-xs text-black/65">{topic.title}</a>)}</div></div>
-            </div>
+            <section className="mt-14 border-t border-black/10 pt-9"><div className="mb-7 flex items-end justify-between"><div><p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/40">Explore the library</p><h2 className="mt-2 text-2xl font-semibold text-black">Main topics</h2></div><a href="/topics" className="text-xs font-medium text-black">All topics →</a></div>
+              <div className="grid gap-x-9 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">{topics.slice(0, 8).map((topic) => <div key={topic.id}><a href={`/topics/${topic.slug}`} className="text-base font-semibold text-black hover:underline">{topic.title} →</a><p className="mt-2 text-[9px] font-semibold uppercase tracking-wide text-black/35">Popular topics</p><ul className="mt-3 space-y-2">{topic.subtopics.slice(0, 6).map((subtopic) => <li key={subtopic.id}><a href={`/topics/${subtopic.slug}`} className="text-xs leading-5 text-black/55 hover:text-black">{subtopic.title}</a></li>)}</ul></div>)}</div>
+            </section>
+            <section className="mt-12 border-t border-black/10 pt-8"><p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/40">Contributing authors</p><div className="mt-3 flex flex-wrap gap-2">{authors.map((author) => <span key={author.id} className="rounded-full bg-white px-3 py-1.5 text-xs text-black/65">{author.name}</span>)}</div></section>
           </div>
         </section>
       </main>

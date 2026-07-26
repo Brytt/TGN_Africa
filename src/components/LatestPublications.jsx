@@ -9,7 +9,7 @@ export default function LatestPublications({ publications = [] }) {
   const [activeFilter, setActiveFilter] = useState('All')
   const extraCategories = publications.map((item) => item.type).filter((type) => !publicationCategories.includes(type))
   const filters = [...publicationCategories, ...new Set(extraCategories)]
-  const displayed = useMemo(() => (activeFilter === 'All' ? publications : publications.filter((item) => item.type === activeFilter)).slice(0, 12), [activeFilter, publications])
+  const displayed = useMemo(() => (activeFilter === 'All' ? publications : publications.filter((item) => item.type === activeFilter)).slice(0, 16), [activeFilter, publications])
 
   return (
     <section id="latest" className="bg-[#f7f7f6] py-16 font-sans md:py-24">
@@ -23,7 +23,7 @@ export default function LatestPublications({ publications = [] }) {
         </div>
         {!displayed.length ? <p className="border border-black/10 bg-white py-16 text-center text-sm text-black/50">No {activeFilter.toLowerCase()} publications have been published yet.</p> : (
           <>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {displayed.map((publication, index) => <Reveal key={publication.id} delay={(index % 3) * 0.035} className="h-full"><a href={`/articles/${publication.slug}`} className="group flex h-full min-h-[360px] flex-col border border-black/10 bg-white transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg">
                 <div className="relative overflow-hidden"><img src={publication.image} alt="" className="aspect-[16/8.5] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" /><span className="absolute left-3 top-3 bg-black/75 px-2.5 py-1 text-[8px] font-medium uppercase tracking-[0.12em] text-white">{publication.type}</span></div>
                 <div className="flex grow flex-col p-4">

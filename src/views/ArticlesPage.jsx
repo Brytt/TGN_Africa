@@ -20,6 +20,7 @@ function paginationItems(current, total) {
 export default function ArticlesPage({ articles = [], authors = [], topics = [] }) {
   const [activeFilter, setActiveFilter] = useState('All')
   const [page, setPage] = useState(1)
+  const [comingSoon, setComingSoon] = useState('')
   const filters = [...categories, ...new Set(articles.map((article) => article.type).filter((type) => !categories.includes(type)))]
   const filtered = useMemo(() => activeFilter === 'All' ? articles : articles.filter((article) => article.type === activeFilter), [activeFilter, articles])
   const featured = filtered.slice(0, 2)
@@ -32,6 +33,11 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
   const goToPage = (nextPage) => {
     setPage(nextPage)
     document.getElementById('publication-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+  const publishedTopicIds = useMemo(() => new Set(articles.map((article) => article.topicId).filter(Boolean)), [articles])
+  const openTopic = (topic, ids) => {
+    if (ids.some((id) => publishedTopicIds.has(id))) window.location.href = `/topics/${topic.slug}`
+    else setComingSoon(topic.title)
   }
 
   return (
@@ -75,12 +81,19 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
             </nav>}
 
             <section className="mt-14 border-t border-black/10 pt-9"><div className="mb-7 flex items-end justify-between"><div><p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/40">Explore the library</p><h2 className="mt-2 text-2xl font-semibold text-black">Main topics</h2></div><a href="/topics" className="text-xs font-medium text-black">All topics →</a></div>
-              <div className="grid gap-x-9 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">{topics.slice(0, 8).map((topic) => <div key={topic.id}><a href={`/topics/${topic.slug}`} className="text-base font-semibold text-black hover:underline">{topic.title} →</a><p className="mt-2 text-[9px] font-semibold uppercase tracking-wide text-black/35">Popular topics</p><ul className="mt-3 space-y-2">{topic.subtopics.slice(0, 6).map((subtopic) => <li key={subtopic.id}><a href={`/topics/${subtopic.slug}`} className="text-xs leading-5 text-black/55 hover:text-black">{subtopic.title}</a></li>)}</ul></div>)}</div>
+              <div className="grid gap-x-9 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">{topics.slice(0, 8).map((topic) => {
+                const mainIds = [topic.id, ...topic.subtopics.flatMap((subtopic) => [subtopic.id, ...subtopic.resources.map((resource) => resource.id)])]
+                return <div key={topic.id}><button type="button" onClick={() => openTopic(topic, mainIds)} className="text-left text-base font-semibold text-black hover:underline">{topic.title} →</button><p className="mt-2 text-[9px] font-semibold uppercase tracking-wide text-black/35">Popular topics</p><ul className="mt-3 space-y-2">{topic.subtopics.slice(0, 6).map((subtopic) => {
+                  const subtopicIds = [subtopic.id, ...subtopic.resources.map((resource) => resource.id)]
+                  return <li key={subtopic.id}><button type="button" onClick={() => openTopic(subtopic, subtopicIds)} className="text-left text-xs leading-5 text-black/55 hover:text-black">{subtopic.title}</button></li>
+                })}</ul></div>
+              })}</div>
             </section>
             <section className="mt-12 border-t border-black/10 pt-8"><p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/40">Contributing authors</p><div className="mt-3 flex flex-wrap gap-2">{authors.map((author) => <span key={author.id} className="rounded-full bg-white px-3 py-1.5 text-xs text-black/65">{author.name}</span>)}</div></section>
           </div>
         </section>
       </main>
+      {comingSoon && <div className="fixed bottom-6 left-1/2 z-[90] w-[min(440px,calc(100vw-2rem))] -translate-x-1/2 border border-black/10 bg-white p-5 shadow-2xl" role="alert"><div className="flex items-start gap-4"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-heritage-gold/15 text-heritage-gold"><span className="material-symbols-outlined text-[20px]">schedule</span></span><div className="min-w-0 flex-1"><p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/35">Coming soon</p><h3 className="mt-1 font-semibold text-black">{comingSoon}</h3><p className="mt-2 text-xs leading-5 text-black/50">Publications for this topic are being prepared. Please explore another topic for now.</p></div><button type="button" onClick={() => setComingSoon('')} className="text-black/35 hover:text-black" aria-label="Close notice">×</button></div></div>}
       <Footer />
     </div>
   )

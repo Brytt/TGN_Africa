@@ -170,7 +170,8 @@ export async function getAuthors({ admin = false } = {}) {
   if (!admin) query = query.eq('status', 'active')
   const { data, error } = await query
   if (error) return schemaFallback(error, [])
-  return (data || []).map(mapAuthor)
+  const authors = (data || []).map(mapAuthor)
+  return admin ? authors : authors.filter((author) => !/\bodame\s+bright\b|\bbright\s+odame\b/i.test(author.name))
 }
 
 export async function getTopicTree() {

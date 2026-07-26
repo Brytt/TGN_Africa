@@ -66,7 +66,7 @@ export default function Navbar() {
     : searchItems.slice(-3)
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-midnight-navy/10 bg-white/95 backdrop-blur-xl">
+    <nav className="relative z-50 border-b border-black/10 bg-white">
       <div className="page-shell relative flex h-16 items-center justify-between md:h-[72px]">
         <div className="flex min-w-0 items-center gap-7 xl:gap-10">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
@@ -104,39 +104,42 @@ export default function Navbar() {
 
                   <div
                     id="desktop-topics-menu"
-                    className={`absolute left-0 right-0 top-full border-y border-midnight-navy/10 bg-white shadow-[0_24px_55px_rgba(13,34,64,0.10)] transition-all duration-200 ${
+                    className={`absolute left-0 right-0 top-full overflow-hidden border border-black/10 bg-[#f7f7f6] shadow-[0_28px_70px_rgba(0,0,0,0.16)] transition-all duration-200 ${
                       topicsOpen ? 'pointer-events-auto visible opacity-100' : 'pointer-events-none invisible opacity-0'
                     }`}
                   >
-                    <div className="page-shell py-9">
-                      <div className="mb-7 flex items-end justify-between border-b border-midnight-navy/10 pb-5">
-                        <div>
-                          <span className="eyebrow text-[9px] text-midnight-navy/45">Topic Bank</span>
-                          <p className="mt-1 font-display text-2xl text-midnight-navy">Explore theological resources</p>
+                    <div>
+                      <div className="flex items-center justify-between bg-midnight-navy px-7 py-5 text-white">
+                        <div className="flex items-center gap-4">
+                          <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10"><span className="material-symbols-outlined text-[20px]">library_books</span></span>
+                          <div><span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/45">Topic Bank</span><p className="mt-0.5 font-display text-xl">Explore Scripture, doctrine, church, and life</p></div>
                         </div>
-                        <a href="/topics" onClick={() => setTopicsOpen(false)} className="text-[10px] font-bold uppercase tracking-[0.16em] text-midnight-navy">
+                        <a href="/topics" onClick={() => setTopicsOpen(false)} className="rounded-full border border-white/20 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.13em] text-white transition-colors hover:bg-white hover:text-midnight-navy">
                           View all topics →
                         </a>
                       </div>
 
-                      <div className="grid grid-cols-4 gap-9">
-                        {topicGroups.map((group) => (
-                          <div key={group.label}>
-                            <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-midnight-navy/45">{group.label}</p>
-                            <ul className="space-y-3">
+                      <div className="grid grid-cols-4 gap-px bg-black/10 p-px">
+                        {topicGroups.map((group, groupIndex) => (
+                          <section key={group.label} className="min-h-[275px] bg-white p-5">
+                            <div className="mb-5 flex items-start justify-between gap-3 border-b border-black/10 pb-4">
+                              <p className="text-[10px] font-semibold uppercase leading-4 tracking-[0.12em] text-black">{group.label}</p>
+                              <span className="text-[10px] tabular-nums text-black/25">{String(groupIndex + 1).padStart(2, '0')}</span>
+                            </div>
+                            <ul className="space-y-1">
                               {group.topics.map((topic) => (
                                 <li key={topic}>
                                   <a
                                     href={`/topics/${topicSlugByTitle[topic]}`}
                                     onClick={() => setTopicsOpen(false)}
-                                    className="block text-[15px] leading-5 text-midnight-navy transition-opacity hover:opacity-55"
+                                    className="group/topic flex items-start justify-between gap-3 rounded-lg px-2 py-2 text-[12px] leading-[1.35] text-black/60 transition-colors hover:bg-midnight-navy/5 hover:text-black"
                                   >
-                                    {topic}
+                                    <span>{topic}</span><span className="shrink-0 opacity-0 transition-opacity group-hover/topic:opacity-100">→</span>
                                   </a>
                                 </li>
                               ))}
                             </ul>
-                          </div>
+                          </section>
                         ))}
                       </div>
                     </div>
@@ -265,11 +268,11 @@ export default function Navbar() {
                     <span className={`material-symbols-outlined transition-transform ${topicsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
                   {topicsOpen && (
-                    <div className="pb-5">
+                    <div className="space-y-3 pb-5">
                       {topicGroups.map((group) => (
-                        <div key={group.label} className="mb-5 last:mb-0">
-                          <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.18em] text-midnight-navy/45">{group.label}</p>
-                          <div className="space-y-2">
+                        <section key={group.label} className="rounded-2xl border border-black/10 bg-white p-4">
+                          <p className="mb-3 border-b border-black/10 pb-3 text-[9px] font-semibold uppercase tracking-[0.14em] text-black/45">{group.label}</p>
+                          <div className="space-y-1">
                             {group.topics.map((topic) => (
                               <a
                                 key={topic}
@@ -278,13 +281,13 @@ export default function Navbar() {
                                   setOpen(false)
                                   setTopicsOpen(false)
                                 }}
-                                className="block text-base leading-5 text-midnight-navy/75"
+                                className="block rounded-lg px-2 py-2 text-sm leading-5 text-black/65 hover:bg-black/5 hover:text-black"
                               >
                                 {topic}
                               </a>
                             ))}
                           </div>
-                        </div>
+                        </section>
                       ))}
                     </div>
                   )}

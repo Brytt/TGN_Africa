@@ -13,7 +13,20 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { slug } = await params
   const [topics, publications] = await Promise.all([getTopicTree(), getPublications()])
-  const topic = topics.find((item) => item.slug === slug)
+  let topic = topics.find((item) => item.slug === slug)
+  let topicIds = []
+  if (topic) {
+    topicIds = [topic.id, ...topic.subtopics.flatMap((subtopic) => [subtopic.id, ...subtopic.resources.map((resource) => resource.id)])]
+  } else {
+    for (const mainTopic of topics) {
+      const subtopic = mainTopic.subtopics.find((item) => item.slug === slug)
+      if (subtopic) {
+        topic = { ...subtopic, subtopics: [subtopic] }
+        topicIds = [subtopic.id, ...subtopic.resources.map((resource) => resource.id)]
+        break
+      }
+    }
+  }
   if (!topic) notFound()
-  return <TopicPage topics={topics} topic={topic} publications={publications.filter((item) => item.topicId === topic.id)} />
+  return <TopicPage topics={topics} topic={topic} publications={publications.filter((item) => topicIds.includes(item.topicId))} />
 }

@@ -31,17 +31,16 @@ export default function Hero() {
       </div>
 
       <div className="page-shell relative z-10 text-center">
-        <span className="hero-reveal eyebrow mb-10 block tracking-[0.38em] text-midnight-navy">
-          The Gospel Network
-        </span>
+        <div className="hero-reveal mx-auto mb-12 flex w-fit flex-col items-center font-display uppercase leading-none text-midnight-navy" aria-label="The Gospel Network">
+          <span className="translate-x-[0.28em] text-[clamp(0.75rem,1.2vw,1rem)] font-semibold tracking-[0.56em]">The</span>
+          <span className="mt-2 text-[clamp(2.25rem,5vw,4.4rem)] font-medium tracking-[0.17em]">Gospel</span>
+          <span className="mt-2 translate-x-[0.24em] text-[clamp(0.8rem,1.5vw,1.2rem)] font-semibold tracking-[0.48em]">Network</span>
+        </div>
         <h1 key={statement} className="hero-quote-transition mx-auto max-w-6xl font-display text-[clamp(2.8rem,6.5vw,6rem)] font-medium leading-[0.98] tracking-[-0.035em] text-midnight-navy">
           {heroStatements[statement]}
         </h1>
         <p className="hero-reveal hero-delay-1 mt-6 font-body text-[10px] font-semibold uppercase tracking-[0.2em] text-midnight-navy/40">Acts 20:26–27</p>
-        <p className="hero-reveal hero-delay-2 mx-auto mt-10 max-w-2xl text-lg font-light leading-8 text-charcoal-text/65 md:text-xl">
-          Thoughtful, church-rooted resources helping Christians across Africa know the truth, live the gospel, and serve the local church.
-        </p>
-        <div className="hero-reveal hero-delay-3 mt-12 flex flex-col justify-center gap-4 sm:flex-row sm:gap-6">
+        <div className="hero-reveal hero-delay-2 mt-12 flex flex-col justify-center gap-4 sm:flex-row sm:gap-6">
           <a href="#latest" className="editorial-button bg-midnight-navy text-white hover:opacity-80">
             Read latest
           </a>

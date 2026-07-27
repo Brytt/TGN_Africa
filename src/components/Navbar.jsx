@@ -74,10 +74,10 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
-      <div className="page-shell relative flex h-[72px] items-center justify-between md:h-20">
+      <div className="page-shell relative flex h-20 items-center justify-between md:h-[88px]">
         <div className="flex min-w-0 items-center gap-7 xl:gap-10">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
-            <span className="relative block h-[68px] w-[68px] md:h-[76px] md:w-[76px]">
+            <span className="relative block h-[76px] w-[76px] md:h-[86px] md:w-[86px]">
               <img
                 src="/images/brand/the-gospel-network-logo.jpeg"
                 alt=""

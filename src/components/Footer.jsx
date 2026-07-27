@@ -73,7 +73,7 @@ export default function Footer() {
         <div className="mt-20 flex flex-col justify-between gap-5 border-t border-parchment-ivory/10 pt-9 md:flex-row md:items-center">
           <p className="eyebrow text-[9px] text-parchment-ivory/35">Established 2015 · © {new Date().getFullYear()} The Gospel Network. All rights reserved.</p>
           <div className="flex items-center gap-3">
-            <span className="eyebrow text-[9px] text-parchment-ivory/35">Designed for Truth</span>
+            <span className="eyebrow text-[9px] text-parchment-ivory/35">Developed by API Technologies Dubai</span>
             <div className="h-px w-12 bg-white/30" />
           </div>
         </div>

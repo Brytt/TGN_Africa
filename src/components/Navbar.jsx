@@ -103,7 +103,7 @@ export default function Navbar() {
 
           <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 lg:flex xl:gap-9">
             {navItems.map((item) => (
-              item.label === 'Category' ? (
+              item.label === 'Categories' ? (
                 <div key={item.label} ref={topicsMenuRef}>
                   <button
                     type="button"
@@ -117,7 +117,7 @@ export default function Navbar() {
                     aria-expanded={topicsOpen}
                     aria-controls="desktop-topics-menu"
                   >
-                    Category
+                    Categories
                     <span className={`material-symbols-outlined text-[17px] transition-transform ${topicsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
 
@@ -333,7 +333,7 @@ export default function Navbar() {
         <div id="mobile-navigation" className="border-t border-midnight-navy/10 bg-parchment-ivory lg:hidden">
           <div className="page-shell flex flex-col py-6">
             {navItems.map((item) => (
-              item.label === 'Category' ? (
+              item.label === 'Categories' ? (
                 <div key={item.label} className="border-b border-midnight-navy/10">
                   <button
                     type="button"
@@ -341,7 +341,7 @@ export default function Navbar() {
                     className="flex w-full items-center justify-between py-4 text-sm font-medium text-black"
                     aria-expanded={topicsOpen}
                   >
-                    Category
+                    Categories
                     <span className={`material-symbols-outlined transition-transform ${topicsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
                   {topicsOpen && (

@@ -11,7 +11,7 @@ export default function Footer() {
                 <img
                   src="/images/brand/the-gospel-network-footer-logo.jpeg"
                   alt=""
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-contain mix-blend-lighten"
                 />
               </span>
               <span>

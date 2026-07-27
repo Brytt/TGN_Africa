@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { navItems, topicGroups } from '../data/content'
+import { aboutItems } from '../data/about'
 
 const topicSlugByTitle = Object.fromEntries(topicGroups.flatMap((group) => group.topics).map((title) => [
   title,
@@ -24,10 +25,12 @@ const searchItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [topicsOpen, setTopicsOpen] = useState(false)
+  const [aboutOpen, setAboutOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef(null)
   const topicsMenuRef = useRef(null)
+  const aboutMenuRef = useRef(null)
 
   useEffect(() => {
     const closeOnResize = () => {
@@ -44,6 +47,7 @@ export default function Navbar() {
       if (event.key === 'Escape') {
         setSearchOpen(false)
         setTopicsOpen(false)
+        setAboutOpen(false)
       }
     }
     window.addEventListener('keydown', closeOnEscape)
@@ -51,13 +55,16 @@ export default function Navbar() {
   }, [searchOpen])
 
   useEffect(() => {
-    const closeTopicsOutside = (event) => {
+    const closeMenusOutside = (event) => {
       if (window.innerWidth >= 1024 && topicsMenuRef.current && !topicsMenuRef.current.contains(event.target)) {
         setTopicsOpen(false)
       }
+      if (window.innerWidth >= 1024 && aboutMenuRef.current && !aboutMenuRef.current.contains(event.target)) {
+        setAboutOpen(false)
+      }
     }
-    document.addEventListener('pointerdown', closeTopicsOutside)
-    return () => document.removeEventListener('pointerdown', closeTopicsOutside)
+    document.addEventListener('pointerdown', closeMenusOutside)
+    return () => document.removeEventListener('pointerdown', closeMenusOutside)
   }, [])
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
@@ -92,6 +99,7 @@ export default function Navbar() {
                     onClick={() => {
                       setTopicsOpen((value) => !value)
                       setSearchOpen(false)
+                      setAboutOpen(false)
                     }}
                     className="flex items-center gap-1 text-[13px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
@@ -146,6 +154,53 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
+              ) : item.label === 'About Us' ? (
+                <div key={item.label} ref={aboutMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAboutOpen((value) => !value)
+                      setTopicsOpen(false)
+                      setSearchOpen(false)
+                    }}
+                    className="flex items-center gap-1 text-[13px] font-medium text-black transition-opacity hover:opacity-55"
+                    aria-haspopup="true"
+                    aria-expanded={aboutOpen}
+                    aria-controls="desktop-about-menu"
+                  >
+                    About Us
+                    <span className={`material-symbols-outlined text-[17px] transition-transform ${aboutOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
+                  </button>
+                  <div
+                    id="desktop-about-menu"
+                    className={`absolute right-0 top-[calc(100%+25px)] w-[430px] border border-midnight-navy/10 bg-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${
+                      aboutOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'
+                    }`}
+                  >
+                    <div className="border-b border-midnight-navy/10 px-3 pb-3 pt-2">
+                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">About The Gospel Network</p>
+                    </div>
+                    <div className="grid gap-1 pt-2">
+                      {aboutItems.map((aboutItem) => (
+                        <a
+                          key={aboutItem.href}
+                          href={aboutItem.href}
+                          onClick={() => setAboutOpen(false)}
+                          className="group grid grid-cols-[38px_1fr_auto] items-center gap-3 px-3 py-3 transition-colors hover:bg-[#f3f6fb]"
+                        >
+                          <span className="grid size-9 place-items-center bg-midnight-navy/5 text-midnight-navy transition-colors group-hover:bg-midnight-navy group-hover:text-white">
+                            <span className="material-symbols-outlined text-[18px]">{aboutItem.icon}</span>
+                          </span>
+                          <span>
+                            <span className="block text-[13px] font-semibold text-midnight-navy">{aboutItem.label}</span>
+                            <span className="mt-0.5 block text-[10px] leading-4 text-midnight-navy/45">{aboutItem.description}</span>
+                          </span>
+                          <span className="text-midnight-navy/25 transition-transform group-hover:translate-x-1 group-hover:text-heritage-gold">→</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <a
                   key={item.label}
@@ -165,6 +220,7 @@ export default function Navbar() {
             onClick={() => {
               setSearchOpen((value) => !value)
               setTopicsOpen(false)
+              setAboutOpen(false)
             }}
             className="flex items-center gap-2 text-[12px] font-medium text-black transition-opacity hover:opacity-55"
             aria-label={searchOpen ? 'Close search' : 'Open search'}
@@ -289,6 +345,39 @@ export default function Navbar() {
                             ))}
                           </div>
                         </section>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : item.label === 'About Us' ? (
+                <div key={item.label} className="border-b border-midnight-navy/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAboutOpen((value) => !value)
+                      setTopicsOpen(false)
+                    }}
+                    className="flex w-full items-center justify-between py-4 text-sm font-medium text-black"
+                    aria-expanded={aboutOpen}
+                  >
+                    About Us
+                    <span className={`material-symbols-outlined transition-transform ${aboutOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
+                  </button>
+                  {aboutOpen && (
+                    <div className="mb-5 border-l-2 border-midnight-navy pl-4">
+                      {aboutItems.map((aboutItem) => (
+                        <a
+                          key={aboutItem.href}
+                          href={aboutItem.href}
+                          onClick={() => {
+                            setOpen(false)
+                            setAboutOpen(false)
+                          }}
+                          className="flex items-center justify-between gap-4 border-b border-midnight-navy/10 py-3 last:border-0"
+                        >
+                          <span className="text-[13px] font-medium text-midnight-navy">{aboutItem.label}</span>
+                          <span className="text-midnight-navy/35">→</span>
+                        </a>
                       ))}
                     </div>
                   )}

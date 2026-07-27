@@ -62,7 +62,7 @@ export default function Footer() {
             <div>
               <span className="eyebrow mb-7 block text-white">Resources</span>
               <ul className="space-y-4 text-sm text-parchment-ivory/55">
-                <li><a href="/about#faith" className="transition-colors hover:text-parchment-ivory">Statement of Faith</a></li>
+                <li><a href="/about/statement-of-faith" className="transition-colors hover:text-parchment-ivory">Statement of Faith</a></li>
                 <li><a href="#privacy" className="transition-colors hover:text-parchment-ivory">Privacy Policy</a></li>
                 <li><a href="#contact" className="transition-colors hover:text-parchment-ivory">Contact</a></li>
               </ul>

@@ -27,18 +27,29 @@ export default function Navbar() {
   const [topicsOpen, setTopicsOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [darkMode, setDarkMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef(null)
   const topicsMenuRef = useRef(null)
   const aboutMenuRef = useRef(null)
 
   useEffect(() => {
+    setDarkMode(document.documentElement.dataset.theme === 'dark')
     const closeOnResize = () => {
       if (window.innerWidth >= 1024) setOpen(false)
     }
     window.addEventListener('resize', closeOnResize)
     return () => window.removeEventListener('resize', closeOnResize)
   }, [])
+
+  const toggleTheme = () => {
+    setDarkMode((current) => {
+      const next = !current
+      document.documentElement.dataset.theme = next ? 'dark' : 'light'
+      window.localStorage.setItem('tgn-theme', next ? 'dark' : 'light')
+      return next
+    })
+  }
 
   useEffect(() => {
     if (searchOpen) searchInputRef.current?.focus()
@@ -215,6 +226,15 @@ export default function Navbar() {
         </div>
 
         <div className="ml-auto flex items-center gap-3 md:gap-5">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="grid size-10 place-items-center rounded-full border border-midnight-navy/15 text-midnight-navy transition-colors hover:bg-midnight-navy hover:text-white"
+            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={darkMode ? 'Light mode' : 'Dark mode'}
+          >
+            <span className="material-symbols-outlined text-[19px]">{darkMode ? 'light_mode' : 'dark_mode'}</span>
+          </button>
           <button
             type="button"
             onClick={() => {

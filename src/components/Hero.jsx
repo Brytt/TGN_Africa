@@ -33,7 +33,7 @@ export default function Hero() {
       <div className="page-shell relative z-10 text-center">
         <div className="hero-reveal mx-auto mb-12 flex w-fit flex-col items-center font-display uppercase leading-none text-midnight-navy" aria-label="The Gospel Network">
           <span className="translate-x-[0.28em] text-[clamp(0.75rem,1.2vw,1rem)] font-semibold tracking-[0.56em]">The</span>
-          <span className="mt-2 text-[clamp(2.25rem,5vw,4.4rem)] font-medium tracking-[0.17em]">Gospel</span>
+          <span className="mt-2 text-[clamp(2rem,4.4vw,3.9rem)] font-medium tracking-[0.17em]">Gospel</span>
           <span className="mt-2 translate-x-[0.24em] text-[clamp(0.8rem,1.5vw,1.2rem)] font-semibold tracking-[0.48em]">Network</span>
         </div>
         <h1 key={statement} className="hero-quote-transition mx-auto max-w-6xl font-display text-[clamp(2.8rem,6.5vw,6rem)] font-medium leading-[0.98] tracking-[-0.035em] text-midnight-navy">

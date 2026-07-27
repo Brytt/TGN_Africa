@@ -20,6 +20,75 @@ body {
   background: #ffffff;
 }
 
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) {
+  background: #071321;
+  color: #e8edf5;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .bg-white,
+html[data-theme='dark'] body:not(:has(.admin-app)) .bg-parchment-ivory {
+  background-color: #0b1a2a !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .bg-\[\#f7f7f6\],
+html[data-theme='dark'] body:not(:has(.admin-app)) .bg-\[\#f3f6fb\],
+html[data-theme='dark'] body:not(:has(.admin-app)) .bg-\[\#f8fafc\],
+html[data-theme='dark'] body:not(:has(.admin-app)) .bg-\[\#eef1f5\],
+html[data-theme='dark'] body:not(:has(.admin-app)) .bg-surface-container-low {
+  background-color: #101f30 !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .text-black,
+html[data-theme='dark'] body:not(:has(.admin-app)) .text-charcoal-text,
+html[data-theme='dark'] body:not(:has(.admin-app)) .text-midnight-navy {
+  color: #edf2f8 !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-black/'],
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-charcoal-text/'],
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-midnight-navy/'] {
+  color: rgb(220 229 240 / 68%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='border-black/'],
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='border-midnight-navy/'] {
+  border-color: rgb(226 234 244 / 16%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) nav.sticky {
+  background-color: rgb(7 19 33 / 95%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .hero-background > div {
+  background-image: linear-gradient(to bottom, #071321, rgb(7 19 33 / 25%), #071321) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-topics-menu {
+  background-color: #0b1a2a !important;
+  background-image: none !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) input,
+html[data-theme='dark'] body:not(:has(.admin-app)) textarea,
+html[data-theme='dark'] body:not(:has(.admin-app)) select {
+  background-color: #0b1a2a;
+  color: #edf2f8;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body {
+  color: rgb(232 237 245 / 88%);
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body h2,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body h3,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body blockquote {
+  color: #edf2f8;
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;

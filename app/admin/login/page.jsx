@@ -9,7 +9,7 @@ export default async function AdminLoginPage({ searchParams }) {
       <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-7 shadow-xl md:p-9">
         <a href="/" className="inline-flex items-center gap-3 text-midnight-navy">
           <span className="relative block h-20 w-16 shrink-0">
-            <img src="/images/brand/tgn-africa-logo-transparent.png" alt="" className="absolute inset-0 h-full w-full object-contain" />
+            <img src="/images/brand/the-gospel-network-logo.jpeg" alt="" className="absolute inset-0 h-full w-full object-contain" />
           </span>
           <span><span className="block font-bold">TGN Africa</span><span className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Editorial platform</span></span>
         </a>

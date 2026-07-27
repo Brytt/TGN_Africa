@@ -111,7 +111,7 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
               <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3" aria-label="TGN Admin home">
                 <span className="relative h-16 w-14 shrink-0 transition-opacity hover:opacity-90">
                   <img
-                    src="/images/brand/tgn-africa-logo-transparent.png"
+                    src="/images/brand/the-gospel-network-logo.jpeg"
                     alt=""
                     className="absolute inset-0 h-full w-full object-contain"
                   />

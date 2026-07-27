@@ -72,7 +72,7 @@ export default function Navbar() {
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
             <span className="relative block h-12 w-11 md:h-14 md:w-12">
               <img
-                src="/images/brand/tgn-africa-logo-transparent.png"
+                src="/images/brand/the-gospel-network-logo.jpeg"
                 alt=""
                 className="absolute inset-0 h-full w-full object-contain"
               />

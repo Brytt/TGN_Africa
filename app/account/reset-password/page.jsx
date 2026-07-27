@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
   return (
     <main className="grid min-h-screen place-items-center bg-slate-50 px-6 font-sans">
       <form onSubmit={updatePassword} className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-        <img src="/images/brand/tgn-africa-logo-transparent.png" alt="TGN Africa" className="mx-auto h-24 w-20 object-contain" />
+        <img src="/images/brand/the-gospel-network-logo.jpeg" alt="The Gospel Network" className="mx-auto h-24 w-24 object-contain" />
         <p className="mt-5 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-midnight-navy/50">The Gospel Network Africa</p>
         <h1 className="mt-3 text-center text-3xl font-semibold text-midnight-navy">{invitation ? 'Create your password' : 'Choose a new password'}</h1>
         {invitation && <p className="mt-2 text-center text-sm leading-6 text-slate-500">Choose a secure password. You will complete your author profile next.</p>}

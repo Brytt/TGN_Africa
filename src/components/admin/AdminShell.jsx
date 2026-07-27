@@ -38,7 +38,7 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [notifications, setNotifications] = useState([])
   const [notificationsLoading, setNotificationsLoading] = useState(true)
-  const [lastSeenNotifications, setLastSeenNotifications] = useState(null)
+  const [previewNotification, setPreviewNotification] = useState(null)
   const [sidebarExpanded, setSidebarExpanded] = useState(true)
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -98,8 +98,6 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
   }, [query, searchOpen])
 
   useEffect(() => {
-    const stored = window.localStorage.getItem('tgn-admin-notifications-seen')
-    setLastSeenNotifications(stored ? new Date(stored) : new Date(0))
     let active = true
     const loadNotifications = async () => {
       try {
@@ -120,20 +118,36 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
     }
   }, [])
 
-  const unreadNotifications = lastSeenNotifications
-    ? notifications.filter((item) => new Date(item.createdAt) > lastSeenNotifications).length
-    : 0
+  const unreadNotifications = notifications.filter((item) => !item.read).length
 
-  const toggleNotifications = () => {
-    setNotificationsOpen((value) => {
-      const next = !value
-      if (next) {
-        const now = new Date()
-        setLastSeenNotifications(now)
-        window.localStorage.setItem('tgn-admin-notifications-seen', now.toISOString())
-      }
-      return next
+  const previewActivity = async (item) => {
+    setPreviewNotification(item)
+    if (item.read) return
+    setNotifications((current) => current.map((notification) => notification.id === item.id ? { ...notification, read: true } : notification))
+    await fetch('/api/admin/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notificationId: item.id, action: 'read' }),
+    }).catch(() => {})
+  }
+
+  const clearNotification = async (item) => {
+    const response = await fetch('/api/admin/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notificationId: item.id, action: 'clear' }),
     })
+    if (!response.ok) return
+    setNotifications((current) => current.filter((notification) => notification.id !== item.id))
+    if (previewNotification?.id === item.id) setPreviewNotification(null)
+  }
+
+  const clearAllNotifications = async () => {
+    if (!notifications.length || !window.confirm('Clear all of your notifications? This will not affect other users.')) return
+    const response = await fetch('/api/admin/notifications', { method: 'DELETE' })
+    if (!response.ok) return
+    setNotifications([])
+    setPreviewNotification(null)
   }
 
   const notificationTime = (value) => {
@@ -283,7 +297,7 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
                 </Link>
               )}
               <div className="relative" ref={notificationsRef}>
-                <button type="button" onClick={toggleNotifications} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-600 hover:bg-slate-50" aria-label={`${unreadNotifications} unread notifications`} aria-expanded={notificationsOpen}>
+                <button type="button" onClick={() => { setNotificationsOpen((value) => !value); setPreviewNotification(null) }} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-600 hover:bg-slate-50" aria-label={`${unreadNotifications} unread notifications`} aria-expanded={notificationsOpen}>
                   <span className="material-symbols-outlined text-[20px]">notifications</span>
                   {unreadNotifications > 0 && <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full border-2 border-white bg-red-500 px-1 text-[9px] font-bold text-white">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
                 </button>
@@ -291,14 +305,32 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
                   <div className="absolute right-0 top-[calc(100%+10px)] w-[min(390px,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl">
                     <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
                       <div><p className="font-semibold text-slate-900">Editorial notifications</p><p className="mt-0.5 text-[10px] text-slate-400">Updates automatically every 30 seconds</p></div>
-                      <span className="rounded-full bg-midnight-navy/5 px-2.5 py-1 text-[10px] font-semibold text-midnight-navy">{notifications.length} recent</span>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-midnight-navy/5 px-2.5 py-1 text-[10px] font-semibold text-midnight-navy">{notifications.length} recent</span>
+                        {notifications.length > 0 && <button type="button" onClick={clearAllNotifications} className="text-[10px] font-semibold text-red-500 hover:underline">Clear all</button>}
+                      </div>
                     </div>
                     <div className="admin-scroll max-h-[430px] overflow-y-auto p-2">
-                      {notificationsLoading ? <p className="px-3 py-8 text-center text-sm text-slate-400">Loading activity…</p> : notifications.length ? notifications.map((item) => (
-                        <Link key={item.id} href={item.href} onClick={() => setNotificationsOpen(false)} className="flex gap-3 rounded-xl p-3 hover:bg-slate-50">
-                          <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${item.type === 'publication' ? 'bg-emerald-50 text-emerald-600' : item.type === 'subscriber' ? 'bg-sky-50 text-sky-600' : item.type === 'comment' ? 'bg-violet-50 text-violet-600' : 'bg-amber-50 text-amber-600'}`}><span className="material-symbols-outlined text-[19px]">{item.icon}</span></span>
-                          <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-3"><span className="text-xs font-semibold text-slate-800">{item.title}</span><span className="shrink-0 text-[10px] text-slate-400">{notificationTime(item.createdAt)}</span></span><span className="mt-1 block line-clamp-2 text-xs leading-5 text-slate-500">{item.description}</span></span>
-                        </Link>
+                      {previewNotification ? (
+                        <div className="p-3">
+                          <button type="button" onClick={() => setPreviewNotification(null)} className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-midnight-navy"><span className="material-symbols-outlined text-[16px]">arrow_back</span>All notifications</button>
+                          <span className={`mt-5 grid size-12 place-items-center rounded-xl ${previewNotification.type === 'publication' ? 'bg-emerald-50 text-emerald-600' : previewNotification.type === 'subscriber' ? 'bg-sky-50 text-sky-600' : previewNotification.type === 'comment' ? 'bg-violet-50 text-violet-600' : 'bg-amber-50 text-amber-600'}`}><span className="material-symbols-outlined text-[22px]">{previewNotification.icon}</span></span>
+                          <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">{notificationTime(previewNotification.createdAt)}</p>
+                          <h3 className="mt-2 text-lg font-semibold text-slate-900">{previewNotification.title}</h3>
+                          <p className="mt-3 text-sm leading-6 text-slate-600">{previewNotification.detail || previewNotification.description}</p>
+                          <div className="mt-6 flex gap-2 border-t border-slate-100 pt-4">
+                            <Link href={previewNotification.href} onClick={() => setNotificationsOpen(false)} className="flex-1 rounded-xl bg-midnight-navy px-4 py-3 text-center text-xs font-semibold text-white">View activity</Link>
+                            <button type="button" onClick={() => clearNotification(previewNotification)} className="inline-flex items-center gap-1 rounded-xl border border-red-100 px-4 py-3 text-xs font-semibold text-red-500"><span className="material-symbols-outlined text-[16px]">delete</span>Clear</button>
+                          </div>
+                        </div>
+                      ) : notificationsLoading ? <p className="px-3 py-8 text-center text-sm text-slate-400">Loading activity…</p> : notifications.length ? notifications.map((item) => (
+                        <div key={item.id} className={`group flex items-center gap-2 rounded-xl p-1 ${item.read ? '' : 'bg-midnight-navy/[0.035]'}`}>
+                          <button type="button" onClick={() => previewActivity(item)} className="flex min-w-0 flex-1 gap-3 rounded-xl p-2 text-left hover:bg-slate-50">
+                            <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${item.type === 'publication' ? 'bg-emerald-50 text-emerald-600' : item.type === 'subscriber' ? 'bg-sky-50 text-sky-600' : item.type === 'comment' ? 'bg-violet-50 text-violet-600' : 'bg-amber-50 text-amber-600'}`}><span className="material-symbols-outlined text-[19px]">{item.icon}</span></span>
+                            <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-3"><span className="flex items-center gap-2 text-xs font-semibold text-slate-800">{!item.read && <span className="size-1.5 rounded-full bg-red-500" />}{item.title}</span><span className="shrink-0 text-[10px] text-slate-400">{notificationTime(item.createdAt)}</span></span><span className="mt-1 block line-clamp-2 text-xs leading-5 text-slate-500">{item.description}</span></span>
+                          </button>
+                          <button type="button" onClick={() => clearNotification(item)} className="grid size-8 shrink-0 place-items-center rounded-lg text-slate-300 opacity-0 hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 focus:opacity-100" aria-label={`Clear ${item.title}`}><span className="material-symbols-outlined text-[17px]">close</span></button>
+                        </div>
                       )) : <p className="px-3 py-8 text-center text-sm text-slate-400">No recent activity yet.</p>}
                     </div>
                   </div>

@@ -35,7 +35,7 @@ export default function Footer() {
                 <img
                   src="/images/brand/gye-nyame-reference.jpeg"
                   alt=""
-                  className="absolute left-1/2 top-[-25px] w-[144px] max-w-none -translate-x-1/2"
+                  className="absolute left-1/2 top-1/2 w-[144px] max-w-none -translate-x-1/2 -translate-y-[40.5%]"
                 />
               </div>
               <div>
@@ -71,7 +71,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-20 flex flex-col justify-between gap-5 border-t border-parchment-ivory/10 pt-9 md:flex-row md:items-center">
-          <p className="eyebrow text-[9px] text-parchment-ivory/35">© {new Date().getFullYear()} The Gospel Network Africa. All rights reserved.</p>
+          <p className="eyebrow text-[9px] text-parchment-ivory/35">Established 2015 · © {new Date().getFullYear()} The Gospel Network. All rights reserved.</p>
           <div className="flex items-center gap-3">
             <span className="eyebrow text-[9px] text-parchment-ivory/35">Designed for Truth</span>
             <div className="h-px w-12 bg-white/30" />

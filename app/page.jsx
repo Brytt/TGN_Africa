@@ -17,7 +17,7 @@ export default async function HomePage() {
         <Hero />
         <LatestPublications publications={publications} />
         <Mission />
-        <ResourceGateway />
+        <ResourceGateway publications={publications} />
       </main>
       <Footer />
     </div>

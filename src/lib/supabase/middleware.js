@@ -66,7 +66,7 @@ export async function updateSession(request) {
     url.pathname = '/'
     return NextResponse.redirect(url)
   }
-  const superOnlyPath = pathname.startsWith('/admin/authors') || pathname.startsWith('/admin/topics')
+  const superOnlyPath = pathname.startsWith('/admin/authors') || pathname.startsWith('/admin/topics') || pathname.startsWith('/admin/subscribers')
   const settingsPath = pathname.startsWith('/admin/settings')
   const isSuperAuthor = role === 'admin' || authorTier === 'Super Author'
   const isContributingAuthor = authorTier === 'Contributing Author'

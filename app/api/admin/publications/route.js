@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../src/lib/http'
+import { notifySubscribers } from '../../../../src/lib/newsletter'
 
 const slugify = (value) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const statusValue = (value) => value.toLowerCase().replaceAll(' ', '_')
@@ -51,5 +52,12 @@ export async function POST(request) {
   }
   const { data, error } = await auth.supabase.from('publications').insert(row).select('id').single()
   if (error) return failure(error)
+  if (body.status === 'Published') {
+    try {
+      await notifySubscribers({ slug: row.slug, title: row.title, excerpt: row.excerpt })
+    } catch (notificationError) {
+      console.error('Newsletter notification failed:', notificationError)
+    }
+  }
   return NextResponse.json({ data }, { status: 201 })
 }

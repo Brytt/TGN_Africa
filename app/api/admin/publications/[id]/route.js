@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../../src/lib/http'
+import { notifySubscribers } from '../../../../../src/lib/newsletter'
 
 const statusValue = (value) => value.toLowerCase().replaceAll(' ', '_')
 
@@ -8,6 +9,7 @@ export async function PATCH(request, { params }) {
   if (auth.error) return auth.error
   const { id } = await params
   const body = await request.json()
+  const { data: existing } = await auth.supabase.from('publications').select('status, slug, title, excerpt').eq('id', id).maybeSingle()
   const row = {}
   const fields = {
     title: 'title', subtitle: 'subtitle', excerpt: 'excerpt', body: 'body',
@@ -26,6 +28,17 @@ export async function PATCH(request, { params }) {
   row.updated_by = auth.user.id
   const { error } = await auth.supabase.from('publications').update(row).eq('id', id)
   if (error) return failure(error)
+  if (body.status === 'Published' && existing?.status !== 'published') {
+    try {
+      await notifySubscribers({
+        slug: body.slug || existing.slug,
+        title: body.title || existing.title,
+        excerpt: body.excerpt || existing.excerpt,
+      })
+    } catch (notificationError) {
+      console.error('Newsletter notification failed:', notificationError)
+    }
+  }
   return NextResponse.json({ success: true })
 }
 

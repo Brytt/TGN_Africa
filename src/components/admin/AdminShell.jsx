@@ -18,6 +18,7 @@ const navGroups = [
     label: 'Manage',
     items: [
       { label: 'Authors', icon: 'group', href: '/admin/authors', access: 'super' },
+      { label: 'Subscribers', icon: 'mark_email_read', href: '/admin/subscribers', access: 'super' },
       { label: 'Topics', icon: 'category', href: '/admin/topics', access: 'super' },
       { label: 'My account', icon: 'manage_accounts', href: '/admin/account' },
       { label: 'Settings', icon: 'settings', href: '/admin/settings', access: 'contributor' },

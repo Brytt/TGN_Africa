@@ -1,10 +1,8 @@
 export const navItems = [
-  { label: 'Home', href: '/#top' },
   { label: 'Articles', href: '/articles' },
-  { label: 'Topic', href: '/topics' },
-  { label: 'Sermon', href: '/#resources' },
-  { label: 'Authors', href: '/authors' },
-  { label: 'About', href: '/about' },
+  { label: 'Category', href: '/topics' },
+  { label: 'Contributors', href: '/authors' },
+  { label: 'About Us', href: '/about' },
 ]
 
 export const topicGroups = [

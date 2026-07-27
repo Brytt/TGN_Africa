@@ -70,7 +70,7 @@ export default function Navbar() {
       <div className="page-shell relative flex h-16 items-center justify-between md:h-[72px]">
         <div className="flex min-w-0 items-center gap-7 xl:gap-10">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
-            <span className="relative block h-12 w-11 md:h-14 md:w-12">
+            <span className="relative block h-14 w-14 md:h-16 md:w-16">
               <img
                 src="/images/brand/the-gospel-network-logo.jpeg"
                 alt=""
@@ -85,7 +85,7 @@ export default function Navbar() {
 
           <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 lg:flex xl:gap-9">
             {navItems.map((item) => (
-              item.label === 'Topic' ? (
+              item.label === 'Category' ? (
                 <div key={item.label} ref={topicsMenuRef}>
                   <button
                     type="button"
@@ -98,7 +98,7 @@ export default function Navbar() {
                     aria-expanded={topicsOpen}
                     aria-controls="desktop-topics-menu"
                   >
-                    Topic
+                    Category
                     <span className={`material-symbols-outlined text-[17px] transition-transform ${topicsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
 
@@ -174,10 +174,10 @@ export default function Navbar() {
             <span className="hidden sm:inline">Search</span>
           </button>
           <a
-            href="/topics"
-            className="hidden border border-black bg-black px-4 py-2.5 text-[10px] font-semibold text-white transition-colors hover:bg-white hover:text-black xl:inline-flex"
+            href="/subscribe"
+            className="hidden border border-midnight-navy bg-midnight-navy px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-white hover:text-midnight-navy xl:inline-flex"
           >
-            Explore resources
+            Subscribe
           </a>
           <button
             type="button"
@@ -257,7 +257,7 @@ export default function Navbar() {
         <div id="mobile-navigation" className="border-t border-midnight-navy/10 bg-parchment-ivory lg:hidden">
           <div className="page-shell flex flex-col py-6">
             {navItems.map((item) => (
-              item.label === 'Topic' ? (
+              item.label === 'Category' ? (
                 <div key={item.label} className="border-b border-midnight-navy/10">
                   <button
                     type="button"
@@ -265,7 +265,7 @@ export default function Navbar() {
                     className="flex w-full items-center justify-between py-4 text-sm font-medium text-black"
                     aria-expanded={topicsOpen}
                   >
-                    Topic
+                    Category
                     <span className={`material-symbols-outlined transition-transform ${topicsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
                   {topicsOpen && (
@@ -305,11 +305,11 @@ export default function Navbar() {
               )
             ))}
             <a
-              href="/topics"
+              href="/subscribe"
               onClick={() => setOpen(false)}
               className="mt-6 bg-midnight-navy px-6 py-4 text-center text-[11px] font-bold uppercase tracking-[0.2em] text-parchment-ivory"
             >
-              Explore resources
+              Subscribe free
             </a>
           </div>
         </div>

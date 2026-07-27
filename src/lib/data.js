@@ -261,6 +261,16 @@ export async function getModerationComments() {
   return data || []
 }
 
+export async function getNewsletterSubscribers() {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('newsletter_subscribers')
+    .select('id, email, display_name, status, consented_at, unsubscribed_at, source, created_at')
+    .order('created_at', { ascending: false })
+  if (error) return schemaFallback(error, [])
+  return data || []
+}
+
 export async function getCurrentProfile() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

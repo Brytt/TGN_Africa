@@ -17,7 +17,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <header id="top" className="relative flex min-h-[78vh] items-center overflow-hidden bg-white py-24 md:min-h-[86vh]">
+    <header id="top" className="relative flex items-center overflow-hidden bg-white py-12 md:min-h-[86vh] md:py-24">
       <div className="hero-background absolute inset-0">
         <img
           src={images.hero}
@@ -31,7 +31,7 @@ export default function Hero() {
       </div>
 
       <div className="page-shell relative z-10 text-center">
-        <div className="hero-reveal mx-auto mb-12 flex w-fit flex-col items-center font-display uppercase leading-none text-midnight-navy" aria-label="The Gospel Network">
+        <div className="hero-reveal mx-auto mb-8 flex w-fit flex-col items-center font-display uppercase leading-none text-midnight-navy md:mb-12" aria-label="The Gospel Network">
           <span className="translate-x-[0.28em] text-[clamp(0.75rem,1.2vw,1rem)] font-semibold tracking-[0.56em]">The</span>
           <span className="mt-2 text-[clamp(2rem,4.4vw,3.9rem)] font-medium tracking-[0.17em]">Gospel</span>
           <span className="mt-2 translate-x-[0.24em] text-[clamp(0.8rem,1.5vw,1.2rem)] font-semibold tracking-[0.48em]">Network</span>

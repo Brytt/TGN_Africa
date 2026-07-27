@@ -2,7 +2,7 @@ import { navItems } from '../data/content'
 
 export default function Footer() {
   return (
-    <footer id="contributors" className="bg-midnight-navy py-20 text-white md:py-28">
+    <footer id="contributors" className="mb-0 bg-midnight-navy pb-[calc(5rem+env(safe-area-inset-bottom))] pt-20 text-white md:py-28">
       <div className="page-shell">
         <div className="flex flex-col justify-between gap-16 lg:flex-row">
           <div className="max-w-md">
@@ -20,7 +20,7 @@ export default function Footer() {
               </span>
             </a>
             <p className="mt-7 leading-7 text-parchment-ivory/55">
-              Equipping the African church through the proclamation of the gospel and the defense of biblical truth with resources that are contextually relevant and scripturally sound.
+              The Gospel Network exists to declare the whole counsel of God for the saints of Africa by publishing faithful, clear, and pastorally useful biblical resources that proclaim Christ, strengthen local churches, confront error, and equip believers for maturity and faithful living.
             </p>
             <div className="mt-9 flex gap-5">
               {['public', 'language', 'mail'].map((icon) => (

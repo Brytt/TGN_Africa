@@ -20,6 +20,12 @@ body {
   background: #ffffff;
 }
 
+@media (max-width: 767px) {
+  html {
+    background-color: #0d2240;
+  }
+}
+
 html[data-theme='dark'] {
   color-scheme: dark;
 }

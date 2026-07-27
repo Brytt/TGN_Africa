@@ -111,7 +111,7 @@ function DateRangePicker({ from, to, onFromChange, onToChange }) {
   )
 }
 
-export default function AnalyticsManager({ publications = [], editorialTasks = [], authors = [], analyticsEvents = [] }) {
+export default function AnalyticsManager({ publications = [], editorialTasks = [], authors = [], analyticsEvents = [], subscribers = [] }) {
   const [period, setPeriod] = useState('This year')
   const [metric, setMetric] = useState('Views')
   const todayValue = toDateValue(new Date())
@@ -171,6 +171,11 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
   }, [analyticsEvents, publications, range])
 
   const chartMax = Math.max(1, ...report.visibleMonths.map((item) => metric === 'Views' ? item.views : item.published))
+  const activeSubscribers = subscribers.filter((subscriber) => subscriber.status === 'active')
+  const newSubscribers = activeSubscribers.filter((subscriber) => {
+    const date = new Date(subscriber.consented_at || subscriber.created_at)
+    return date >= range.start && date <= range.end
+  }).length
   const topPublications = [...report.rangePublications].sort((a, b) => b.views - a.views).slice(0, 6)
   const authorPerformance = Object.values(report.rangePublications.reduce((acc, item) => {
     acc[item.author] ||= { author: item.author, publications: 0, views: 0 }
@@ -193,6 +198,8 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
       ['Published', report.published],
       ['Drafts', report.drafts],
       ['Engaged readers', report.engaged],
+      ['Active subscribers', activeSubscribers.length],
+      ['New subscribers in period', newSubscribers],
       [],
       ['Top publications'],
       ['Title', 'Type', 'Author', 'Status', 'Views'],
@@ -252,15 +259,16 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
           </section>
         )}
 
-        <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Performance summary">
+        <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="Performance summary">
           {[
             { label: 'Total views', value: report.views.toLocaleString(), icon: 'visibility' },
             { label: 'Published', value: report.published, icon: 'task_alt' },
             { label: 'Completed reads', value: report.engaged.toLocaleString(), icon: 'group' },
+            { label: 'Active subscribers', value: activeSubscribers.length.toLocaleString(), icon: 'mark_email_read', detail: `${newSubscribers.toLocaleString()} joined in period` },
             { label: 'Average read time', value: `${report.avgRead.toFixed(1)} min`, icon: 'schedule' },
           ].map((item) => (
             <article key={item.label} className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-              <div className="flex items-start justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[21px]">{item.icon}</span></span><span className="max-w-[150px] text-right text-[10px] font-medium text-slate-400">{periodLabel}</span></div>
+              <div className="flex items-start justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[21px]">{item.icon}</span></span><span className="max-w-[150px] text-right text-[10px] font-medium text-slate-400">{item.detail || periodLabel}</span></div>
               <strong className="mt-5 block text-3xl font-semibold tracking-tight text-slate-900">{item.value}</strong>
               <p className="mt-1 text-xs text-slate-500">{item.label}</p>
             </article>

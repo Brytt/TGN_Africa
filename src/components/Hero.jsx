@@ -44,8 +44,10 @@ export default function Hero() {
           <a href="#latest" className="editorial-button bg-midnight-navy text-white hover:opacity-80">
             Read latest
           </a>
-          <a href="#resources" className="editorial-button border-midnight-navy/15 text-midnight-navy hover:bg-midnight-navy hover:text-parchment-ivory">
-            Explore resources
+          <a href="/subscribe" className="group inline-flex items-center justify-center gap-3 border border-midnight-navy bg-white px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.2em] text-midnight-navy shadow-[0_8px_24px_rgba(13,34,64,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-midnight-navy hover:text-white hover:shadow-[0_14px_32px_rgba(13,34,64,0.18)]">
+            <span className="material-symbols-outlined text-[18px]">mail</span>
+            Subscribe free
+            <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
           </a>
         </div>
       </div>

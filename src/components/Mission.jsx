@@ -15,11 +15,14 @@ export default function Mission() {
             </div>
           </div>
           <div className="mx-auto mb-5 h-px w-10 bg-midnight-navy" />
-          <span className="eyebrow mb-5 block tracking-[0.32em] text-charcoal-text/40">Our Manifesto</span>
+          <span className="eyebrow mb-5 block tracking-[0.32em] text-charcoal-text/40">Our Mission</span>
           <h2 className="font-display text-[clamp(1.8rem,3.4vw,3.1rem)] italic leading-[1.12] text-midnight-navy">
-            This network is not a superficial cultural publication, but the result of a thorough examination of{' '}
-            <strong className="not-italic text-midnight-navy">Scripture</strong>, its mechanisms and impact on the individual and African society.
+            Declaring the Whole Counsel of God for the{' '}
+            <strong className="not-italic text-midnight-navy">Saints of Africa</strong>
           </h2>
+          <p className="mx-auto mt-6 max-w-3xl font-sans text-sm leading-7 text-charcoal-text/55">
+            The Gospel Network exists to declare the whole counsel of God for the saints of Africa by publishing faithful, clear, and pastorally useful biblical resources that proclaim Christ, strengthen local churches, confront error, and equip believers for maturity and faithful living.
+          </p>
         </Reveal>
       </div>
     </section>

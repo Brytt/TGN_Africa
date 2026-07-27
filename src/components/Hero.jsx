@@ -32,7 +32,7 @@ export default function Hero() {
 
       <div className="page-shell relative z-10 text-center">
         <span className="hero-reveal eyebrow mb-10 block tracking-[0.38em] text-midnight-navy">
-          The Gospel Network Africa
+          The Gospel Network
         </span>
         <h1 key={statement} className="hero-quote-transition mx-auto max-w-6xl font-display text-[clamp(2.8rem,6.5vw,6rem)] font-medium leading-[0.98] tracking-[-0.035em] text-midnight-navy">
           {heroStatements[statement]}

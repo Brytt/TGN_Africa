@@ -6,7 +6,7 @@ import { getAuthors } from '../../src/lib/data'
 
 export const metadata = {
   title: 'About',
-  description: 'Learn about The Gospel Network Africa, our founder, contributors, beliefs, mission, and vision.',
+  description: 'Learn about The Gospel Network, our founder, contributors, beliefs, and mission.',
 }
 
 function Person({ person, label, compact = false }) {
@@ -27,7 +27,7 @@ export default async function AboutPage() {
       <header className="border-b border-black/10 py-12 md:py-16"><div className="page-shell"><h1 className="text-4xl font-semibold tracking-tight text-black md:text-5xl">About Us</h1></div></header>
 
       <section className="py-12 md:py-20"><div className="page-shell grid gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <aside className="h-fit border-t border-black/15 pt-4 lg:sticky lg:top-24"><nav className="space-y-3 text-sm"><a href="#overview" className="block font-semibold text-black">Overview</a><a href="#mission-vision" className="block text-black/50 hover:text-black">Mission and vision</a><a href="#resources" className="block text-black/50 hover:text-black">Our resources</a><a href="#leadership" className="block text-black/50 hover:text-black">Leadership</a><a href="#faith" className="block text-black/50 hover:text-black">Statement of faith</a></nav></aside>
+        <aside className="h-fit border-t border-black/15 pt-4 lg:sticky lg:top-24"><nav className="space-y-3 text-sm"><a href="#overview" className="block font-semibold text-black">Overview</a><a href="#mission-vision" className="block text-black/50 hover:text-black">Our mission</a><a href="#resources" className="block text-black/50 hover:text-black">Our resources</a><a href="#leadership" className="block text-black/50 hover:text-black">Leadership</a><a href="#faith" className="block text-black/50 hover:text-black">Statement of faith</a></nav></aside>
         <div id="overview"><p className="font-display text-[clamp(2.4rem,5vw,4.7rem)] font-medium leading-[1.02] text-black">Biblical truth is not foreign to Africa. It is <em>good news for Africa.</em></p><div className="mt-10 max-w-3xl space-y-6 text-base leading-8 text-black/65"><p>The Gospel Network Africa is an editorial and theological network serving the African church with gospel-centered, contextually faithful resources.</p><p>We believe the deepest and most enduring needs of the church are met through the faithful proclamation of Jesus Christ and the careful teaching of Scripture. Our work brings together pastors, scholars, and writers who know the communities they serve.</p><p>Every publication exists to help readers know the truth, live the gospel, and strengthen the local church.</p></div>
           <section id="resources" className="mt-14 border-t border-black/10 pt-9"><h2 className="text-2xl font-semibold text-black">Our Resources</h2><div className="mt-6 grid gap-5 sm:grid-cols-2">{[['Articles', 'Biblical and theological writing addressing doctrine, Christian life, church, and culture.'], ['Bible studies', 'Careful engagement with Scripture for personal reading, discipleship, and church teaching.'], ['Sermons', 'Gospel-centered preaching and pastoral instruction for the African church.'], ['Devotionals and poems', 'Shorter reflections that unite truth, worship, prayer, and Christian imagination.']].map(([title, text]) => <article key={title} className="border-t border-black/15 pt-4"><h3 className="font-semibold text-black">{title}</h3><p className="mt-2 text-sm leading-6 text-black/55">{text}</p></article>)}</div></section>
         </div>

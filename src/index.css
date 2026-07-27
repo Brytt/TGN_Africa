@@ -238,6 +238,81 @@ a:focus-visible {
   text-align: center;
 }
 
+.tgn-article-serif {
+  font-family: 'Source Serif 4', 'EB Garamond', Georgia, serif;
+}
+
+.tgn-article-sans {
+  font-family: 'Source Sans 3', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+.tgn-article-body {
+  color: rgb(26 26 26 / 88%);
+  font-family: 'Source Serif 4', 'EB Garamond', Georgia, serif;
+  font-size: 19px;
+  line-height: 1.7;
+}
+
+.tgn-article-body p + p,
+.tgn-article-body ul + p,
+.tgn-article-body p + ul {
+  margin-top: 1.2em;
+}
+
+.tgn-article-body h2 {
+  color: #0d2240;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 52px 0 18px;
+}
+
+.tgn-article-body h3 {
+  color: #0d2240;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 40px 0 16px;
+}
+
+.tgn-article-body blockquote {
+  border-left: 3px solid #0d2240;
+  color: rgb(13 34 64 / 82%);
+  font-size: 20px;
+  line-height: 1.65;
+  margin: 36px 0;
+  padding: 2px 0 2px 28px;
+}
+
+.tgn-article-body ul {
+  list-style: disc;
+  padding-left: 1.4em;
+}
+
+.tgn-article-body li + li {
+  margin-top: 0.55em;
+}
+
+@media (max-width: 640px) {
+  .tgn-article-body {
+    font-size: 18px;
+  }
+
+  .tgn-article-body h2 {
+    font-size: 27px;
+    margin-top: 48px;
+  }
+
+  .tgn-article-body h3 {
+    font-size: 22px;
+  }
+
+  .tgn-article-body blockquote {
+    font-size: 19px;
+    padding-left: 24px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

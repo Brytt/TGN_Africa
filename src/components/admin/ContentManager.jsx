@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import ArticleBody from '../ArticleBody'
 import AdminSelect from './AdminSelect'
 import TopicPicker from './TopicPicker'
 
@@ -10,6 +11,7 @@ const statuses = ['All statuses', 'Published', 'Draft', 'In review', 'Scheduled'
 const publicationTypes = types.filter((item) => item !== 'All types')
 const emptyPublication = {
   title: '',
+  subtitle: '',
   type: '',
   author: '',
   authorId: '',
@@ -44,8 +46,8 @@ function formatPublishedDate(value) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return '—'
   return new Intl.DateTimeFormat('en-GB', {
-    day: '2-digit',
-    month: 'short',
+    day: 'numeric',
+    month: 'long',
     year: 'numeric',
   }).format(date)
 }
@@ -105,6 +107,11 @@ function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false,
           <label className="block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
             Publication title
             <input required value={draft.title} onChange={update('title')} className={`${fieldClass} text-lg font-semibold`} placeholder="Enter a clear, compelling title" />
+          </label>
+
+          <label className="mt-6 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
+            Subtitle <span className="font-normal normal-case tracking-normal text-slate-400">(optional)</span>
+            <textarea value={draft.subtitle || ''} onChange={update('subtitle')} rows={2} className={`${fieldClass} resize-y text-base leading-7`} placeholder="Clarify the article’s central question or burden without repeating the title." />
           </label>
 
           <label className="mt-6 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
@@ -484,23 +491,51 @@ export default function ContentManager({ initialPublications = [], topics = [], 
         </section>
       </div>
       {previewPublication && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-midnight-navy/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="publication-preview-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setPreviewPublication(null) }}>
-          <article className="admin-scroll max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl">
-            <div className="relative aspect-[16/6] overflow-hidden bg-slate-100">
-              <img src={previewPublication.image} alt="" className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-midnight-navy/65 via-transparent to-transparent" />
-              <button type="button" onClick={() => setPreviewPublication(null)} className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-slate-600 shadow" aria-label="Close preview"><span className="material-symbols-outlined">close</span></button>
-            </div>
-            <div className="mx-auto max-w-3xl p-6 md:p-10">
-              <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy/55">
-                <span>{previewPublication.type}</span><span>·</span><span>{previewPublication.topic}</span><span className={`ml-auto rounded-full px-3 py-1 normal-case tracking-normal ${statusStyles[previewPublication.status]}`}>{previewPublication.status}</span>
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-midnight-navy/65 p-2 backdrop-blur-sm md:p-5" role="dialog" aria-modal="true" aria-labelledby="publication-preview-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setPreviewPublication(null) }}>
+          <article className="admin-scroll max-h-[96vh] w-full max-w-6xl overflow-y-auto bg-white shadow-2xl">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/95 px-5 py-3 backdrop-blur">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">Published-page preview</span>
+                <span className={`rounded-full px-3 py-1 text-[10px] font-semibold ${statusStyles[previewPublication.status]}`}>{previewPublication.status}</span>
               </div>
-              <h2 id="publication-preview-title" className="mt-5 font-display text-4xl leading-[1.08] tracking-tight text-midnight-navy md:text-5xl">{plainText(previewPublication.title)}</h2>
-              <p className="mt-3 text-sm text-slate-500">By {previewPublication.author} · {formatPublishedDate(previewPublication.publishedAt)}</p>
-              {previewPublication.excerpt && <p className="mt-8 rounded-2xl bg-midnight-navy/[0.04] p-5 text-lg leading-8 text-slate-600">{plainText(previewPublication.excerpt)}</p>}
-              <div className="mt-8 whitespace-pre-wrap font-display text-[1.12rem] leading-8 text-slate-700">{plainText(previewPublication.body) || 'This publication does not have article body content yet. Select Edit to add the full text.'}</div>
-              <div className="mt-8 flex justify-end border-t border-slate-100 pt-5">
-                <button type="button" onClick={() => { setPreviewPublication(null); editPublication(previewPublication) }} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white"><span className="material-symbols-outlined text-[18px]">edit</span>Edit publication</button>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => { setPreviewPublication(null); editPublication(previewPublication) }} className="inline-flex items-center gap-2 bg-midnight-navy px-4 py-2 text-xs font-medium text-white"><span className="material-symbols-outlined text-[16px]">edit</span>Edit</button>
+                <button type="button" onClick={() => setPreviewPublication(null)} className="grid size-9 place-items-center border border-slate-200 text-slate-600" aria-label="Close preview"><span className="material-symbols-outlined">close</span></button>
+              </div>
+            </div>
+
+            <div className="px-5 pb-16 pt-10 sm:px-8 md:pt-14">
+              <header className="mx-auto max-w-[900px]">
+                <p className="tgn-article-sans text-[13px] font-semibold uppercase tracking-[0.14em] text-midnight-navy">{previewPublication.topic || 'Uncategorized'}</p>
+                <h2 id="publication-preview-title" className="tgn-article-serif mt-5 text-[clamp(2.5rem,6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-midnight-navy">{plainText(previewPublication.title)}</h2>
+                {previewPublication.subtitle && <p className="tgn-article-serif mt-5 max-w-[760px] text-[clamp(1.2rem,2.5vw,1.55rem)] leading-[1.4] text-slate-600">{plainText(previewPublication.subtitle)}</p>}
+                <div className="tgn-article-sans mt-8 flex items-center gap-4">
+                  {previewPublication.authorImage
+                    ? <img src={previewPublication.authorImage} alt="" className="size-12 rounded-full object-cover" />
+                    : <span className="grid size-12 place-items-center rounded-full bg-midnight-navy text-sm font-bold text-white">{previewPublication.author?.split(' ').map((part) => part[0]).slice(0, 2).join('')}</span>}
+                  <div><p className="text-[15px] font-semibold text-midnight-navy">{previewPublication.author}</p><p className="mt-0.5 text-sm text-slate-500">{formatPublishedDate(previewPublication.publishedAt)} · {String(previewPublication.readingTime || '').replace(' min read', '-minute read')}</p></div>
+                </div>
+              </header>
+
+              {previewPublication.image && <figure className="mx-auto mt-10 max-w-[1050px]"><img src={previewPublication.image} alt={`Featured image for ${plainText(previewPublication.title)}`} className="aspect-video w-full object-cover" /></figure>}
+
+              <div className="mx-auto mt-12 max-w-[720px]">
+                {previewPublication.excerpt && <p className="tgn-article-serif mb-9 border-b border-midnight-navy/10 pb-9 text-[21px] leading-[1.55] text-midnight-navy/75">{plainText(previewPublication.excerpt)}</p>}
+                <ArticleBody body={previewPublication.body} emptyMessage="This publication does not have article body content yet. Select Edit to add the full text." />
+
+                <section className="mt-16 border-y border-midnight-navy/15 py-8">
+                  <div className="grid gap-5 sm:grid-cols-[80px_1fr]">
+                    {previewPublication.authorImage
+                      ? <img src={previewPublication.authorImage} alt="" className="size-20 rounded-full object-cover" />
+                      : <span className="grid size-20 place-items-center rounded-full bg-midnight-navy text-xl font-semibold text-white">{previewPublication.author?.split(' ').map((part) => part[0]).slice(0, 2).join('')}</span>}
+                    <div><p className="tgn-article-sans text-[10px] font-bold uppercase tracking-[0.16em] text-heritage-gold">About the contributor</p><h3 className="tgn-article-serif mt-2 text-2xl font-semibold text-midnight-navy">{previewPublication.author}</h3><p className="tgn-article-serif mt-3 text-base leading-7 text-slate-600">{previewPublication.authorBio || 'The contributor biography will appear here when it has been added to the profile.'}</p></div>
+                  </div>
+                </section>
+
+                <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                  <div className="border border-slate-200 p-5"><p className="tgn-article-sans text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">Related articles</p><p className="tgn-article-serif mt-3 text-xl text-midnight-navy">Related publications will appear here.</p></div>
+                  <div className="border border-slate-200 p-5"><p className="tgn-article-sans text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">Reader response</p><p className="tgn-article-serif mt-3 text-xl text-midnight-navy">Comments and responses will appear last.</p></div>
+                </div>
               </div>
             </div>
           </article>

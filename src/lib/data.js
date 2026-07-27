@@ -19,7 +19,7 @@ const PUBLICATION_SELECT = `
   id, legacy_id, slug, title, subtitle, excerpt, body, publication_type,
   body_format, import_metadata, scripture, cover_path, status, reading_time_minutes, scheduled_at,
   published_at, created_at, updated_at,
-  author:authors(id, name, slug, avatar_path),
+  author:authors(id, name, slug, avatar_path, bio, editorial_role),
   topic:topics(id, title, slug, level)
 `
 
@@ -46,6 +46,8 @@ export function mapPublication(row) {
     author: row.author?.name || 'TGN Africa',
     authorSlug: row.author?.slug,
     authorImage: row.author?.avatar_path,
+    authorBio: row.author?.bio || '',
+    authorRole: row.author?.editorial_role || 'Contributor',
     authorSocials: {
       linkedin: row.author?.linkedin_url || '',
       instagram: row.author?.instagram_url || '',

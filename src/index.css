@@ -78,6 +78,14 @@ html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-topics-menu {
   background-image: none !important;
 }
 
+html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-about-menu a:hover {
+  background-color: #15283c !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-about-menu a:hover [class*='text-midnight-navy'] {
+  color: #ffffff !important;
+}
+
 html[data-theme='dark'] body:not(:has(.admin-app)) input,
 html[data-theme='dark'] body:not(:has(.admin-app)) textarea,
 html[data-theme='dark'] body:not(:has(.admin-app)) select {

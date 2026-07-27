@@ -321,6 +321,19 @@ export default function ContentManager({ initialPublications = [], topics = [], 
     announce(`“${publication.title}” was archived.`)
   }
 
+  const publishPublication = async (publication) => {
+    if (!window.confirm(`Publish “${publication.title}” now? Subscribers will be notified when email delivery is configured.`)) return
+    const response = await fetch(`/api/admin/publications/${publication.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'Published' }) })
+    const result = await response.json()
+    if (!response.ok) return announce(result.error || 'Unable to publish this publication.')
+    setPublications((current) => current.map((item) => item.id === publication.id ? {
+      ...item,
+      status: 'Published',
+      publishedAt: result.data?.published_at || item.publishedAt,
+    } : item))
+    announce(`“${publication.title}” is now published.`)
+  }
+
   const deletePublication = async (publication) => {
     if (!window.confirm(`Delete “${publication.title}”? This will remove it from the content list.`)) return
     const response = await fetch(`/api/admin/publications/${publication.id}`, { method: 'DELETE' })
@@ -451,6 +464,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
                         <div ref={menuRef} className="absolute right-8 top-12 z-20 w-40 rounded-2xl border border-slate-100 bg-white p-2 text-left shadow-xl">
                           <button type="button" onClick={() => { setPreviewPublication(item); setActiveMenu(null) }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[17px]">visibility</span>Preview</button>
                           <button type="button" onClick={() => editPublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[17px]">edit</span>Edit</button>
+                          {item.status !== 'Published' && <button type="button" onClick={() => publishPublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"><span className="material-symbols-outlined text-[17px]">publish</span>Publish</button>}
                           <button type="button" onClick={() => duplicatePublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[17px]">content_copy</span>Duplicate</button>
                           <button type="button" disabled={item.status === 'Archived'} onClick={() => archivePublication(item)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40"><span className="material-symbols-outlined text-[17px]">archive</span>Archive</button>
                           <div className="my-1 border-t border-slate-100" />

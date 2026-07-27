@@ -36,6 +36,9 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
   const [searchOpen, setSearchOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [notifications, setNotifications] = useState([])
+  const [notificationsLoading, setNotificationsLoading] = useState(true)
+  const [lastSeenNotifications, setLastSeenNotifications] = useState(null)
   const [sidebarExpanded, setSidebarExpanded] = useState(true)
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -93,6 +96,55 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
       controller.abort()
     }
   }, [query, searchOpen])
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem('tgn-admin-notifications-seen')
+    setLastSeenNotifications(stored ? new Date(stored) : new Date(0))
+    let active = true
+    const loadNotifications = async () => {
+      try {
+        const response = await fetch('/api/admin/notifications', { cache: 'no-store' })
+        const result = await response.json()
+        if (active && response.ok) setNotifications(result.data || [])
+      } catch {
+        if (active) setNotifications([])
+      } finally {
+        if (active) setNotificationsLoading(false)
+      }
+    }
+    loadNotifications()
+    const interval = window.setInterval(loadNotifications, 30000)
+    return () => {
+      active = false
+      window.clearInterval(interval)
+    }
+  }, [])
+
+  const unreadNotifications = lastSeenNotifications
+    ? notifications.filter((item) => new Date(item.createdAt) > lastSeenNotifications).length
+    : 0
+
+  const toggleNotifications = () => {
+    setNotificationsOpen((value) => {
+      const next = !value
+      if (next) {
+        const now = new Date()
+        setLastSeenNotifications(now)
+        window.localStorage.setItem('tgn-admin-notifications-seen', now.toISOString())
+      }
+      return next
+    })
+  }
+
+  const notificationTime = (value) => {
+    const date = new Date(value)
+    const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000))
+    if (seconds < 60) return 'Just now'
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
+    return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(date)
+  }
 
   const goToContent = (title = '') => {
     const suffix = title ? `?q=${encodeURIComponent(title)}` : ''
@@ -231,14 +283,24 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
                 </Link>
               )}
               <div className="relative" ref={notificationsRef}>
-                <button type="button" onClick={() => setNotificationsOpen((value) => !value)} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-600 hover:bg-slate-50" aria-label="Notifications" aria-expanded={notificationsOpen}>
+                <button type="button" onClick={toggleNotifications} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-600 hover:bg-slate-50" aria-label={`${unreadNotifications} unread notifications`} aria-expanded={notificationsOpen}>
                   <span className="material-symbols-outlined text-[20px]">notifications</span>
-                  <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-white bg-red-500" />
+                  {unreadNotifications > 0 && <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full border-2 border-white bg-red-500 px-1 text-[9px] font-bold text-white">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
                 </button>
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-[calc(100%+10px)] w-72 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl">
-                    <p className="font-semibold text-slate-900">Editorial notifications</p>
-                    <p className="mt-3 rounded-xl bg-midnight-navy/5 p-3 text-xs leading-5 text-slate-600">Two drafts are ready for review and one sermon is scheduled this week.</p>
+                  <div className="absolute right-0 top-[calc(100%+10px)] w-[min(390px,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl">
+                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
+                      <div><p className="font-semibold text-slate-900">Editorial notifications</p><p className="mt-0.5 text-[10px] text-slate-400">Updates automatically every 30 seconds</p></div>
+                      <span className="rounded-full bg-midnight-navy/5 px-2.5 py-1 text-[10px] font-semibold text-midnight-navy">{notifications.length} recent</span>
+                    </div>
+                    <div className="admin-scroll max-h-[430px] overflow-y-auto p-2">
+                      {notificationsLoading ? <p className="px-3 py-8 text-center text-sm text-slate-400">Loading activity…</p> : notifications.length ? notifications.map((item) => (
+                        <Link key={item.id} href={item.href} onClick={() => setNotificationsOpen(false)} className="flex gap-3 rounded-xl p-3 hover:bg-slate-50">
+                          <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${item.type === 'publication' ? 'bg-emerald-50 text-emerald-600' : item.type === 'subscriber' ? 'bg-sky-50 text-sky-600' : item.type === 'comment' ? 'bg-violet-50 text-violet-600' : 'bg-amber-50 text-amber-600'}`}><span className="material-symbols-outlined text-[19px]">{item.icon}</span></span>
+                          <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-3"><span className="text-xs font-semibold text-slate-800">{item.title}</span><span className="shrink-0 text-[10px] text-slate-400">{notificationTime(item.createdAt)}</span></span><span className="mt-1 block line-clamp-2 text-xs leading-5 text-slate-500">{item.description}</span></span>
+                        </Link>
+                      )) : <p className="px-3 py-8 text-center text-sm text-slate-400">No recent activity yet.</p>}
+                    </div>
                   </div>
                 )}
               </div>

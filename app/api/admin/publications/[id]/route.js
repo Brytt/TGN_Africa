@@ -9,7 +9,7 @@ export async function PATCH(request, { params }) {
   if (auth.error) return auth.error
   const { id } = await params
   const body = await request.json()
-  const { data: existing } = await auth.supabase.from('publications').select('status, slug, title, excerpt').eq('id', id).maybeSingle()
+  const { data: existing } = await auth.supabase.from('publications').select('status, slug, title, excerpt, published_at').eq('id', id).maybeSingle()
   const row = {}
   const fields = {
     title: 'title', subtitle: 'subtitle', excerpt: 'excerpt', body: 'body',
@@ -21,12 +21,12 @@ export async function PATCH(request, { params }) {
   })
   if (body.status) {
     row.status = statusValue(body.status)
-    if (body.status === 'Published') row.published_at = new Date().toISOString()
+    if (body.status === 'Published' && existing?.status !== 'published') row.published_at = existing?.published_at || new Date().toISOString()
     if (body.status === 'Archived') row.archived_at = new Date().toISOString()
   }
   if (Object.hasOwn(body, 'body')) row.reading_time_minutes = Math.max(1, Math.ceil((body.body || '').trim().split(/\s+/).filter(Boolean).length / 220))
   row.updated_by = auth.user.id
-  const { error } = await auth.supabase.from('publications').update(row).eq('id', id)
+  const { data, error } = await auth.supabase.from('publications').update(row).eq('id', id).select('status, published_at').single()
   if (error) return failure(error)
   if (body.status === 'Published' && existing?.status !== 'published') {
     try {
@@ -39,7 +39,7 @@ export async function PATCH(request, { params }) {
       console.error('Newsletter notification failed:', notificationError)
     }
   }
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ success: true, data })
 }
 
 export async function DELETE(_request, { params }) {

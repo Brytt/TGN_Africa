@@ -9,9 +9,9 @@ export default function Footer() {
             <a href="#top" className="inline-flex items-center gap-4 text-white">
               <span className="relative block h-24 w-24 overflow-hidden">
                 <img
-                  src="/images/brand/the-gospel-network-footer-logo.jpeg"
+                  src="/images/brand/the-gospel-network-footer-logo-transparent.png"
                   alt=""
-                  className="h-full w-full object-contain mix-blend-lighten"
+                  className="h-full w-full object-contain"
                 />
               </span>
               <span>

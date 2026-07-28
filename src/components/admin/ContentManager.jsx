@@ -67,7 +67,7 @@ function SelectControl({ label, value, onChange, options }) {
   return <AdminSelect label={label} value={value} onChange={onChange} options={options} />
 }
 
-function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false, topics = [], authorRole = 'Author' }) {
+function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false, topics = [], authors = [], authorRole = 'Author' }) {
   const [uploading, setUploading] = useState(false)
   const fieldClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10'
 
@@ -143,12 +143,25 @@ function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false,
             </div>
             {draft.status === 'Scheduled' && <label className="mt-4 block text-xs font-semibold text-slate-500">Publish date and time<input required type="datetime-local" value={draft.scheduledAt || ''} onChange={update('scheduledAt')} className={fieldClass} /></label>}
             <label className="mt-4 block text-xs font-semibold text-slate-500">
-              Author
+              Contributor
               <div className="relative mt-2">
                 <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">person</span>
-                <input readOnly value={draft.author} className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm font-medium text-slate-700 outline-none" aria-describedby="author-help" />
+                <select
+                  required
+                  value={draft.authorId}
+                  onChange={(event) => {
+                    const author = authors.find((item) => item.id === event.target.value)
+                    onChange((current) => ({ ...current, authorId: author?.id || '', author: author?.name || '' }))
+                  }}
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm font-medium text-slate-700 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10"
+                  aria-describedby="author-help"
+                >
+                  <option value="">Select a contributor</option>
+                  {authors.map((author) => <option key={author.id} value={author.id}>{author.name}</option>)}
+                </select>
+                <span className="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">expand_more</span>
               </div>
-              <span id="author-help" className="mt-2 block text-[11px] font-normal leading-4 text-slate-400">Automatically assigned from the signed-in account · {authorRole}</span>
+              <span id="author-help" className="mt-2 block text-[11px] font-normal leading-4 text-slate-400">Defaults to your signed-in account · {authorRole}. Select someone else when publishing on their behalf.</span>
             </label>
             <div className="mt-4 text-xs font-semibold text-slate-500">
               <p>Topic</p>
@@ -178,7 +191,7 @@ function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false,
   )
 }
 
-export default function ContentManager({ initialPublications = [], topics = [], currentAuthor }) {
+export default function ContentManager({ initialPublications = [], topics = [], currentAuthor, authors = [] }) {
   const searchParams = useSearchParams()
   const menuRef = useRef(null)
   const [query, setQuery] = useState(searchParams.get('q') || '')
@@ -349,7 +362,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
   if (editorOpen) {
     return (
       <main className="admin-scroll min-h-0 flex-1 overflow-y-auto px-6 pb-10 pt-6 xl:px-10">
-        <PublicationEditor draft={draft} onChange={setDraft} editing={Boolean(editingId)} topics={topics} authorRole={currentAuthor?.role} onCancel={() => { setEditorOpen(false); setEditingId(null); setDraft(newDraft) }} onSave={savePublication} />
+        <PublicationEditor draft={draft} onChange={setDraft} editing={Boolean(editingId)} topics={topics} authors={authors} authorRole={currentAuthor?.role} onCancel={() => { setEditorOpen(false); setEditingId(null); setDraft(newDraft) }} onSave={savePublication} />
       </main>
     )
   }

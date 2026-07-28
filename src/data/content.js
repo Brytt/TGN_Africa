@@ -1,6 +1,7 @@
 export const navItems = [
   { label: 'Articles', href: '/articles' },
   { label: 'Categories', href: '/topics' },
+  { label: 'Resources', href: '/resources' },
   { label: 'Contributors', href: '/authors' },
   { label: 'About Us', href: '/about' },
 ]

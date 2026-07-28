@@ -22,14 +22,6 @@ export default function Footer() {
             <p className="mt-5 text-sm leading-6 text-parchment-ivory/55">
               The Gospel Network exists to declare the whole counsel of God for the saints of Africa by publishing faithful, clear, and pastorally useful biblical resources that proclaim Christ, strengthen local churches, confront error, and equip believers for maturity and faithful living.
             </p>
-            <div className="mt-6 flex gap-5">
-              {['public', 'language', 'mail'].map((icon) => (
-                <a key={icon} href="#social" className="transition-opacity hover:opacity-60" aria-label={icon}>
-                  <span className="material-symbols-outlined">{icon}</span>
-                </a>
-              ))}
-            </div>
-
           </div>
 
           <div className="flex shrink-0 flex-col items-center justify-center text-center lg:px-8">
@@ -62,7 +54,6 @@ export default function Footer() {
               <ul className="space-y-3 text-sm text-parchment-ivory/55">
                 <li><a href="/about/statement-of-faith" className="transition-colors hover:text-parchment-ivory">Statement of Faith</a></li>
                 <li><a href="#privacy" className="transition-colors hover:text-parchment-ivory">Privacy Policy</a></li>
-                <li><a href="#contact" className="transition-colors hover:text-parchment-ivory">Contact</a></li>
               </ul>
             </div>
           </div>

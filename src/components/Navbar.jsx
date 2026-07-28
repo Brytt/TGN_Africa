@@ -22,6 +22,14 @@ const searchItems = [
   { label: 'Nomsa Dlamini', type: 'Author', href: '/#authors' },
 ]
 
+function GyeNyameIcon() {
+  return (
+    <span className="relative block size-9 shrink-0 overflow-hidden rounded-full bg-white" aria-hidden="true">
+      <img src="/images/brand/gye-nyame-reference.jpeg" alt="" className="absolute left-1/2 top-1/2 w-[81px] max-w-none -translate-x-1/2 -translate-y-[40.5%]" />
+    </span>
+  )
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [topicsOpen, setTopicsOpen] = useState(false)
@@ -32,6 +40,8 @@ export default function Navbar() {
   const searchInputRef = useRef(null)
   const topicsMenuRef = useRef(null)
   const aboutMenuRef = useRef(null)
+  const topicsCloseTimer = useRef(null)
+  const aboutCloseTimer = useRef(null)
 
   useEffect(() => {
     setDarkMode(document.documentElement.dataset.theme === 'dark')
@@ -86,7 +96,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
       <div className="page-shell relative flex h-20 items-center justify-between md:h-[88px]">
-        <div className="flex min-w-0 items-center gap-7 xl:gap-10">
+        <div className="flex min-w-0 items-center gap-4 xl:gap-6">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
             <span className="relative block h-[76px] w-[76px] md:h-[86px] md:w-[86px]">
               <img
@@ -101,10 +111,21 @@ export default function Navbar() {
             </span>
           </a>
 
-          <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 lg:flex xl:gap-9">
+          <div className="hidden items-center gap-6 lg:flex xl:gap-8">
             {navItems.map((item) => (
               item.label === 'Categories' ? (
-                <div key={item.label} ref={topicsMenuRef}>
+                <div
+                  key={item.label}
+                  ref={topicsMenuRef}
+                  onMouseEnter={() => {
+                    window.clearTimeout(topicsCloseTimer.current)
+                    setTopicsOpen(true)
+                    setAboutOpen(false)
+                  }}
+                  onMouseLeave={() => {
+                    topicsCloseTimer.current = window.setTimeout(() => setTopicsOpen(false), 180)
+                  }}
+                >
                   <button
                     type="button"
                     onClick={() => {
@@ -112,7 +133,7 @@ export default function Navbar() {
                       setSearchOpen(false)
                       setAboutOpen(false)
                     }}
-                    className="flex items-center gap-1 text-[13px] font-medium text-black transition-opacity hover:opacity-55"
+                    className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={topicsOpen}
                     aria-controls="desktop-topics-menu"
@@ -166,7 +187,19 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : item.label === 'About Us' ? (
-                <div key={item.label} ref={aboutMenuRef} className="relative">
+                <div
+                  key={item.label}
+                  ref={aboutMenuRef}
+                  className="relative"
+                  onMouseEnter={() => {
+                    window.clearTimeout(aboutCloseTimer.current)
+                    setAboutOpen(true)
+                    setTopicsOpen(false)
+                  }}
+                  onMouseLeave={() => {
+                    aboutCloseTimer.current = window.setTimeout(() => setAboutOpen(false), 180)
+                  }}
+                >
                   <button
                     type="button"
                     onClick={() => {
@@ -174,7 +207,7 @@ export default function Navbar() {
                       setTopicsOpen(false)
                       setSearchOpen(false)
                     }}
-                    className="flex items-center gap-1 text-[13px] font-medium text-black transition-opacity hover:opacity-55"
+                    className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={aboutOpen}
                     aria-controls="desktop-about-menu"
@@ -199,9 +232,7 @@ export default function Navbar() {
                           onClick={() => setAboutOpen(false)}
                           className="group grid grid-cols-[38px_1fr_auto] items-center gap-3 px-3 py-3 transition-colors hover:bg-[#f3f6fb]"
                         >
-                          <span className="grid size-9 place-items-center bg-midnight-navy/5 text-midnight-navy transition-colors group-hover:bg-midnight-navy group-hover:text-white">
-                            <span className="material-symbols-outlined text-[18px]">{aboutItem.icon}</span>
-                          </span>
+                          <GyeNyameIcon />
                           <span>
                             <span className="block text-[13px] font-semibold text-midnight-navy">{aboutItem.label}</span>
                             <span className="mt-0.5 block text-[10px] leading-4 text-midnight-navy/45">{aboutItem.description}</span>
@@ -216,7 +247,7 @@ export default function Navbar() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-[13px] font-medium text-black transition-opacity hover:opacity-55"
+                  className="text-[15px] font-medium text-black transition-opacity hover:opacity-55"
                 >
                   {item.label}
                 </a>
@@ -393,9 +424,10 @@ export default function Navbar() {
                             setOpen(false)
                             setAboutOpen(false)
                           }}
-                          className="flex items-center justify-between gap-4 border-b border-midnight-navy/10 py-3 last:border-0"
+                          className="flex items-center gap-3 border-b border-midnight-navy/10 py-3 last:border-0"
                         >
-                          <span className="text-[13px] font-medium text-midnight-navy">{aboutItem.label}</span>
+                          <GyeNyameIcon />
+                          <span className="min-w-0 flex-1 text-[13px] font-medium text-midnight-navy">{aboutItem.label}</span>
                           <span className="text-midnight-navy/35">→</span>
                         </a>
                       ))}

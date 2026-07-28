@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="page-shell">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-center">
           <div className="max-w-md">
-            <a href="#top" className="inline-flex items-center gap-4 text-white">
+            <a href="#top" className="inline-flex items-center gap-5 text-white" aria-label="The Gospel Network home">
               <span className="relative block h-24 w-24 overflow-hidden">
                 <img
                   src="/images/brand/the-gospel-network-footer-logo-transparent.png"
@@ -14,9 +14,10 @@ export default function Footer() {
                   className="h-full w-full object-contain"
                 />
               </span>
-              <span>
-                <span className="block font-display text-2xl uppercase tracking-[0.14em]">The Gospel Network</span>
-                <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.2em] text-white/50">Africa</span>
+              <span className="flex flex-col items-center font-display uppercase leading-none text-white">
+                <span className="translate-x-[0.22em] text-[10px] font-semibold tracking-[0.48em]">The</span>
+                <span className="mt-1.5 text-[32px] font-medium tracking-[0.14em]">Gospel</span>
+                <span className="mt-1.5 translate-x-[0.18em] text-[12px] font-semibold tracking-[0.4em]">Network</span>
               </span>
             </a>
             <p className="mt-5 text-sm leading-6 text-parchment-ivory/55">

@@ -364,6 +364,7 @@ a:focus-visible {
   border-left: 3px solid #0d2240;
   color: rgb(13 34 64 / 82%);
   font-size: 20px;
+  font-weight: 600;
   line-height: 1.65;
   margin: 36px 0;
   padding: 2px 0 2px 28px;
@@ -496,6 +497,7 @@ a:focus-visible {
 .tgn-rich-editor blockquote {
   border-left: 3px solid #0d2240;
   color: rgb(13 34 64 / 75%);
+  font-weight: 600;
   margin: 1.5em 0;
   padding-left: 1.25em;
 }

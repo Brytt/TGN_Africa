@@ -148,12 +148,13 @@ function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false,
                 <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">person</span>
                 <select
                   required
+                  disabled={editing}
                   value={draft.authorId}
                   onChange={(event) => {
                     const author = authors.find((item) => item.id === event.target.value)
                     onChange((current) => ({ ...current, authorId: author?.id || '', author: author?.name || '' }))
                   }}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm font-medium text-slate-700 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10"
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm font-medium text-slate-700 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10 disabled:cursor-not-allowed disabled:bg-slate-50"
                   aria-describedby="author-help"
                 >
                   <option value="">Select a contributor</option>
@@ -161,7 +162,7 @@ function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false,
                 </select>
                 <span className="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">expand_more</span>
               </div>
-              <span id="author-help" className="mt-2 block text-[11px] font-normal leading-4 text-slate-400">Defaults to your signed-in account · {authorRole}. Select someone else when publishing on their behalf.</span>
+              <span id="author-help" className="mt-2 block text-[11px] font-normal leading-4 text-slate-400">{editing ? 'The original contributor is preserved when an article is edited.' : `Defaults to your signed-in account · ${authorRole}. Select someone else when publishing on their behalf.`}</span>
             </label>
             <div className="mt-4 text-xs font-semibold text-slate-500">
               <p>Topic</p>

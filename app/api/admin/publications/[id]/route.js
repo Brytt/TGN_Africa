@@ -10,11 +10,11 @@ export async function PATCH(request, { params }) {
   if (auth.error) return auth.error
   const { id } = await params
   const body = await request.json()
-  const { data: existing } = await auth.supabase.from('publications').select('status, slug, title, excerpt, published_at').eq('id', id).maybeSingle()
+  const { data: existing } = await auth.supabase.from('publications').select('status, slug, title, excerpt, published_at, created_at, import_metadata').eq('id', id).maybeSingle()
   const row = {}
   const fields = {
     title: 'title', subtitle: 'subtitle', excerpt: 'excerpt', body: 'body',
-    type: 'publication_type', authorId: 'author_id', topicId: 'topic_id',
+    type: 'publication_type', topicId: 'topic_id',
     scripture: 'scripture', image: 'cover_path', scheduledAt: 'scheduled_at',
   }
   Object.entries(fields).forEach(([input, column]) => {
@@ -26,7 +26,10 @@ export async function PATCH(request, { params }) {
   }
   if (body.status) {
     row.status = statusValue(body.status)
-    if (body.status === 'Published' && existing?.status !== 'published') row.published_at = existing?.published_at || new Date().toISOString()
+    if (body.status === 'Published' && existing?.status !== 'published') {
+      row.published_at = existing?.published_at
+        || (existing?.import_metadata?.source === 'wordpress' ? existing.created_at : new Date().toISOString())
+    }
     if (body.status === 'Archived') row.archived_at = new Date().toISOString()
   }
   if (Object.hasOwn(body, 'body')) row.reading_time_minutes = Math.max(1, Math.ceil(articleWordCount(row.body) / 220))

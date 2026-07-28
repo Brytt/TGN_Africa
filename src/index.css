@@ -338,7 +338,9 @@ a:focus-visible {
 
 .tgn-article-body p + p,
 .tgn-article-body ul + p,
-.tgn-article-body p + ul {
+.tgn-article-body ol + p,
+.tgn-article-body p + ul,
+.tgn-article-body p + ol {
   margin-top: 1.2em;
 }
 
@@ -367,13 +369,171 @@ a:focus-visible {
   padding: 2px 0 2px 28px;
 }
 
+.tgn-article-body ul,
+.tgn-article-body ol {
+  padding-left: 1.4em;
+}
+
 .tgn-article-body ul {
   list-style: disc;
-  padding-left: 1.4em;
+}
+
+.tgn-article-body ol {
+  list-style: decimal;
 }
 
 .tgn-article-body li + li {
   margin-top: 0.55em;
+}
+
+.tgn-article-body a {
+  color: #0d4f8b;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.tgn-article-body strong {
+  color: #0d2240;
+  font-weight: 700;
+}
+
+.tgn-article-body figure,
+.tgn-article-body table,
+.tgn-article-body pre,
+.tgn-article-body hr {
+  margin: 2em 0;
+}
+
+.tgn-article-body img {
+  height: auto;
+  max-width: 100%;
+}
+
+.tgn-article-body figcaption {
+  color: rgb(26 26 26 / 60%);
+  font-family: 'Source Sans 3', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.tgn-article-body hr {
+  border: 0;
+  border-top: 1px solid rgb(13 34 64 / 18%);
+}
+
+.tgn-article-body pre {
+  overflow-x: auto;
+  background: #f2f5f8;
+  padding: 1.25rem;
+}
+
+.tgn-article-body :not(pre) > code {
+  border-radius: 0.25rem;
+  background: #f2f5f8;
+  padding: 0.1em 0.3em;
+}
+
+.tgn-article-body table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-family: 'Source Sans 3', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+}
+
+.tgn-article-body th,
+.tgn-article-body td {
+  border: 1px solid rgb(13 34 64 / 18%);
+  min-width: 120px;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.tgn-article-body th {
+  background: rgb(13 34 64 / 6%);
+  color: #0d2240;
+  font-weight: 700;
+}
+
+.tgn-rich-editor p {
+  margin: 0 0 1em;
+}
+
+.tgn-rich-editor h2,
+.tgn-rich-editor h3 {
+  color: #0d2240;
+  font-weight: 650;
+  line-height: 1.25;
+  margin: 1.4em 0 0.55em;
+}
+
+.tgn-rich-editor h2 {
+  font-size: 1.7rem;
+}
+
+.tgn-rich-editor h3 {
+  font-size: 1.35rem;
+}
+
+.tgn-rich-editor ul,
+.tgn-rich-editor ol {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+.tgn-rich-editor ul {
+  list-style: disc;
+}
+
+.tgn-rich-editor ol {
+  list-style: decimal;
+}
+
+.tgn-rich-editor blockquote {
+  border-left: 3px solid #0d2240;
+  color: rgb(13 34 64 / 75%);
+  margin: 1.5em 0;
+  padding-left: 1.25em;
+}
+
+.tgn-rich-editor a {
+  color: #0d4f8b;
+  text-decoration: underline;
+}
+
+.tgn-rich-editor hr {
+  border: 0;
+  border-top: 1px solid rgb(13 34 64 / 18%);
+  margin: 1.75em 0;
+}
+
+.tgn-rich-editor table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+}
+
+.tgn-rich-editor th,
+.tgn-rich-editor td {
+  border: 1px solid rgb(13 34 64 / 20%);
+  min-width: 90px;
+  padding: 0.55rem;
+}
+
+.tgn-rich-editor .selectedCell {
+  background: rgb(13 34 64 / 8%);
+}
+
+.tgn-rich-editor p.is-editor-empty:first-child::before {
+  color: #94a3b8;
+  content: 'Begin writing your article, devotional, Bible study, sermon, or poem…';
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
 
 @media (max-width: 640px) {

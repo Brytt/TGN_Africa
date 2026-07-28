@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../../src/lib/http'
 import { notifySubscribers } from '../../../../../src/lib/newsletter'
+import { articleWordCount, sanitizeArticleHtml } from '../../../../../src/lib/article-html'
 
 const statusValue = (value) => value.toLowerCase().replaceAll(' ', '_')
 
@@ -19,12 +20,16 @@ export async function PATCH(request, { params }) {
   Object.entries(fields).forEach(([input, column]) => {
     if (Object.hasOwn(body, input)) row[column] = body[input] || null
   })
+  if (Object.hasOwn(body, 'body')) {
+    row.body = sanitizeArticleHtml(body.body || '', { plain: body.bodyFormat === 'plain' })
+    row.body_format = 'html'
+  }
   if (body.status) {
     row.status = statusValue(body.status)
     if (body.status === 'Published' && existing?.status !== 'published') row.published_at = existing?.published_at || new Date().toISOString()
     if (body.status === 'Archived') row.archived_at = new Date().toISOString()
   }
-  if (Object.hasOwn(body, 'body')) row.reading_time_minutes = Math.max(1, Math.ceil((body.body || '').trim().split(/\s+/).filter(Boolean).length / 220))
+  if (Object.hasOwn(body, 'body')) row.reading_time_minutes = Math.max(1, Math.ceil(articleWordCount(row.body) / 220))
   row.updated_by = auth.user.id
   const { data, error } = await auth.supabase.from('publications').update(row).eq('id', id).select('status, published_at').single()
   if (error) return failure(error)

@@ -2,8 +2,8 @@ import process from 'node:process'
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { basename, extname } from 'node:path'
-import sanitizeHtml from 'sanitize-html'
 import { createClient } from '@supabase/supabase-js'
+import { articlePlainText, sanitizeArticleHtml } from '../src/lib/article-html.js'
 
 /* global console, fetch, setTimeout, URL */
 
@@ -58,30 +58,8 @@ const slugify = (value) => String(value || '')
   .replace(/[^a-z0-9]+/g, '-')
   .replace(/^-|-$/g, '')
 
-const plainText = (html) => sanitizeHtml(String(html || ''), {
-  allowedTags: [],
-  allowedAttributes: {},
-}).replace(/\s+/g, ' ').trim()
-
-const cleanBody = (html) => sanitizeHtml(String(html || ''), {
-  allowedTags: [
-    'p', 'br', 'h2', 'h3', 'h4', 'h5', 'strong', 'b', 'em', 'i', 'u',
-    'blockquote', 'ul', 'ol', 'li', 'a', 'figure', 'figcaption', 'img',
-    'hr', 'sup', 'sub', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
-  ],
-  allowedAttributes: {
-    a: ['href', 'title', 'target', 'rel'],
-    img: ['src', 'alt', 'title', 'width', 'height', 'loading'],
-    figure: ['class'],
-    figcaption: ['class'],
-    p: ['class'],
-  },
-  allowedSchemes: ['http', 'https', 'mailto'],
-  transformTags: {
-    a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }, true),
-    img: sanitizeHtml.simpleTransform('img', { loading: 'lazy' }, true),
-  },
-})
+const plainText = articlePlainText
+const cleanBody = sanitizeArticleHtml
 
 async function requestJson(url, attempts = 3) {
   let lastError

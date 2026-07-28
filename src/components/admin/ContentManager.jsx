@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import ArticleBody from '../ArticleBody'
 import AdminSelect from './AdminSelect'
+import RichTextEditor from './RichTextEditor'
 import TopicPicker from './TopicPicker'
+import { articleWordCount } from '../../lib/article-html'
 
 const types = ['All types', 'Article', 'Devotional', 'Bible Study', 'Sermon', 'Poem']
 const statuses = ['All statuses', 'Published', 'Draft', 'In review', 'Scheduled', 'Archived']
@@ -122,24 +124,9 @@ function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false,
           <div className="mt-6">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
               <label htmlFor="publication-body" className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Publication body</label>
-              <span className="text-xs text-slate-400">{draft.body.trim() ? draft.body.trim().split(/\s+/).length : 0} words</span>
+              <span className="text-xs text-slate-400">Paste cleanly from Microsoft Word or Google Docs</span>
             </div>
-            <div className="overflow-hidden rounded-2xl border border-slate-200 focus-within:border-midnight-navy/40 focus-within:ring-2 focus-within:ring-midnight-navy/10">
-              <div className="flex items-center gap-1 border-b border-slate-100 bg-slate-50/70 px-3 py-2 text-slate-500" aria-label="Writing tools">
-                {[
-                  ['format_bold', 'Bold'],
-                  ['format_italic', 'Italic'],
-                  ['format_list_bulleted', 'Bulleted list'],
-                  ['format_quote', 'Quote'],
-                  ['link', 'Add link'],
-                ].map(([icon, label]) => (
-                  <button key={label} type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-white hover:text-midnight-navy" aria-label={label} title={label}>
-                    <span className="material-symbols-outlined text-[18px]">{icon}</span>
-                  </button>
-                ))}
-              </div>
-              <textarea id="publication-body" required value={draft.body} onChange={update('body')} rows={18} className="w-full resize-y px-5 py-5 text-[15px] leading-7 text-slate-800 outline-none placeholder:text-slate-400" placeholder="Begin writing your article, devotional, Bible study, sermon, or poem..." />
-            </div>
+            <RichTextEditor value={draft.body} bodyFormat={draft.bodyFormat} onChange={(body) => onChange((current) => ({ ...current, body, bodyFormat: 'html' }))} />
           </div>
         </section>
 
@@ -264,6 +251,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
 
   const savePublication = async (event) => {
     event.preventDefault()
+    if (!articleWordCount(draft.body)) return announce('Add the publication body before saving.')
     const existing = publications.find((item) => item.id === editingId)
     const response = await fetch(existing ? `/api/admin/publications/${editingId}` : '/api/admin/publications', {
       method: existing ? 'PATCH' : 'POST',
@@ -535,7 +523,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
 
               <div className="mx-auto mt-12 max-w-[720px]">
                 {previewPublication.excerpt && <p className="tgn-article-serif mb-9 border-b border-midnight-navy/10 pb-9 text-[21px] leading-[1.55] text-midnight-navy/75">{plainText(previewPublication.excerpt)}</p>}
-                <ArticleBody body={previewPublication.body} emptyMessage="This publication does not have article body content yet. Select Edit to add the full text." />
+                <ArticleBody body={previewPublication.body} bodyFormat={previewPublication.bodyFormat} emptyMessage="This publication does not have article body content yet. Select Edit to add the full text." />
 
                 <section className="mt-16 border-y border-midnight-navy/15 py-8">
                   <div className="grid gap-5 sm:grid-cols-[80px_1fr]">

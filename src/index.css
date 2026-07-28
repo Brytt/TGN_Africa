@@ -336,6 +336,13 @@ a:focus-visible {
   line-height: 1.7;
 }
 
+.tgn-article-body p,
+.tgn-article-body li,
+.tgn-article-body blockquote {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
 .tgn-article-body p + p,
 .tgn-article-body ul + p,
 .tgn-article-body ol + p,

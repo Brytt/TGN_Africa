@@ -450,7 +450,7 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className="mt-6 bg-midnight-navy px-6 py-4 text-center text-[11px] font-bold uppercase tracking-[0.2em] text-parchment-ivory"
             >
-              Subscribe free
+              Subscribe
             </a>
           </div>
         </div>

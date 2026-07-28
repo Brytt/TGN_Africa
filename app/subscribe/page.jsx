@@ -53,7 +53,7 @@ export default function SubscribePage() {
           <label className="mt-5 block text-xs font-semibold text-black/55">Email address<input required type="email" name="email" className="mt-2 w-full border border-black/15 px-4 py-3 text-sm outline-none focus:border-midnight-navy" /></label>
           <label className="hidden">Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
           <label className="mt-5 flex items-start gap-3 text-xs leading-5 text-black/50"><input required type="checkbox" name="consent" className="mt-1 accent-midnight-navy" /><span>I agree to receive new-publication emails from The Gospel Network. I can unsubscribe at any time.</span></label>
-          <button disabled={saving} className="mt-7 w-full bg-midnight-navy px-6 py-4 text-xs font-semibold uppercase tracking-[0.12em] text-white disabled:opacity-50">{saving ? 'Subscribing…' : 'Subscribe free'}</button>
+          <button disabled={saving} className="mt-7 w-full bg-midnight-navy px-6 py-4 text-xs font-semibold uppercase tracking-[0.12em] text-white disabled:opacity-50">{saving ? 'Subscribing…' : 'Subscribe'}</button>
         </form>
       </div>
     </main>

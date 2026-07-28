@@ -41,20 +41,15 @@ export default function Hero() {
         </h1>
         <p className="hero-reveal hero-delay-1 mt-6 font-body text-[10px] font-semibold uppercase tracking-[0.2em] text-midnight-navy/40">Acts 20:26–27</p>
         <div className="hero-reveal hero-delay-2 mt-12 flex flex-col justify-center gap-4 sm:flex-row sm:gap-6">
-          <a href="#latest" className="editorial-button bg-midnight-navy text-white hover:opacity-80">
+          <a href="#latest" className="editorial-button min-w-[210px] bg-midnight-navy text-white hover:opacity-80">
             Read latest
           </a>
-          <a href="/subscribe" className="group inline-flex items-center justify-center gap-3 border border-midnight-navy bg-white px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.2em] text-midnight-navy shadow-[0_8px_24px_rgba(13,34,64,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-midnight-navy hover:text-white hover:shadow-[0_14px_32px_rgba(13,34,64,0.18)]">
+          <a href="/subscribe" className="editorial-button group min-w-[210px] gap-3 border-midnight-navy bg-white text-midnight-navy shadow-[0_8px_24px_rgba(13,34,64,0.08)] duration-300 hover:-translate-y-0.5 hover:bg-midnight-navy hover:text-white hover:shadow-[0_14px_32px_rgba(13,34,64,0.18)]">
             <span className="material-symbols-outlined text-[18px]">mail</span>
-            Subscribe free
+            Subscribe
             <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
           </a>
         </div>
-      </div>
-
-      <div className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 opacity-35 md:flex">
-        <span className="eyebrow text-[9px] tracking-[0.3em]">Scroll</span>
-        <div className="h-10 w-px bg-midnight-navy" />
       </div>
     </header>
   )

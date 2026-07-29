@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { navItems, topicGroups } from '../data/content'
+import { contributorItems, navItems, topicGroups } from '../data/content'
 import { aboutItems } from '../data/about'
 
 const topicSlugByTitle = Object.fromEntries(topicGroups.flatMap((group) => group.topics).map((title) => [
@@ -34,14 +34,17 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [topicsOpen, setTopicsOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
+  const [contributorsOpen, setContributorsOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef(null)
   const topicsMenuRef = useRef(null)
   const aboutMenuRef = useRef(null)
+  const contributorsMenuRef = useRef(null)
   const topicsCloseTimer = useRef(null)
   const aboutCloseTimer = useRef(null)
+  const contributorsCloseTimer = useRef(null)
 
   useEffect(() => {
     setDarkMode(document.documentElement.dataset.theme === 'dark')
@@ -69,6 +72,7 @@ export default function Navbar() {
         setSearchOpen(false)
         setTopicsOpen(false)
         setAboutOpen(false)
+        setContributorsOpen(false)
       }
     }
     window.addEventListener('keydown', closeOnEscape)
@@ -82,6 +86,9 @@ export default function Navbar() {
       }
       if (window.innerWidth >= 1024 && aboutMenuRef.current && !aboutMenuRef.current.contains(event.target)) {
         setAboutOpen(false)
+      }
+      if (window.innerWidth >= 1024 && contributorsMenuRef.current && !contributorsMenuRef.current.contains(event.target)) {
+        setContributorsOpen(false)
       }
     }
     document.addEventListener('pointerdown', closeMenusOutside)
@@ -121,6 +128,7 @@ export default function Navbar() {
                     window.clearTimeout(topicsCloseTimer.current)
                     setTopicsOpen(true)
                     setAboutOpen(false)
+                    setContributorsOpen(false)
                   }}
                   onMouseLeave={() => {
                     topicsCloseTimer.current = window.setTimeout(() => setTopicsOpen(false), 180)
@@ -132,6 +140,7 @@ export default function Navbar() {
                       setTopicsOpen((value) => !value)
                       setSearchOpen(false)
                       setAboutOpen(false)
+                      setContributorsOpen(false)
                     }}
                     className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
@@ -186,6 +195,78 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
+              ) : item.label === 'Contributors' ? (
+                <div
+                  key={item.label}
+                  ref={contributorsMenuRef}
+                  className="relative"
+                  onMouseEnter={() => {
+                    window.clearTimeout(contributorsCloseTimer.current)
+                    setContributorsOpen(true)
+                    setTopicsOpen(false)
+                    setAboutOpen(false)
+                  }}
+                  onMouseLeave={() => {
+                    contributorsCloseTimer.current = window.setTimeout(() => setContributorsOpen(false), 180)
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setContributorsOpen((value) => !value)
+                      setTopicsOpen(false)
+                      setAboutOpen(false)
+                      setSearchOpen(false)
+                    }}
+                    className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
+                    aria-haspopup="true"
+                    aria-expanded={contributorsOpen}
+                  >
+                    Contributors
+                    <span className={`material-symbols-outlined text-[17px] transition-transform ${contributorsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
+                  </button>
+                  <div className={`absolute left-1/2 top-[calc(100%+25px)] w-[390px] -translate-x-1/2 border border-midnight-navy/10 bg-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${contributorsOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
+                    <div className="flex items-end justify-between border-b border-midnight-navy/10 px-3 pb-3 pt-2">
+                      <div><p className="text-[9px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">Editorial team</p><p className="mt-1 font-display text-xl text-midnight-navy">Meet our contributors</p></div>
+                      <a href="/authors" onClick={() => setContributorsOpen(false)} className="text-[9px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all →</a>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 pt-2">
+                      {contributorItems.map((contributor) => (
+                        <a key={contributor.href} href={contributor.href} onClick={() => setContributorsOpen(false)} className="group px-3 py-3 hover:bg-[#f3f6fb]">
+                          <span className="block text-[13px] font-semibold text-midnight-navy">{contributor.name}</span>
+                          <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.1em] text-midnight-navy/40 group-hover:text-heritage-gold">{contributor.role}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : item.label === 'Contributors' ? (
+                <div key={item.label} className="border-b border-midnight-navy/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setContributorsOpen((value) => !value)
+                      setTopicsOpen(false)
+                      setAboutOpen(false)
+                    }}
+                    className="flex w-full items-center justify-between py-4 text-sm font-medium text-black"
+                    aria-expanded={contributorsOpen}
+                  >
+                    Contributors
+                    <span className={`material-symbols-outlined transition-transform ${contributorsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
+                  </button>
+                  {contributorsOpen && (
+                    <div className="mb-5 border-l-2 border-midnight-navy pl-4">
+                      {contributorItems.map((contributor) => (
+                        <a key={contributor.href} href={contributor.href} onClick={() => { setOpen(false); setContributorsOpen(false) }} className="flex items-center justify-between gap-4 border-b border-midnight-navy/10 py-3 last:border-0">
+                          <span className="text-[13px] font-medium text-midnight-navy">{contributor.name}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-midnight-navy/40">{contributor.role}</span>
+                        </a>
+                      ))}
+                      <a href="/authors" onClick={() => { setOpen(false); setContributorsOpen(false) }} className="mt-3 block text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all contributors →</a>
+                    </div>
+                  )}
+                </div>
               ) : item.label === 'About Us' ? (
                 <div
                   key={item.label}
@@ -195,6 +276,7 @@ export default function Navbar() {
                     window.clearTimeout(aboutCloseTimer.current)
                     setAboutOpen(true)
                     setTopicsOpen(false)
+                    setContributorsOpen(false)
                   }}
                   onMouseLeave={() => {
                     aboutCloseTimer.current = window.setTimeout(() => setAboutOpen(false), 180)
@@ -205,6 +287,7 @@ export default function Navbar() {
                     onClick={() => {
                       setAboutOpen((value) => !value)
                       setTopicsOpen(false)
+                      setContributorsOpen(false)
                       setSearchOpen(false)
                     }}
                     className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
@@ -272,6 +355,7 @@ export default function Navbar() {
               setSearchOpen((value) => !value)
               setTopicsOpen(false)
               setAboutOpen(false)
+              setContributorsOpen(false)
             }}
             className="flex items-center gap-2 text-[12px] font-medium text-black transition-opacity hover:opacity-55"
             aria-label={searchOpen ? 'Close search' : 'Open search'}

@@ -6,6 +6,15 @@ export const navItems = [
   { label: 'About Us', href: '/about' },
 ]
 
+export const contributorItems = [
+  { name: 'Kwesi Sena', role: 'Founder', href: '/authors/kwesi-sena-wp-3' },
+  { name: 'Michael Franco Smit', role: 'Managing Editor', href: '/authors/michael-franco-smit-wp-8' },
+  { name: 'Ebenezer Foster-Nyarko', role: 'Deputy Editor', href: '/authors/ebenezer-foster-nyarko-wp-6' },
+  { name: 'Enoch Anti', role: 'Contributor', href: '/authors/enoch-anti-wp-4' },
+  { name: 'Andrews Ampomah', role: 'Contributor', href: '/authors/andrews-ampomah-wp-5' },
+  { name: 'Francis Sowani', role: 'Contributor', href: '/authors/francis-sowani-wp-12' },
+]
+
 export const topicGroups = [
   {
     label: 'Bible & Doctrine',

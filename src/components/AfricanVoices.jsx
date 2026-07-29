@@ -1,6 +1,6 @@
 import Reveal from './Reveal'
 
-const roleRank = { 'Super Author': 3, 'Contributing Author': 2, Author: 1 }
+const roleRank = { Founder: 6, 'Managing Editor': 5, 'Deputy Editor': 4, Contributor: 3, 'Guest Author': 1 }
 const authorPriority = (author) => /\bkwesi\s+sena\b/i.test(author.name) ? 2 : /\b(michael|mike)\b/i.test(author.name) ? 1 : 0
 
 export default function AfricanVoices({ contributors = [] }) {

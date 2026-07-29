@@ -556,6 +556,13 @@ a:focus-visible {
   margin-top: 1.25em;
 }
 
+.resource-document-text .resource-inline-emphasis {
+  color: rgb(13 34 64 / 94%);
+  font-size: inherit;
+  font-weight: 600;
+  letter-spacing: inherit;
+}
+
 .resource-document-text h2 {
   border-bottom: 1px solid rgb(13 34 64 / 14%);
   color: #0d2240;

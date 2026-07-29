@@ -45,6 +45,12 @@ function parseDocument(raw) {
 
 function TextBlock({ text }) {
   const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean)
+  const renderInlineEmphasis = (line) => line.split(/(\*\*.+?\*\*)/g).map((part, index) => (
+    part.startsWith('**') && part.endsWith('**')
+      ? <strong key={index} className="resource-inline-emphasis">{part.slice(2, -2)}</strong>
+      : part
+  ))
+
   return (
     <div className="resource-document-text">
       {lines.map((line, index) => {
@@ -64,8 +70,8 @@ function TextBlock({ text }) {
           return <h3 key={index} className="resource-question">{line}</h3>
         }
         if (/^Answer\./.test(line)) return <p key={index} className="resource-answer"><strong>Answer.</strong>{line.slice(7)}</p>
-        if (/^(\d+\.|•)/.test(line)) return <p key={index} className="resource-numbered-line">{line.replace(/^•\s*/, '')}</p>
-        return <p key={index}>{line}</p>
+        if (/^(\d+\.|•)/.test(line)) return <p key={index} className="resource-numbered-line">{renderInlineEmphasis(line.replace(/^•\s*/, ''))}</p>
+        return <p key={index}>{renderInlineEmphasis(line)}</p>
       })}
     </div>
   )

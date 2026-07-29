@@ -1,12 +1,12 @@
 import SettingsManager from '../../../src/components/admin/SettingsManager'
-import { getCurrentAuthor, getCurrentProfile, getSettings } from '../../../src/lib/data'
+import { getCurrentAuthor, getSettings } from '../../../src/lib/data'
 
 export const metadata = {
   title: 'Settings',
 }
 
 export default async function AdminSettingsPage() {
-  const [settings, profile, author] = await Promise.all([getSettings(), getCurrentProfile(), getCurrentAuthor()])
-  const fullAccess = profile?.role === 'admin' || author?.role === 'Super Author'
+  const [settings, author] = await Promise.all([getSettings(), getCurrentAuthor()])
+  const fullAccess = author?.role === 'Founder'
   return <SettingsManager initialValues={settings} limited={!fullAccess} />
 }

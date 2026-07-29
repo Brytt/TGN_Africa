@@ -9,24 +9,24 @@ const navGroups = [
   {
     label: 'Workspace',
     items: [
-      { label: 'Analytics', icon: 'monitoring', href: '/admin' },
-      { label: 'Content', icon: 'article', href: '/admin/content' },
-      { label: 'Comments', icon: 'forum', href: '/admin/comments' },
+      { label: 'Analytics', icon: 'monitoring', href: '/admin', permission: 'analytics' },
+      { label: 'Content', icon: 'article', href: '/admin/content', permission: 'content' },
+      { label: 'Comments', icon: 'forum', href: '/admin/comments', permission: 'comments' },
     ],
   },
   {
     label: 'Manage',
     items: [
-      { label: 'Authors', icon: 'group', href: '/admin/authors', access: 'super' },
-      { label: 'Subscribers', icon: 'mark_email_read', href: '/admin/subscribers', access: 'super' },
-      { label: 'Topics', icon: 'category', href: '/admin/topics', access: 'super' },
+      { label: 'Authors', icon: 'group', href: '/admin/authors', permission: 'authors' },
+      { label: 'Subscribers', icon: 'mark_email_read', href: '/admin/subscribers', permission: 'subscribers' },
+      { label: 'Topics', icon: 'category', href: '/admin/topics', permission: 'topics' },
       { label: 'My account', icon: 'manage_accounts', href: '/admin/account' },
-      { label: 'Settings', icon: 'settings', href: '/admin/settings', access: 'contributor' },
+      { label: 'General settings', icon: 'settings', href: '/admin/settings', permission: 'settings' },
     ],
   },
 ]
 
-export default function AdminShell({ children, profile, authorTier = 'Author', dateOfBirth = '' }) {
+export default function AdminShell({ children, profile, authorTier = 'Guest Author', menuAccess = [], dateOfBirth = '' }) {
   const pathname = usePathname()
   const router = useRouter()
   const searchRef = useRef(null)
@@ -49,9 +49,17 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
   const today = new Date()
   const isBirthday = Boolean(dateOfBirth && Number(dateOfBirth.slice(5, 7)) === today.getMonth() + 1 && Number(dateOfBirth.slice(8, 10)) === today.getDate())
-  const isSuperAuthor = profile?.role === 'admin' || authorTier === 'Super Author'
-  const isContributingAuthor = authorTier === 'Contributing Author'
-  const canSeeItem = (item) => !item.access || (item.access === 'super' && isSuperAuthor) || (item.access === 'contributor' && (isSuperAuthor || isContributingAuthor))
+  const isFounder = authorTier === 'Founder'
+  const seniorStaff = ['Founder', 'Managing Editor', 'Deputy Editor'].includes(authorTier)
+  const contributor = authorTier === 'Contributor'
+  const baselineAccess = seniorStaff
+    ? ['analytics', 'content', 'comments', 'authors', 'subscribers', 'topics']
+    : contributor
+      ? ['analytics', 'content', 'comments']
+      : ['content']
+  if (isFounder) baselineAccess.push('settings')
+  const allowedMenus = new Set([...baselineAccess, ...menuAccess])
+  const canSeeItem = (item) => !item.permission || allowedMenus.has(item.permission)
   useEffect(() => {
     const closeMenus = (event) => {
       if (event.key === 'Escape') {
@@ -291,7 +299,7 @@ export default function AdminShell({ children, profile, authorTier = 'Author', d
                   </div>
                 )}
               </div>
-              {(isSuperAuthor || isContributingAuthor) && (
+              {isFounder && (
                 <Link href="/admin/settings" prefetch={false} onMouseEnter={() => router.prefetch('/admin/settings')} className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-500 transition-colors hover:border-midnight-navy/20 hover:text-midnight-navy sm:flex" title="Settings" aria-label="Settings">
                   <span className="material-symbols-outlined text-[20px]">settings</span>
                 </Link>

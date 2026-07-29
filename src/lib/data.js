@@ -77,6 +77,8 @@ export function mapAuthor(row) {
     phone: row.phone || '',
     dateOfBirth: row.date_of_birth || '',
     role: row.editorial_role,
+    isStaff: Boolean(row.is_staff),
+    menuAccess: Array.isArray(row.admin_menu_access) ? row.admin_menu_access : [],
     qualification: row.qualification || '',
     church: row.church || '',
     denomination: row.denomination || '',

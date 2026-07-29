@@ -3,7 +3,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import AdminSelect from './AdminSelect'
 
-const authorRoles = ['Author', 'Contributing Author', 'Super Author']
+const authorRoles = ['Founder', 'Managing Editor', 'Deputy Editor', 'Contributor', 'Guest Author']
+const menuOptions = [
+  ['analytics', 'Analytics'],
+  ['content', 'Content'],
+  ['comments', 'Comments'],
+  ['authors', 'Authors'],
+  ['subscribers', 'Subscribers'],
+  ['topics', 'Topics'],
+]
 
 function Avatar({ author, size = 'large' }) {
   const initials = author.name.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()
@@ -13,7 +21,7 @@ function Avatar({ author, size = 'large' }) {
     : <span className={`${sizeClass} grid shrink-0 place-items-center rounded-2xl bg-midnight-navy/10 font-bold text-midnight-navy`}>{initials}</span>
 }
 
-export default function AuthorManager({ initialAuthors = [] }) {
+export default function AuthorManager({ initialAuthors = [], canManageAccess = false }) {
   const [authors, setAuthors] = useState(initialAuthors)
   const [query, setQuery] = useState('')
   const [role, setRole] = useState('All roles')
@@ -86,6 +94,20 @@ export default function AuthorManager({ initialAuthors = [] }) {
     window.setTimeout(() => setNotice(''), 3000)
   }
 
+  const toggleMenuAccess = async (author, permission) => {
+    const current = author.menuAccess || []
+    const menuAccess = current.includes(permission) ? current.filter((item) => item !== permission) : [...current, permission]
+    const response = await fetch(`/api/admin/authors/${author.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'changeAccess', menuAccess }),
+    })
+    if (!response.ok) return setNotice((await response.json()).error || 'Unable to update menu access.')
+    setAuthors((items) => items.map((item) => item.id === author.id ? { ...item, menuAccess } : item))
+    setNotice(`${author.name}'s additional menu access was updated.`)
+    window.setTimeout(() => setNotice(''), 3000)
+  }
+
   const toggleAuthorStatus = async (author) => {
     const nextStatus = author.status === 'Active' ? 'Inactive' : 'Active'
     const response = await fetch(`/api/admin/authors/${author.id}`, {
@@ -116,8 +138,8 @@ export default function AuthorManager({ initialAuthors = [] }) {
         <div className="mb-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Contributor network</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Authors</h2>
-            <p className="mt-1 text-sm text-slate-500">Preview authors, manage access and assign editorial roles. Authors update their personal details from My Account.</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Staff and guest authors</h2>
+            <p className="mt-1 text-sm text-slate-500">The six staff members are clearly identified. Everyone else remains a Guest Author and is not counted as staff.</p>
           </div>
         </div>
 
@@ -159,7 +181,7 @@ export default function AuthorManager({ initialAuthors = [] }) {
                 {visible.map((author) => (
                   <tr key={author.id} className="border-b border-slate-50 text-sm last:border-0 hover:bg-slate-50/60">
                     <td className="py-4 pr-5"><div className="flex items-center gap-3"><Avatar author={author} /><span className="min-w-0"><span className="block font-semibold text-slate-900">{author.name}</span><span className="block truncate text-xs text-slate-400">{author.email} · {[author.location, author.country].filter(Boolean).join(', ')}</span></span></div></td>
-                    <td className="py-4 pr-5"><span className="rounded-full bg-midnight-navy/5 px-3 py-1.5 text-xs font-medium text-midnight-navy">{author.role}</span></td>
+                    <td className="py-4 pr-5"><span className="rounded-full bg-midnight-navy/5 px-3 py-1.5 text-xs font-medium text-midnight-navy">{author.role}</span><span className="ml-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{author.isStaff ? 'Staff' : 'Guest'}</span></td>
                     <td className="max-w-[220px] py-4 pr-5 text-xs leading-5 text-slate-500">{author.qualification}</td>
                     <td className="max-w-[180px] py-4 pr-5 text-xs leading-5 text-slate-500">{author.church}</td>
                     <td className="py-4 pr-5 text-center font-medium tabular-nums text-slate-700">{author.publications}</td>
@@ -171,12 +193,21 @@ export default function AuthorManager({ initialAuthors = [] }) {
                       {activeMenu === author.id && (
                         <div className="absolute right-0 top-[calc(100%-8px)] z-30 w-56 rounded-2xl border border-slate-100 bg-white p-2 text-left shadow-xl">
                           <button type="button" onClick={() => { setPreviewAuthor(author); setActiveMenu(null) }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[18px]">visibility</span>Preview profile</button>
-                          <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Change role</p>
+                          {canManageAccess && <><p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Change role</p>
                           {authorRoles.map((authorRole) => (
                             <button key={authorRole} type="button" onClick={() => changeAuthorRole(author, authorRole)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-slate-50 ${author.role === authorRole ? 'font-semibold text-midnight-navy' : 'text-slate-600'}`}>
                               {authorRole}{author.role === authorRole && <span className="material-symbols-outlined text-[17px]">check</span>}
                             </button>
-                          ))}
+                          ))}</>}
+                          {canManageAccess && author.isStaff && author.role !== 'Founder' && <>
+                            <div className="my-1 border-t border-slate-100" />
+                            <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Additional menu access</p>
+                            {menuOptions.map(([permission, label]) => (
+                              <button key={permission} type="button" onClick={() => toggleMenuAccess(author, permission)} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50">
+                                {label}{author.menuAccess?.includes(permission) && <span className="material-symbols-outlined text-[17px] text-emerald-600">check</span>}
+                              </button>
+                            ))}
+                          </>}
                           <div className="my-1 border-t border-slate-100" />
                           <button type="button" onClick={() => toggleAuthorStatus(author)} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[18px]">{author.status === 'Active' ? 'person_off' : 'person_check'}</span>{author.status === 'Active' ? 'Set inactive' : 'Set active'}</button>
                           <div className="my-1 border-t border-slate-100" />

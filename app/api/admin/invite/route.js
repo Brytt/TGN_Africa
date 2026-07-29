@@ -6,6 +6,8 @@ import { failure, requireStaff } from '../../../../src/lib/http'
 export async function POST(request) {
   const auth = await requireStaff(['admin'])
   if (auth.error) return auth.error
+  const { data: founder } = await auth.supabase.from('authors').select('editorial_role').eq('profile_id', auth.user.id).maybeSingle()
+  if (founder?.editorial_role !== 'Founder') return failure('Only the Founder can invite staff.', 403)
   const body = await request.json()
   const email = String(body.email || '').trim().toLowerCase()
   const displayName = String(body.displayName || '').trim()
@@ -48,7 +50,8 @@ export async function POST(request) {
         slug: `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${data.user.id.slice(0, 8)}`,
         name,
         email,
-        editorial_role: 'Author',
+        editorial_role: 'Guest Author',
+        is_staff: false,
         status: 'active',
       })
   const { error: authorError } = await authorWrite

@@ -23,13 +23,13 @@ export async function updateSession(request) {
   const pathname = request.nextUrl.pathname
   let role = null
   let authorTier = null
+  let menuAccess = []
   if (user && pathname.startsWith('/admin')) {
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
     role = profile?.role
-    if (role !== 'admin') {
-      const { data: author } = await supabase.from('authors').select('editorial_role').eq('profile_id', user.id).maybeSingle()
-      authorTier = author?.editorial_role
-    }
+    const { data: author } = await supabase.from('authors').select('editorial_role, admin_menu_access').eq('profile_id', user.id).maybeSingle()
+    authorTier = author?.editorial_role
+    menuAccess = author?.admin_menu_access || []
   }
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !user) {
     const url = request.nextUrl.clone()
@@ -66,18 +66,29 @@ export async function updateSession(request) {
     url.pathname = '/'
     return NextResponse.redirect(url)
   }
-  const superOnlyPath = pathname.startsWith('/admin/authors') || pathname.startsWith('/admin/topics') || pathname.startsWith('/admin/subscribers')
-  const settingsPath = pathname.startsWith('/admin/settings')
-  const isSuperAuthor = role === 'admin' || authorTier === 'Super Author'
-  const isContributingAuthor = authorTier === 'Contributing Author'
-  if (user && superOnlyPath && !isSuperAuthor) {
+  const isFounder = authorTier === 'Founder'
+  const seniorStaff = ['Founder', 'Managing Editor', 'Deputy Editor'].includes(authorTier)
+  const contributor = authorTier === 'Contributor'
+  const baseline = seniorStaff
+    ? ['analytics', 'content', 'comments', 'authors', 'subscribers', 'topics']
+    : contributor
+      ? ['analytics', 'content', 'comments']
+      : ['content']
+  if (isFounder) baseline.push('settings')
+  const permissions = new Set([...baseline, ...menuAccess])
+  const protectedMenus = [
+    ['/admin/settings', 'settings'],
+    ['/admin/subscribers', 'subscribers'],
+    ['/admin/authors', 'authors'],
+    ['/admin/topics', 'topics'],
+    ['/admin/comments', 'comments'],
+    ['/admin/content', 'content'],
+  ]
+  const requiredPermission = protectedMenus.find(([prefix]) => pathname.startsWith(prefix))?.[1]
+    || (pathname === '/admin' ? 'analytics' : null)
+  if (user && requiredPermission && !permissions.has(requiredPermission)) {
     const url = request.nextUrl.clone()
-    url.pathname = '/admin'
-    return NextResponse.redirect(url)
-  }
-  if (user && settingsPath && !isSuperAuthor && !isContributingAuthor) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/admin'
+    url.pathname = permissions.has('analytics') ? '/admin' : permissions.has('content') ? '/admin/content' : '/admin/account'
     return NextResponse.redirect(url)
   }
   return response

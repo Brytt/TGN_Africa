@@ -4,7 +4,7 @@ import { failure, requireStaff } from '../../../../src/lib/http'
 const slugify = (value) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
 function authorRow(body) {
-  const editorialRole = ['Author', 'Contributing Author', 'Super Author'].includes(body.role) ? body.role : 'Author'
+  const editorialRole = ['Founder', 'Managing Editor', 'Deputy Editor', 'Contributor', 'Guest Author'].includes(body.role) ? body.role : 'Guest Author'
   return {
     slug: body.slug || slugify(body.name),
     name: body.name,
@@ -12,6 +12,7 @@ function authorRow(body) {
     phone: body.phone || null,
     date_of_birth: body.dateOfBirth || null,
     editorial_role: editorialRole,
+    is_staff: editorialRole !== 'Guest Author',
     qualification: body.qualification || null,
     church: body.church || null,
     denomination: body.denomination || null,
@@ -29,7 +30,7 @@ function authorRow(body) {
 }
 
 export async function POST(request) {
-  const auth = await requireStaff(['admin'])
+  const auth = await requireStaff(['admin', 'editor'])
   if (auth.error) return auth.error
   const body = await request.json()
   const { data, error } = await auth.supabase.from('authors').insert(authorRow(body)).select('id').single()

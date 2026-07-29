@@ -22,21 +22,25 @@ export async function generateMetadata({ params }) {
 
 function parseDocument(raw) {
   const normalized = raw.replace(/\r\n?/g, '\n').trim()
-  const [front, pageBody = ''] = normalized.split('\f')
-  const frontLines = front.split('\n')
-  const noteIndex = frontLines.findIndex((line) => line.trim() === 'Editorial Note:')
+  const titleEnd = normalized.indexOf('\n')
+  const noteMatch = /\nEditorial Note:?\s*\n/i.exec(normalized)
+  const firstPageBreak = normalized.indexOf('\f')
+  let text
+  let note = ''
 
-  if (pageBody) {
-    const note = frontLines.slice(noteIndex + 1).join('\n').trim()
-    const bodyLines = pageBody.trim().split('\n')
-    if (/^[A-Z\s]+$/.test(bodyLines[0]?.trim() || '')) bodyLines.shift()
-    return { text: bodyLines.join('\n').trim(), note }
+  if (noteMatch && firstPageBreak > noteMatch.index) {
+    note = normalized.slice(noteMatch.index + noteMatch[0].length, firstPageBreak).trim()
+    text = normalized.slice(firstPageBreak + 1)
+  } else if (noteMatch) {
+    text = normalized.slice(titleEnd + 1, noteMatch.index)
+    note = normalized.slice(noteMatch.index + noteMatch[0].length)
+  } else {
+    text = normalized.slice(titleEnd + 1)
   }
 
-  return {
-    text: frontLines.slice(1, noteIndex < 0 ? undefined : noteIndex).join('\n').trim(),
-    note: noteIndex < 0 ? '' : frontLines.slice(noteIndex + 1).join('\n').trim(),
-  }
+  const cleanedLines = text.replaceAll('\f', '\n').trim().split('\n')
+  if (/^[A-Z\s]+$/.test(cleanedLines[0]?.trim() || '')) cleanedLines.shift()
+  return { text: cleanedLines.join('\n').trim(), note }
 }
 
 function TextBlock({ text }) {
@@ -44,7 +48,7 @@ function TextBlock({ text }) {
   return (
     <div className="resource-document-text">
       {lines.map((line, index) => {
-        if (/^(Of |The Holy Spirit$|The Sacraments$|Baptism$|The Lord's Supper$|Gratitude$|Prayer$)/.test(line)) {
+        if (/^(Of |The Holy Spirit$|The Sacraments$|Baptism$|The Lord's Supper$|Gratitude$|Prayer$|Preface$|Contents$|Summary Statement$|Articles? of |Articles? of$|Exposition$|Chapter\s+\d+|CHAPTER\s+[IVXLCDM]+|THE (FIRST|SECOND|THIRD|FOURTH|FIFTH) MAIN POINT|Article\s+([IVXLCDM]+|\d+)\.?$)/i.test(line)) {
           return <h2 key={index}>{line}</h2>
         }
         if (/^Question \d+\./.test(line)) {
@@ -60,7 +64,7 @@ function TextBlock({ text }) {
           return <h3 key={index} className="resource-question">{line}</h3>
         }
         if (/^Answer\./.test(line)) return <p key={index} className="resource-answer"><strong>Answer.</strong>{line.slice(7)}</p>
-        if (/^\d+\./.test(line)) return <p key={index} className="resource-numbered-line">{line}</p>
+        if (/^(\d+\.|•)/.test(line)) return <p key={index} className="resource-numbered-line">{line.replace(/^•\s*/, '')}</p>
         return <p key={index}>{line}</p>
       })}
     </div>
@@ -104,12 +108,20 @@ export default async function ResourceDocumentPage({ params }) {
               <TextBlock text={parsed.text} />
             </article>
 
-            <aside className="border-t-4 border-heritage-gold bg-surface-container-low p-7 lg:sticky lg:top-28">
+            <aside
+              className="resource-note-scroll border-t-4 border-heritage-gold bg-surface-container-low p-7 lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:overscroll-contain"
+              tabIndex={0}
+              aria-label="TGN editorial note; scroll to read the complete note"
+            >
               <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-heritage-gold">TGN Editorial Note</p>
               <h2 className="mt-4 font-display text-2xl leading-tight text-midnight-navy">Reading this document carefully</h2>
-              <div className="mt-6 space-y-4 text-sm leading-7 text-midnight-navy/65">
-                {parsed.note.split(/\n+/).map((paragraph, index) => paragraph.trim() && <p key={index}>{paragraph.trim()}</p>)}
-              </div>
+              {parsed.note ? (
+                <div className="mt-6 space-y-4 text-sm leading-7 text-midnight-navy/65">
+                  {parsed.note.split(/\n+/).map((paragraph, index) => paragraph.trim() && <p key={index}>{paragraph.trim()}</p>)}
+                </div>
+              ) : (
+                <p className="mt-6 text-sm leading-7 text-midnight-navy/65">This reader edition reproduces the supplied historical document. No additional TGN editorial commentary has been attached to this edition.</p>
+              )}
               <p className="mt-7 border-t border-midnight-navy/10 pt-5 text-[10px] leading-5 text-midnight-navy/40">This editorial material is commentary from The Gospel Network. It is not part of the historical document itself.</p>
             </aside>
           </div>

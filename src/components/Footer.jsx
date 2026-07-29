@@ -26,11 +26,11 @@ export default function Footer() {
           </div>
 
           <div className="flex shrink-0 flex-col items-center justify-center text-center lg:px-8">
-            <div className="relative size-16 overflow-hidden rounded-full bg-white" aria-hidden="true">
+            <div className="relative size-20 overflow-hidden" aria-hidden="true">
               <img
-                src="/images/brand/gye-nyame-reference.jpeg"
+                src="/images/brand/gye-nyame-footer.jpg"
                 alt=""
-                className="absolute left-1/2 top-1/2 w-[144px] max-w-none -translate-x-1/2 -translate-y-[40.5%]"
+                className="h-full w-full object-contain"
               />
             </div>
             <p className="mt-4 font-display text-xl text-white">Gye Nyame</p>

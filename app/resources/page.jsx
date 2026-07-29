@@ -19,14 +19,14 @@ export default function ResourcesPage() {
             <div>
               <p className="eyebrow text-heritage-gold">Resources</p>
               <h1 className="mt-6 max-w-4xl font-display text-[clamp(3.5rem,7vw,6.8rem)] leading-[0.9] tracking-[-0.035em] text-midnight-navy">
-                The faith once delivered, carefully confessed.
+                The faith once for all delivered to the saints.
               </h1>
             </div>
             <div className="border-l-2 border-heritage-gold pl-6">
               <p className="font-display text-xl leading-8 text-midnight-navy/75">
-                A curated reading room for the historic documents that have helped the church articulate, defend, and teach biblical truth.
+                A curated library of historic creeds, confessions, catechisms, and declarations gathered to help the saints of Africa understand, confess, defend, and teach biblical truth.
               </p>
-              <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-midnight-navy/40">Historical texts remain subordinate to Holy Scripture.</p>
+              <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-midnight-navy/40">Every historical document remains subordinate to Holy Scripture, our final and infallible authority.</p>
             </div>
           </div>
         </header>

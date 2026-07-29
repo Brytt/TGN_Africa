@@ -2,6 +2,7 @@ import AnnouncementBar from '../src/components/AnnouncementBar'
 import Footer from '../src/components/Footer'
 import Hero from '../src/components/Hero'
 import LatestPublications from '../src/components/LatestPublications'
+import Mission from '../src/components/Mission'
 import Navbar from '../src/components/Navbar'
 import ResourceGateway from '../src/components/ResourceGateway'
 import { getPublications } from '../src/lib/data'
@@ -15,6 +16,7 @@ export default async function HomePage() {
       <main>
         <Hero />
         <LatestPublications publications={publications} />
+        <Mission />
         <ResourceGateway publications={publications} />
       </main>
       <Footer />

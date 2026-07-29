@@ -240,33 +240,6 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
-              ) : item.label === 'Contributors' ? (
-                <div key={item.label} className="border-b border-midnight-navy/10">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setContributorsOpen((value) => !value)
-                      setTopicsOpen(false)
-                      setAboutOpen(false)
-                    }}
-                    className="flex w-full items-center justify-between py-4 text-sm font-medium text-black"
-                    aria-expanded={contributorsOpen}
-                  >
-                    Contributors
-                    <span className={`material-symbols-outlined transition-transform ${contributorsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
-                  </button>
-                  {contributorsOpen && (
-                    <div className="mb-5 border-l-2 border-midnight-navy pl-4">
-                      {contributorItems.map((contributor) => (
-                        <a key={contributor.href} href={contributor.href} onClick={() => { setOpen(false); setContributorsOpen(false) }} className="flex items-center justify-between gap-4 border-b border-midnight-navy/10 py-3 last:border-0">
-                          <span className="text-[13px] font-medium text-midnight-navy">{contributor.name}</span>
-                          <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-midnight-navy/40">{contributor.role}</span>
-                        </a>
-                      ))}
-                      <a href="/authors" onClick={() => { setOpen(false); setContributorsOpen(false) }} className="mt-3 block text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all contributors →</a>
-                    </div>
-                  )}
-                </div>
               ) : item.label === 'About Us' ? (
                 <div
                   key={item.label}
@@ -481,6 +454,33 @@ export default function Navbar() {
                           </div>
                         </section>
                       ))}
+                    </div>
+                  )}
+                </div>
+              ) : item.label === 'Contributors' ? (
+                <div key={item.label} className="border-b border-midnight-navy/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setContributorsOpen((value) => !value)
+                      setTopicsOpen(false)
+                      setAboutOpen(false)
+                    }}
+                    className="flex w-full items-center justify-between py-4 text-sm font-medium text-black"
+                    aria-expanded={contributorsOpen}
+                  >
+                    Contributors
+                    <span className={`material-symbols-outlined transition-transform ${contributorsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
+                  </button>
+                  {contributorsOpen && (
+                    <div className="mb-5 border-l-2 border-midnight-navy pl-4">
+                      {contributorItems.map((contributor) => (
+                        <a key={contributor.href} href={contributor.href} onClick={() => { setOpen(false); setContributorsOpen(false) }} className="flex items-center justify-between gap-4 border-b border-midnight-navy/10 py-3 last:border-0">
+                          <span className="text-[13px] font-medium text-midnight-navy">{contributor.name}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-midnight-navy/40">{contributor.role}</span>
+                        </a>
+                      ))}
+                      <a href="/authors" onClick={() => { setOpen(false); setContributorsOpen(false) }} className="mt-3 block text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all contributors →</a>
                     </div>
                   )}
                 </div>

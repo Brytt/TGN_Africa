@@ -544,7 +544,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
                     {previewPublication.authorImage
                       ? <img src={previewPublication.authorImage} alt="" className="size-20 rounded-full object-cover" />
                       : <span className="grid size-20 place-items-center rounded-full bg-midnight-navy text-xl font-semibold text-white">{previewPublication.author?.split(' ').map((part) => part[0]).slice(0, 2).join('')}</span>}
-                    <div><p className="tgn-article-sans text-[10px] font-bold uppercase tracking-[0.16em] text-heritage-gold">About the contributor</p><h3 className="tgn-article-serif mt-2 text-2xl font-semibold text-midnight-navy">{previewPublication.author}</h3><p className="tgn-article-serif mt-3 text-base leading-7 text-slate-600">{previewPublication.authorBio || 'The contributor biography will appear here when it has been added to the profile.'}</p></div>
+                    <div><p className="tgn-article-sans text-[10px] font-bold uppercase tracking-[0.16em] text-heritage-gold">About the contributor</p><h3 className="tgn-article-serif mt-2 text-2xl font-semibold text-midnight-navy">{previewPublication.author}</h3><p className="tgn-article-serif mt-3 text-base leading-7 text-slate-600">{previewPublication.authorShortBio || 'The concise contributor biography will appear here when it has been added to the profile.'}</p></div>
                   </div>
                 </section>
 

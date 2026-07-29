@@ -18,6 +18,7 @@ function authorRow(body) {
     city: body.location || null,
     country: body.country || null,
     bio: body.bio || null,
+    short_bio: body.shortBio || null,
     expertise: body.expertise || null,
     linkedin_url: body.linkedin || null,
     instagram_url: body.instagram || null,

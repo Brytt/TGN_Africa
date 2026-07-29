@@ -127,7 +127,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
                   <p className="tgn-article-sans text-[10px] font-bold uppercase tracking-[0.16em] text-heritage-gold">About the contributor</p>
                   <h2 className="tgn-article-serif mt-2 text-3xl font-semibold text-midnight-navy">{article.author}</h2>
                   <p className="tgn-article-sans mt-1 text-xs text-midnight-navy/45">{article.authorRole}</p>
-                  <p className="tgn-article-serif mt-4 text-base leading-7 text-charcoal-text/65">{article.authorBio || 'Read more from this contributor and explore their publications for The Gospel Network.'}</p>
+                  <p className="tgn-article-serif mt-4 text-base leading-7 text-charcoal-text/65">{article.authorShortBio || 'Read more from this contributor and explore their publications for The Gospel Network.'}</p>
                   <div className="tgn-article-sans mt-5 flex flex-wrap gap-5 text-[11px] font-semibold uppercase tracking-[0.1em] text-midnight-navy">
                     <a href={article.authorSlug ? `/authors/${article.authorSlug}` : '/authors'} className="border-b border-midnight-navy pb-1">View profile</a>
                     <a href={article.authorSlug ? `/authors/${article.authorSlug}` : '/articles'} className="border-b border-midnight-navy pb-1">All articles</a>

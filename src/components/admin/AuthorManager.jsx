@@ -234,8 +234,12 @@ export default function AuthorManager({ initialAuthors = [] }) {
               {previewAuthor.expertise && <div className="mt-6"><p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Areas of expertise</p><p className="mt-2 text-sm leading-6 text-slate-600">{previewAuthor.expertise}</p></div>}
               {Object.entries({ linkedin: previewAuthor.linkedin, instagram: previewAuthor.instagram, facebook: previewAuthor.facebook }).some(([, url]) => url) && <div className="mt-6"><p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Social profiles</p><div className="mt-3 flex flex-wrap gap-2">{Object.entries({ linkedin: previewAuthor.linkedin, instagram: previewAuthor.instagram, facebook: previewAuthor.facebook }).filter(([, url]) => url).map(([network, url]) => <a key={network} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold capitalize text-midnight-navy hover:bg-slate-50"><span className="material-symbols-outlined text-[16px]">open_in_new</span>{network}</a>)}</div></div>}
               <div className="mt-6">
-                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Biography</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Full profile biography</p>
                 <p className="mt-2 text-sm leading-7 text-slate-600">{previewAuthor.bio || 'No biography has been added.'}</p>
+              </div>
+              <div className="mt-6 rounded-2xl bg-slate-50 p-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Concise article biography</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{previewAuthor.shortBio || 'No concise article biography has been added.'}</p>
               </div>
             </div>
           </article>

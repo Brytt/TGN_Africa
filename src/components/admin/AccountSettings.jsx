@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/browser'
 
 const inputClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-midnight-navy/30 focus:ring-2 focus:ring-midnight-navy/10'
+const wordCount = (value) => String(value || '').trim().split(/\s+/).filter(Boolean).length
 
 export default function AccountSettings({ initialProfile = {}, email = '', onboarding = false }) {
   const router = useRouter()
@@ -19,6 +20,7 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
     city: initialProfile.location || '',
     country: initialProfile.country || '',
     bio: initialProfile.bio || '',
+    shortBio: initialProfile.shortBio || '',
     expertise: initialProfile.expertise || '',
     linkedin: initialProfile.linkedin || '',
     instagram: initialProfile.instagram || '',
@@ -29,6 +31,8 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
   const [passwordNotice, setPasswordNotice] = useState('')
   const [passwordOpen, setPasswordOpen] = useState(false)
   const [saving, setSaving] = useState(false)
+  const biographyWords = wordCount(profile.bio)
+  const shortBiographyWords = wordCount(profile.shortBio)
   const update = (field) => (event) => setProfile((current) => ({ ...current, [field]: event.target.value }))
 
   const uploadPhoto = async (event) => {
@@ -50,6 +54,14 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
 
   const saveProfile = async (event) => {
     event.preventDefault()
+    if (profile.bio && (biographyWords < 250 || biographyWords > 300)) {
+      setProfileNotice(`The full biography must contain 250–300 words. It currently has ${biographyWords}.`)
+      return
+    }
+    if (profile.shortBio && (shortBiographyWords < 20 || shortBiographyWords > 25)) {
+      setProfileNotice(`The article biography must contain 20–25 words. It currently has ${shortBiographyWords}.`)
+      return
+    }
     setSaving(true)
     setProfileNotice('')
     const response = await fetch('/api/admin/profile', {
@@ -125,7 +137,18 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
             <label className="text-xs font-semibold text-slate-500">LinkedIn profile<input type="url" value={profile.linkedin} onChange={update('linkedin')} className={inputClass} placeholder="https://linkedin.com/in/..." /></label>
             <label className="text-xs font-semibold text-slate-500">Instagram profile<input type="url" value={profile.instagram} onChange={update('instagram')} className={inputClass} placeholder="https://instagram.com/..." /></label>
             <label className="text-xs font-semibold text-slate-500 md:col-span-2">Facebook profile<input type="url" value={profile.facebook} onChange={update('facebook')} className={inputClass} placeholder="https://facebook.com/..." /></label>
-            <label className="text-xs font-semibold text-slate-500 md:col-span-2">Biography<textarea value={profile.bio} onChange={update('bio')} rows={4} className={`${inputClass} resize-y`} /></label>
+            <label className="text-xs font-semibold text-slate-500 md:col-span-2">
+              Full contributor biography
+              <span className="ml-2 font-normal text-slate-400">Profile page · 250–300 words</span>
+              <textarea value={profile.bio} onChange={update('bio')} rows={10} className={`${inputClass} resize-y leading-6`} placeholder="Write the full biography displayed on your contributor profile…" />
+              <span className={`mt-2 block text-right text-[11px] font-normal ${profile.bio && (biographyWords < 250 || biographyWords > 300) ? 'text-amber-600' : 'text-slate-400'}`}>{biographyWords} / 250–300 words</span>
+            </label>
+            <label className="text-xs font-semibold text-slate-500 md:col-span-2">
+              Concise article biography
+              <span className="ml-2 font-normal text-slate-400">Article footer · 20–25 words</span>
+              <textarea value={profile.shortBio} onChange={update('shortBio')} rows={3} className={`${inputClass} resize-y leading-6`} placeholder="Write the short biography displayed beneath your articles…" />
+              <span className={`mt-2 block text-right text-[11px] font-normal ${profile.shortBio && (shortBiographyWords < 20 || shortBiographyWords > 25) ? 'text-amber-600' : 'text-slate-400'}`}>{shortBiographyWords} / 20–25 words</span>
+            </label>
           </div>
           <button disabled={saving} className="mt-6 rounded-full bg-midnight-navy px-6 py-3 text-sm font-medium text-white disabled:opacity-50">{saving ? 'Saving…' : onboarding ? 'Save and continue' : 'Save profile'}</button>
         </form>

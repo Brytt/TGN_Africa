@@ -1,12 +1,20 @@
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../src/lib/http'
 
+const wordCount = (value) => String(value || '').trim().split(/\s+/).filter(Boolean).length
+
 export async function PUT(request) {
   const auth = await requireStaff()
   if (auth.error) return auth.error
   const body = await request.json()
   const displayName = String(body.displayName || '').trim()
   if (displayName.length < 2) return failure('Please enter your full name.')
+  const biography = String(body.bio || '').trim()
+  const shortBiography = String(body.shortBio || '').trim()
+  const biographyWords = wordCount(biography)
+  const shortBiographyWords = wordCount(shortBiography)
+  if (biography && (biographyWords < 250 || biographyWords > 300)) return failure(`The full biography must contain 250–300 words. It currently has ${biographyWords}.`)
+  if (shortBiography && (shortBiographyWords < 20 || shortBiographyWords > 25)) return failure(`The article biography must contain 20–25 words. It currently has ${shortBiographyWords}.`)
 
   const profileUpdate = await auth.supabase
     .from('profiles')
@@ -23,7 +31,8 @@ export async function PUT(request) {
     denomination: String(body.denomination || '').trim() || null,
     city: String(body.city || '').trim() || null,
     country: String(body.country || '').trim() || null,
-    bio: String(body.bio || '').trim() || null,
+    bio: biography || null,
+    short_bio: shortBiography || null,
     expertise: String(body.expertise || '').trim() || null,
     avatar_path: String(body.image || '').trim() || null,
   }

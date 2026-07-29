@@ -19,7 +19,7 @@ const PUBLICATION_SELECT = `
   id, legacy_id, slug, title, subtitle, excerpt, body, publication_type,
   body_format, import_metadata, scripture, cover_path, status, reading_time_minutes, scheduled_at,
   published_at, created_at, updated_at,
-  author:authors(id, name, slug, avatar_path, bio, editorial_role),
+  author:authors(id, name, slug, avatar_path, bio, short_bio, editorial_role),
   topic:topics(id, title, slug, level)
 `
 
@@ -47,6 +47,7 @@ export function mapPublication(row) {
     authorSlug: row.author?.slug,
     authorImage: row.author?.avatar_path,
     authorBio: row.author?.bio || '',
+    authorShortBio: row.author?.short_bio || '',
     authorRole: row.author?.editorial_role || 'Contributor',
     authorSocials: {
       linkedin: row.author?.linkedin_url || '',
@@ -82,6 +83,7 @@ export function mapAuthor(row) {
     location: row.city || '',
     country: row.country || '',
     bio: row.bio || '',
+    shortBio: row.short_bio || '',
     expertise: row.expertise || '',
     linkedin: row.linkedin_url || '',
     instagram: row.instagram_url || '',

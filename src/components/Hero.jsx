@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { images } from '../data/content'
+import Mission from './Mission'
 
 const heroStatements = [
   'Therefore I testify to you this day that I am innocent of the blood of all.',
@@ -40,6 +41,7 @@ export default function Hero() {
           {heroStatements[statement]}
         </h1>
         <p className="hero-reveal hero-delay-1 mt-6 font-body text-[10px] font-semibold uppercase tracking-[0.2em] text-midnight-navy/40">Acts 20:26–27</p>
+        <Mission />
         <div className="hero-reveal hero-delay-2 mt-12 flex flex-col justify-center gap-4 sm:flex-row sm:gap-6">
           <a href="#latest" className="editorial-button min-w-[210px] bg-midnight-navy text-white hover:opacity-80">
             Read latest

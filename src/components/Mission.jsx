@@ -2,7 +2,7 @@ import Reveal from './Reveal'
 
 export default function Mission() {
   return (
-    <section id="mission" className="overflow-hidden bg-white py-12 md:py-16">
+    <section id="mission" className="overflow-hidden bg-transparent py-0">
       <div className="page-shell max-w-4xl text-center">
         <Reveal>
           <div className="mb-5 flex justify-center">

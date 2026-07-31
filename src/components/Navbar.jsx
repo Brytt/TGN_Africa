@@ -101,7 +101,8 @@ export default function Navbar() {
     : searchItems.slice(-3)
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
+    <>
+    <nav className="fixed inset-x-0 top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
       <div className="page-shell relative flex h-20 items-center justify-between md:h-[88px]">
         <div className="flex min-w-0 items-center gap-4 xl:gap-6">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
@@ -540,5 +541,7 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    <div className="h-20 md:h-[88px]" aria-hidden="true" />
+    </>
   )
 }

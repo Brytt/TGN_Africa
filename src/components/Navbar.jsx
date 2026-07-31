@@ -118,15 +118,20 @@ export default function Navbar() {
 
   return (
     <>
-    <nav className="fixed inset-x-0 top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
+    <nav className="tgn-navbar fixed inset-x-0 top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
       <div className="page-shell relative flex h-20 items-center justify-between md:h-[88px]">
         <div className="flex min-w-0 items-center gap-4 xl:gap-6">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
             <span className="relative block h-[76px] w-[76px] md:h-[86px] md:w-[86px]">
               <img
-                src={darkMode ? '/images/brand/the-gospel-network-footer-logo-transparent.png' : '/images/brand/the-gospel-network-logo.jpeg'}
+                src="/images/brand/the-gospel-network-logo.jpeg"
                 alt=""
-                className="absolute inset-0 h-full w-full object-contain"
+                className="tgn-nav-logo-light absolute inset-0 h-full w-full object-contain"
+              />
+              <img
+                src="/images/brand/the-gospel-network-footer-logo-transparent.png"
+                alt=""
+                className="tgn-nav-logo-dark absolute inset-0 hidden h-full w-full object-contain"
               />
             </span>
             <span className="hidden 2xl:block">
@@ -242,7 +247,7 @@ export default function Navbar() {
                     Contributors
                     <span className={`material-symbols-outlined text-[17px] transition-transform ${contributorsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
-                  <div className={`absolute left-1/2 top-[calc(100%+25px)] w-[390px] -translate-x-1/2 border border-midnight-navy/10 bg-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${contributorsOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
+                  <div id="desktop-contributors-menu" className={`absolute left-1/2 top-[calc(100%+25px)] w-[390px] -translate-x-1/2 border border-midnight-navy/10 bg-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${contributorsOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
                     <div className="flex items-end justify-between border-b border-midnight-navy/10 px-3 pb-3 pt-2">
                       <div><p className="text-[9px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">Editorial team</p><p className="mt-1 font-display text-xl text-midnight-navy">Meet our contributors</p></div>
                       <a href="/authors" onClick={() => setContributorsOpen(false)} className="text-[9px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all →</a>
@@ -356,7 +361,7 @@ export default function Navbar() {
           </button>
           <a
             href="/subscribe"
-            className="hidden border border-midnight-navy bg-midnight-navy px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-white hover:text-midnight-navy xl:inline-flex"
+            className="tgn-nav-subscribe hidden border border-midnight-navy bg-midnight-navy px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-white hover:text-midnight-navy xl:inline-flex"
           >
             Subscribe
           </a>

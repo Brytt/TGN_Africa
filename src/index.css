@@ -65,8 +65,30 @@ html[data-theme='dark'] body:not(:has(.admin-app)) [class*='border-midnight-navy
   border-color: rgb(226 234 244 / 16%) !important;
 }
 
-html[data-theme='dark'] body:not(:has(.admin-app)) nav.sticky {
-  background-color: rgb(7 19 33 / 95%) !important;
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-navbar {
+  background-color: rgb(7 19 33 / 97%) !important;
+  border-color: rgb(226 234 244 / 18%) !important;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 32%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-nav-logo-light {
+  display: none !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-nav-logo-dark {
+  display: block !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-nav-subscribe {
+  background-color: #edf2f8 !important;
+  border-color: #edf2f8 !important;
+  color: #0d2240 !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-nav-subscribe:hover {
+  background-color: #c5a059 !important;
+  border-color: #c5a059 !important;
+  color: #071321 !important;
 }
 
 html[data-theme='dark'] body:not(:has(.admin-app)) .hero-background > div {
@@ -76,6 +98,18 @@ html[data-theme='dark'] body:not(:has(.admin-app)) .hero-background > div {
 html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-topics-menu {
   background-color: #0b1a2a !important;
   background-image: none !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-contributors-menu,
+html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-about-menu,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-navbar > [class*='absolute'][class*='top-full'] {
+  background-color: #0b1a2a !important;
+  border-color: rgb(226 234 244 / 16%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-contributors-menu a:hover,
+html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-about-menu a:hover {
+  background-color: #15283c !important;
 }
 
 html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-about-menu a:hover {

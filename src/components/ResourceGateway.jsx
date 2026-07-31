@@ -84,7 +84,7 @@ export default function ResourceGateway({ publications = [] }) {
             <article key={item.id || item.slug || `${item.title}-${index}`} className="group min-w-full snap-start bg-white">
               <a href={`/articles/${item.slug || item.id}`} className="grid min-h-[560px] lg:grid-cols-[1.12fr_0.88fr]">
                 <div className="relative min-h-[300px] overflow-hidden bg-midnight-navy lg:min-h-full">
-                  <img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-[1.035]" />
+                  {item.image && <img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-[1.035]" />}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-midnight-navy/15" />
                   <span className="absolute left-6 top-6 border border-white/40 bg-midnight-navy/75 px-4 py-2 text-[9px] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-md md:left-8 md:top-8">
                     Archive selection {String(index + 1).padStart(2, '0')}

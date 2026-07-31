@@ -141,6 +141,7 @@ export default function AccountSettings({ initialProfile = {}, email = '', onboa
               Full contributor biography
               <span className="ml-2 font-normal text-slate-400">Profile page · 250–300 words</span>
               <textarea value={profile.bio} onChange={update('bio')} rows={10} className={`${inputClass} resize-y leading-6`} placeholder="Write the full biography displayed on your contributor profile…" />
+              <span className="mt-2 block text-[11px] font-normal text-slate-400">Press Enter to begin a new paragraph. Paragraph breaks are preserved on your public profile.</span>
               <span className={`mt-2 block text-right text-[11px] font-normal ${profile.bio && (biographyWords < 250 || biographyWords > 300) ? 'text-amber-600' : 'text-slate-400'}`}>{biographyWords} / 250–300 words</span>
             </label>
             <label className="text-xs font-semibold text-slate-500 md:col-span-2">

@@ -14,7 +14,7 @@ export default function LatestPublications({ publications = [] }) {
           <>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {displayed.map((publication, index) => <Reveal key={publication.id} delay={(index % 3) * 0.035} className="h-full"><a href={`/articles/${publication.slug}`} className="group flex h-full min-h-[360px] flex-col border border-black/10 bg-white transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg">
-                <div className="relative overflow-hidden"><img src={publication.image} alt="" className="aspect-[16/8.5] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" /><span className="absolute left-3 top-3 bg-black/75 px-2.5 py-1 text-[8px] font-medium uppercase tracking-[0.12em] text-white">{publication.type}</span></div>
+                {publication.image && <div className="relative overflow-hidden"><img src={publication.image} alt="" className="aspect-[16/8.5] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" /><span className="absolute left-3 top-3 bg-black/75 px-2.5 py-1 text-[8px] font-medium uppercase tracking-[0.12em] text-white">{publication.type}</span></div>}
                 <div className="flex grow flex-col p-4">
                   <span className="text-[9px] font-medium uppercase tracking-[0.1em] text-black/40">{publication.date} · {publication.readingTime}</span>
                   <h3 className="mt-3 line-clamp-2 text-[16px] font-semibold leading-[1.3] text-black">{publication.title}</h3>

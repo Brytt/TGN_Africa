@@ -32,6 +32,7 @@ const PUBLICATION_SUMMARY_SELECT = `
 `
 
 export function mapPublication(row) {
+  const image = row.cover_path && row.cover_path !== '/images/publications/featured-study.jpg' ? row.cover_path : ''
   return {
     id: row.id,
     legacyId: row.legacy_id,
@@ -58,7 +59,7 @@ export function mapPublication(row) {
     topic: row.topic?.title || 'Uncategorized',
     topicSlug: row.topic?.slug,
     scripture: row.scripture || '',
-    image: row.cover_path || '/images/publications/featured-study.jpg',
+    image,
     status: row.status.replaceAll('_', ' ').replace(/^\w/, (letter) => letter.toUpperCase()),
     readingTime: `${row.reading_time_minutes} min read`,
     readingTimeMinutes: row.reading_time_minutes,

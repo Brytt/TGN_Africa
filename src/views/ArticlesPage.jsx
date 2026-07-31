@@ -49,8 +49,8 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
             <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-black/40">TGN Africa library</p>
             <h1 className="mt-3 text-4xl font-semibold tracking-[-0.025em] text-black md:text-5xl">Publications</h1>
             {featured.length > 0 && <div className="mt-10 grid gap-5 lg:grid-cols-[minmax(0,2.15fr)_minmax(280px,0.85fr)]">
-              {featured.map((article, index) => <a key={article.id} href={`/articles/${article.slug}`} className={`group overflow-hidden border border-black/10 bg-white ${index === 0 ? 'grid md:grid-cols-[1.2fr_0.8fr]' : 'flex flex-col'}`}>
-                <img src={article.image} alt="" className={`w-full object-cover transition-transform duration-500 group-hover:scale-[1.02] ${index === 0 ? 'h-full min-h-[300px]' : 'aspect-[16/9]'}`} />
+              {featured.map((article, index) => <a key={article.id} href={`/articles/${article.slug}`} className={`group overflow-hidden border border-black/10 bg-white ${index === 0 && article.image ? 'grid md:grid-cols-[1.2fr_0.8fr]' : 'flex flex-col'}`}>
+                {article.image && <img src={article.image} alt="" className={`w-full object-cover transition-transform duration-500 group-hover:scale-[1.02] ${index === 0 ? 'h-full min-h-[300px]' : 'aspect-[16/9]'}`} />}
                 <div className="flex flex-1 flex-col p-5 md:p-6"><p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-black/40">{article.type}</p><h2 className={`${index === 0 ? 'mt-8 text-2xl' : 'mt-4 text-xl'} font-semibold leading-tight text-black`}>{article.title}</h2>{article.subtitle && <p className="mt-2 text-sm font-medium text-black/60">{article.subtitle}</p>}<p className="mt-4 line-clamp-4 text-xs leading-5 text-black/55">{article.excerpt}</p><div className="mt-auto flex items-center gap-2 pt-7">{article.authorImage && <img src={article.authorImage} alt="" className="h-7 w-7 rounded-full object-cover" />}<span className="text-[10px] text-black/55">{article.author} · {article.date}</span></div></div>
               </a>)}
             </div>}
@@ -62,7 +62,7 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
               {!visible.length ? <div className="mt-10 border border-black/10 bg-white px-6 py-16 text-center text-sm text-black/50">No publications in this category.</div> : <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {visible.map((article) => (
                   <a key={article.id} href={`/articles/${article.slug}`} className="group flex min-h-[350px] flex-col border border-black/10 bg-white transition-transform hover:-translate-y-1 hover:shadow-lg">
-                    <div className="relative overflow-hidden"><img src={article.image} alt="" className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" /><span className="absolute left-3 top-3 bg-black/75 px-2 py-1 text-[8px] font-medium uppercase tracking-wide text-white">{article.type}</span></div>
+                    {article.image && <div className="relative overflow-hidden"><img src={article.image} alt="" className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" /><span className="absolute left-3 top-3 bg-black/75 px-2 py-1 text-[8px] font-medium uppercase tracking-wide text-white">{article.type}</span></div>}
                     <div className="flex grow flex-col p-4">
                       <p className="text-[9px] uppercase tracking-wide text-black/40">{article.date} · {article.readingTime}</p>
                       <h2 className="mt-3 line-clamp-3 text-[15px] font-semibold leading-[1.35] text-black">{article.title}</h2>

@@ -283,7 +283,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
       id: result.data.id,
       publishedAt: new Date().toISOString(),
       views: 0,
-      image: draft.image || '/images/publications/featured-study.jpg',
+      image: draft.image || '',
     }
     setPublications((current) => existing ? current.map((item) => item.id === editingId ? publication : item) : [publication, ...current])
     setDraft(newDraft)
@@ -446,7 +446,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
                     </td>
                     <td className="max-w-[300px] py-3.5 pr-4">
                       <div className="flex items-center gap-3">
-                        <img src={item.image} alt="" className="h-11 w-11 shrink-0 rounded-xl object-cover" />
+                        {item.image ? <img src={item.image} alt="" className="h-11 w-11 shrink-0 rounded-xl object-cover" /> : <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[19px]">article</span></span>}
                         <span className="min-w-0">
                           <span className="block truncate font-medium text-slate-900">{item.title}</span>
                           <span className="block text-[11px] text-slate-400">{item.id} · {item.type}</span>
@@ -536,7 +536,6 @@ export default function ContentManager({ initialPublications = [], topics = [], 
               {previewPublication.image && <figure className="mx-auto mt-10 max-w-[1050px]"><img src={previewPublication.image} alt={`Featured image for ${plainText(previewPublication.title)}`} className="aspect-video w-full object-cover" /></figure>}
 
               <div className="mx-auto mt-12 max-w-[720px]">
-                {previewPublication.excerpt && <p className="tgn-article-serif mb-9 border-b border-midnight-navy/10 pb-9 text-[21px] leading-[1.55] text-midnight-navy/75">{plainText(previewPublication.excerpt)}</p>}
                 <ArticleBody body={previewPublication.body} bodyFormat={previewPublication.bodyFormat} emptyMessage="This publication does not have article body content yet. Select Edit to add the full text." />
 
                 <section className="mt-16 border-y border-midnight-navy/15 py-8">

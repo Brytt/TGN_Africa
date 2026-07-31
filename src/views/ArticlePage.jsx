@@ -115,7 +115,6 @@ export default function ArticlePage({ article, related = [], initialComments = [
           )}
 
           <div className="mx-auto mt-12 max-w-[720px] px-5 sm:px-6">
-            {article.excerpt && <p className="tgn-article-serif mb-9 border-b border-midnight-navy/10 pb-9 text-[21px] leading-[1.55] text-midnight-navy/75">{article.excerpt}</p>}
             <ArticleBody body={article.body} bodyFormat={article.bodyFormat} />
 
             <section className="mt-16 border-y border-midnight-navy/15 py-8">

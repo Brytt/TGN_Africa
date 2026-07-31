@@ -288,7 +288,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                       <p className="px-3 py-5 text-center text-sm text-slate-400">Searching…</p>
                     ) : searchResults.length ? searchResults.map((item) => (
                       <button key={item.id} type="button" onClick={() => goToContent(item.title)} className="flex w-full items-center gap-3 rounded-xl p-3 text-left hover:bg-slate-50">
-                        <img src={item.image} alt="" className="h-9 w-9 rounded-xl object-cover" />
+                        {item.image ? <img src={item.image} alt="" className="h-9 w-9 rounded-xl object-cover" /> : <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[17px]">article</span></span>}
                         <span className="min-w-0">
                           <span className="block truncate text-sm font-medium text-slate-900">{item.title}</span>
                           <span className="block text-xs text-slate-400">{item.type} · {item.author}</span>

@@ -39,7 +39,7 @@ export default function LogoPage() {
   return (
     <AboutSectionPage title="Explaining the Logo" introduction="The story and meaning behind the visual identity of The Gospel Network.">
       <div className="grid min-h-[420px] place-items-center bg-[#f3f6fb] p-10 md:p-16">
-        <img src="/images/brand/the-gospel-network-logo.jpeg" alt="The Gospel Network logo: a navy Latin cross containing the shape of the African continent" className="w-full max-w-[390px]" />
+        <img src="/images/brand/the-gospel-network-full-logo.jpeg" alt="The Gospel Network full logo: the cross and Africa mark, wordmark, Gye Nyame symbol, and mission statement" className="w-full max-w-[430px]" />
       </div>
 
       <div className="mt-14">

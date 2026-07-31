@@ -24,7 +24,7 @@ export async function GET(request) {
       title: item.title,
       type: item.publication_type,
       author: item.author?.name || 'TGN Africa',
-      image: item.cover_path || '/images/publications/featured-study.jpg',
+      image: item.cover_path && item.cover_path !== '/images/publications/featured-study.jpg' ? item.cover_path : '',
     })),
   })
 }

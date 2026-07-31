@@ -26,6 +26,16 @@ export default function AboutPage() {
           </div>
         </header>
 
+        <section className="border-b border-midnight-navy/10 bg-white">
+          <div className="page-shell grid place-items-center py-12 md:py-16">
+            <img
+              src="/images/brand/the-gospel-network-full-logo.jpeg"
+              alt="The Gospel Network full logo: the cross and Africa mark, wordmark, Gye Nyame symbol, and mission statement"
+              className="h-auto w-full max-w-[520px]"
+            />
+          </div>
+        </section>
+
         <section className="page-shell py-14 md:py-20">
           <div className="mb-8 flex items-end justify-between border-b border-midnight-navy/15 pb-5">
             <div>

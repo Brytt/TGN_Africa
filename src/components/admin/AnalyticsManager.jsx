@@ -357,7 +357,7 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
             <div className="divide-y divide-slate-100">
               {publications.slice(0, 5).map((item) => (
                 <div key={item.id} className="flex items-center gap-3 py-3">
-                  <img src={item.image} alt="" className="h-10 w-10 shrink-0 rounded-xl object-cover" />
+                  {item.image ? <img src={item.image} alt="" className="h-10 w-10 shrink-0 rounded-xl object-cover" /> : <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[18px]">article</span></span>}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs font-semibold text-slate-700">{item.title}</span>
                     <span className="text-[10px] text-slate-400">{item.author} · {item.type}</span>

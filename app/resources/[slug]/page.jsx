@@ -43,14 +43,16 @@ function parseDocument(raw) {
   return { text: cleanedLines.join('\n').trim(), note }
 }
 
-function TextBlock({ text }) {
-  const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean)
-  const renderInlineEmphasis = (line) => line.split(/(\*\*.+?\*\*)/g).map((part, index) => (
+function renderInlineEmphasis(line) {
+  return line.split(/(\*\*.+?\*\*)/g).map((part, index) => (
     part.startsWith('**') && part.endsWith('**')
       ? <strong key={index} className="resource-inline-emphasis">{part.slice(2, -2)}</strong>
       : part
   ))
+}
 
+function TextBlock({ text }) {
+  const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean)
   return (
     <div className="resource-document-text">
       {lines.map((line, index) => {
@@ -123,7 +125,7 @@ export default async function ResourceDocumentPage({ params }) {
               <h2 className="mt-4 font-display text-2xl leading-tight text-midnight-navy">Reading this document carefully</h2>
               {parsed.note ? (
                 <div className="mt-6 space-y-4 text-sm leading-7 text-midnight-navy/65">
-                  {parsed.note.split(/\n+/).map((paragraph, index) => paragraph.trim() && <p key={index}>{paragraph.trim()}</p>)}
+                  {parsed.note.split(/\n+/).map((paragraph, index) => paragraph.trim() && <p key={index}>{renderInlineEmphasis(paragraph.trim())}</p>)}
                 </div>
               ) : (
                 <p className="mt-6 text-sm leading-7 text-midnight-navy/65">This reader edition reproduces the supplied historical document. No additional TGN editorial commentary has been attached to this edition.</p>

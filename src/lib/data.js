@@ -25,7 +25,7 @@ const PUBLICATION_SELECT = `
 
 const PUBLICATION_SUMMARY_SELECT = `
   id, legacy_id, slug, title, subtitle, excerpt, publication_type,
-  scripture, cover_path, status, reading_time_minutes, scheduled_at,
+  scripture, cover_path, status, reading_time_minutes, scheduled_at, import_metadata,
   published_at, created_at, updated_at,
   author:authors(id, name, slug, avatar_path),
   topic:topics(id, title, slug, level)
@@ -33,6 +33,8 @@ const PUBLICATION_SUMMARY_SELECT = `
 
 export function mapPublication(row) {
   const image = row.cover_path && row.cover_path !== '/images/publications/featured-study.jpg' ? row.cover_path : ''
+  const importedTags = Array.isArray(row.import_metadata?.tags) ? row.import_metadata.tags : []
+  const importedCategories = Array.isArray(row.import_metadata?.categories) ? row.import_metadata.categories : []
   return {
     id: row.id,
     legacyId: row.legacy_id,
@@ -58,6 +60,8 @@ export function mapPublication(row) {
     topicId: row.topic?.id,
     topic: row.topic?.title || 'Uncategorized',
     topicSlug: row.topic?.slug,
+    tags: importedTags.map((tag) => typeof tag === 'string' ? tag : tag?.name).filter(Boolean),
+    categories: importedCategories.map((category) => typeof category === 'string' ? category : category?.name).filter(Boolean),
     scripture: row.scripture || '',
     image,
     status: row.status.replaceAll('_', ' ').replace(/^\w/, (letter) => letter.toUpperCase()),
@@ -67,6 +71,49 @@ export function mapPublication(row) {
     date: new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(row.published_at || row.created_at)),
     views: Number(row.metrics?.views || 0),
   }
+}
+
+function normalizedTerms(values = []) {
+  return new Set(values.map((value) => String(value).trim().toLowerCase()).filter(Boolean))
+}
+
+function sharedTermCount(left, right) {
+  const rightTerms = normalizedTerms(right)
+  return [...normalizedTerms(left)].filter((term) => rightTerms.has(term)).length
+}
+
+export async function getRelatedPublications(publication, limit = 3) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('publications')
+    .select(PUBLICATION_SUMMARY_SELECT)
+    .eq('status', 'published')
+    .neq('id', publication.id)
+    .order('published_at', { ascending: false, nullsFirst: false })
+    .limit(250)
+
+  if (error) return schemaFallback(error, [])
+
+  return (data || [])
+    .map(mapPublication)
+    .map((candidate) => {
+      const sharedTags = sharedTermCount(publication.tags, candidate.tags)
+      const sharedCategories = sharedTermCount(publication.categories, candidate.categories)
+      const sameTopic = Boolean(publication.topicId && publication.topicId === candidate.topicId)
+      const sameType = publication.type === candidate.type
+      const sameAuthor = Boolean(publication.authorId && publication.authorId === candidate.authorId)
+
+      return {
+        candidate,
+        score: (sharedTags * 12) + (sameTopic ? 10 : 0) + (sharedCategories * 6) + (sameType ? 2 : 0) + (sameAuthor ? 1 : 0),
+      }
+    })
+    .sort((left, right) => {
+      if (right.score !== left.score) return right.score - left.score
+      return new Date(right.candidate.publishedAt).getTime() - new Date(left.candidate.publishedAt).getTime()
+    })
+    .slice(0, limit)
+    .map(({ candidate }) => candidate)
 }
 
 export function mapAuthor(row) {

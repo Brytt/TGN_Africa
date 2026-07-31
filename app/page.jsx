@@ -7,6 +7,8 @@ import Navbar from '../src/components/Navbar'
 import ResourceGateway from '../src/components/ResourceGateway'
 import { getPublications } from '../src/lib/data'
 
+export const revalidate = 60
+
 export default async function HomePage() {
   const publications = await getPublications({ summary: true })
   return (

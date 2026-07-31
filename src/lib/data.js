@@ -1,5 +1,6 @@
 import 'server-only'
 import { createClient } from './supabase/server'
+import { createPublicClient } from './supabase/public'
 
 function isSchemaNotReady(error) {
   return error?.code === 'PGRST205' || error?.code === '42P01'
@@ -83,7 +84,7 @@ function sharedTermCount(left, right) {
 }
 
 export async function getRelatedPublications(publication, limit = 3) {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const { data, error } = await supabase
     .from('publications')
     .select(PUBLICATION_SUMMARY_SELECT)
@@ -145,7 +146,7 @@ export function mapAuthor(row) {
 }
 
 export async function getPublications({ admin = false, limit, summary = false } = {}) {
-  const supabase = await createClient()
+  const supabase = admin ? await createClient() : createPublicClient()
   // Keep public reads to one database round trip. Publishing scheduled work is
   // handled when staff load the editorial workspace.
   if (admin) await supabase.rpc('publish_due_publications')
@@ -168,7 +169,7 @@ export async function getPublications({ admin = false, limit, summary = false } 
 }
 
 export async function getPublicationBySlug(slug) {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const { data, error } = await supabase
     .from('publications')
     .select(PUBLICATION_SELECT)
@@ -216,7 +217,7 @@ export async function getArticleInteractions(publicationId) {
 }
 
 export async function getAuthors({ admin = false } = {}) {
-  const supabase = await createClient()
+  const supabase = admin ? await createClient() : createPublicClient()
   let query = supabase
     .from('authors')
     .select('*, publications:publications(count)')
@@ -229,7 +230,7 @@ export async function getAuthors({ admin = false } = {}) {
 }
 
 export async function getTopicTree() {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const { data, error } = await supabase
     .from('topics')
     .select('id, title, slug, level, parent_id, sort_order')

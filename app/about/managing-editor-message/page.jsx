@@ -1,6 +1,8 @@
 import AboutSectionPage from '../../../src/components/AboutSectionPage'
 import { getAuthors } from '../../../src/lib/data'
 
+export const revalidate = 60
+
 export const metadata = { title: 'Message from the Managing Editor | The Gospel Network' }
 
 export default async function ManagingEditorMessagePage() {

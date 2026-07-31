@@ -1,6 +1,8 @@
 import ArticlesPage from '../../src/views/ArticlesPage'
 import { getAuthors, getPublications, getTopicTree } from '../../src/lib/data'
 
+export const revalidate = 60
+
 export const metadata = {
   title: 'Articles',
   description: 'Read recent biblical and theological articles from The Gospel Network Africa.',

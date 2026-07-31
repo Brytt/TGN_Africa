@@ -10,6 +10,8 @@ export async function POST(request) {
   if (!(file instanceof File)) return failure('File is required')
   if (!['author-avatars', 'publication-media'].includes(bucket)) return failure('Invalid storage bucket')
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return failure('Only JPG, PNG, and WebP images are supported')
+  const maximumSize = bucket === 'author-avatars' ? 5 * 1024 * 1024 : 10 * 1024 * 1024
+  if (file.size <= 0 || file.size > maximumSize) return failure(`Image must be smaller than ${bucket === 'author-avatars' ? '5 MB' : '10 MB'}.`, 413)
   const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
   const path = `${auth.user.id}/${crypto.randomUUID()}.${extension}`
   const { error } = await auth.supabase.storage.from(bucket).upload(path, file, { contentType: file.type, upsert: false })

@@ -1,6 +1,6 @@
 import 'server-only'
 import { allResourceDocuments } from '../data/resources'
-import { createClient } from './supabase/server'
+import { createPublicClient } from './supabase/public'
 
 const cleanQuery = (value) => String(value || '').trim().slice(0, 100)
 
@@ -8,7 +8,7 @@ export async function searchSite(value, { limit = 20, offset = 0 } = {}) {
   const query = cleanQuery(value)
   if (query.length < 2) return { query, articles: [], topics: [], contributors: [], resources: [], total: 0 }
 
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const pattern = `%${query.replace(/[%_]/g, '')}%`
   const [articleResult, topicResult, authorResult] = await Promise.all([
     supabase.rpc('search_publications', { p_query: query, p_limit: limit, p_offset: offset }),

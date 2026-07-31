@@ -9,6 +9,7 @@ export async function POST(request) {
   const { data: { user } } = await supabase.auth.getUser()
   const { publicationId, eventType } = await request.json()
   if (!['page_view', 'read', 'share', 'download'].includes(eventType)) return NextResponse.json({ error: 'Invalid event.' }, { status: 400 })
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(publicationId || ''))) return NextResponse.json({ error: 'Invalid publication.' }, { status: 400 })
   const cookieStore = await cookies()
   let sessionId = cookieStore.get('tgn_analytics_session')?.value
   if (!sessionId) sessionId = randomUUID()
@@ -23,7 +24,7 @@ export async function POST(request) {
     anonymous_session_hash: sessionHash,
     referrer_host: referrerHost,
   })
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (error) return NextResponse.json({ error: 'Unable to record this event.' }, { status: 400 })
   const response = NextResponse.json({ success: true })
   response.cookies.set('tgn_analytics_session', sessionId, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 60 * 60 * 24 * 365 })
   return response

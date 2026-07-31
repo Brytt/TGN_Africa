@@ -3,6 +3,8 @@ import Footer from '../../src/components/Footer'
 import Navbar from '../../src/components/Navbar'
 import { getAuthors } from '../../src/lib/data'
 
+export const revalidate = 60
+
 export const metadata = {
   title: 'Authors',
   description: 'Meet the pastors, scholars, and writers contributing to The Gospel Network Africa.',

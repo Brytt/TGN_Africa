@@ -2,6 +2,8 @@ import TopicPage from '../../../src/views/TopicPage'
 import { notFound } from 'next/navigation'
 import { getPublications, getTopicTree } from '../../../src/lib/data'
 
+export const revalidate = 60
+
 export async function generateMetadata({ params }) {
   const { slug } = await params
   return {

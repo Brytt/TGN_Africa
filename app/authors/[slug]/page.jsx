@@ -4,6 +4,8 @@ import Footer from '../../../src/components/Footer'
 import Navbar from '../../../src/components/Navbar'
 import { getAuthors, getPublications } from '../../../src/lib/data'
 
+export const revalidate = 60
+
 export const metadata = { title: 'Author Profile' }
 
 export default async function AuthorPage({ params }) {

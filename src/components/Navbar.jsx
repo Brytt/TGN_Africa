@@ -9,19 +9,6 @@ const topicSlugByTitle = Object.fromEntries(topicGroups.flatMap((group) => group
   title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
 ]))
 
-const searchItems = [
-  ...topicGroups.flatMap((group) => group.topics.map((topic) => ({ label: topic, type: 'Topic', href: `/topics/${topicSlugByTitle[topic]}` }))),
-  { label: 'The Solas of the Reformation in the African Context', type: 'Article', href: '/articles/1' },
-  { label: 'The Local Church Is More Than a Sunday Gathering', type: 'Article', href: '/articles/2' },
-  { label: 'Exodus and the God Who Keeps Covenant', type: 'Bible Study', href: '/articles/3' },
-  { label: 'When the Prosperity Gospel Meets the Cross', type: 'Article', href: '/articles/4' },
-  { label: 'Morning Grace: The Shepherd Who Stays Near', type: 'Devotional', href: '/articles/5' },
-  { label: 'Christian Faithfulness in the African Public Square', type: 'Article', href: '/articles/6' },
-  { label: 'Daniel Adebayo', type: 'Author', href: '/#authors' },
-  { label: 'Kwame Mensah', type: 'Author', href: '/#authors' },
-  { label: 'Nomsa Dlamini', type: 'Author', href: '/#authors' },
-]
-
 function GyeNyameIcon() {
   return (
     <span className="relative block size-9 shrink-0 overflow-hidden rounded-full bg-white" aria-hidden="true">
@@ -38,6 +25,8 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [searchLoading, setSearchLoading] = useState(false)
   const searchInputRef = useRef(null)
   const topicsMenuRef = useRef(null)
   const aboutMenuRef = useRef(null)
@@ -80,6 +69,35 @@ export default function Navbar() {
   }, [searchOpen])
 
   useEffect(() => {
+    const query = searchQuery.trim()
+    if (!searchOpen || query.length < 2) {
+      setSearchResults([])
+      setSearchLoading(false)
+      return undefined
+    }
+    const controller = new AbortController()
+    const timer = window.setTimeout(async () => {
+      setSearchLoading(true)
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=8`, { signal: controller.signal })
+        const result = await response.json()
+        if (response.ok) {
+          const data = result.data || {}
+          setSearchResults([...(data.articles || []), ...(data.topics || []), ...(data.contributors || []), ...(data.resources || [])].slice(0, 10))
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') setSearchResults([])
+      } finally {
+        if (!controller.signal.aborted) setSearchLoading(false)
+      }
+    }, 220)
+    return () => {
+      window.clearTimeout(timer)
+      controller.abort()
+    }
+  }, [searchOpen, searchQuery])
+
+  useEffect(() => {
     const closeMenusOutside = (event) => {
       if (window.innerWidth >= 1024 && topicsMenuRef.current && !topicsMenuRef.current.contains(event.target)) {
         setTopicsOpen(false)
@@ -96,9 +114,7 @@ export default function Navbar() {
   }, [])
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
-  const suggestions = normalizedQuery
-    ? searchItems.filter((item) => item.label.toLowerCase().includes(normalizedQuery)).slice(0, 7)
-    : searchItems.slice(-3)
+  const suggestions = searchResults
 
   return (
     <>
@@ -363,7 +379,7 @@ export default function Navbar() {
             <form
               onSubmit={(event) => {
                 event.preventDefault()
-                if (suggestions[0]) window.location.href = suggestions[0].href
+                if (normalizedQuery.length >= 2) window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
               }}
             >
               <label htmlFor="site-search" className="text-[9px] font-bold uppercase tracking-[0.17em] text-midnight-navy/40">
@@ -391,26 +407,27 @@ export default function Navbar() {
 
             <div className="mt-5">
               <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-midnight-navy/35">
-                {normalizedQuery ? 'Suggestions' : 'Popular searches'}
+                {normalizedQuery ? 'Best matches' : 'Search the complete library'}
               </p>
-              {suggestions.length > 0 ? (
+              {searchLoading ? <p className="border-t border-midnight-navy/10 py-5 font-sans text-sm text-midnight-navy/45">Searching articles, topics, tags, categories, and contributors…</p> : suggestions.length > 0 ? (
                 <div className="divide-y divide-midnight-navy/10 border-t border-midnight-navy/10">
                   {suggestions.map((suggestion) => (
                     <a
-                      key={`${suggestion.type}-${suggestion.label}`}
+                      key={`${suggestion.kind}-${suggestion.href}`}
                       href={suggestion.href}
                       className="group flex items-center justify-between gap-5 py-3"
                     >
-                      <span className="font-sans text-sm text-midnight-navy md:text-base">{suggestion.label}</span>
+                      <span className="min-w-0"><span className="block truncate font-sans text-sm text-midnight-navy md:text-base">{suggestion.title}</span>{suggestion.meta && <span className="mt-0.5 block truncate text-[10px] text-midnight-navy/40">{suggestion.meta}</span>}</span>
                       <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.15em] text-midnight-navy/35 group-hover:text-midnight-navy">
-                        {suggestion.type} →
+                        {suggestion.kind} →
                       </span>
                     </a>
                   ))}
+                  <a href={`/search?q=${encodeURIComponent(searchQuery.trim())}`} className="block py-4 text-center text-[10px] font-bold uppercase tracking-[0.14em] text-midnight-navy">View all search results →</a>
                 </div>
               ) : (
                 <p className="border-t border-midnight-navy/10 py-4 font-sans text-sm text-midnight-navy/45">
-                  No suggestions yet. Try a broader word such as “church,” “gospel,” or “Scripture.”
+                  {normalizedQuery.length < 2 ? 'Type at least two letters. Search by title, phrase, topic, category, tag, Scripture, or contributor.' : 'No matches yet. Try a broader term or a different spelling.'}
                 </p>
               )}
             </div>

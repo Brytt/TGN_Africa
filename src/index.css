@@ -385,6 +385,17 @@ a:focus-visible {
   margin-top: 1.2em;
 }
 
+@media (min-width: 768px) {
+  .tgn-article-body > p:first-of-type::first-letter {
+    float: left;
+    color: #0d2240;
+    font-size: 4.25em;
+    font-weight: 600;
+    line-height: 0.78;
+    margin: 0.1em 0.12em 0 0;
+  }
+}
+
 .tgn-article-body h2 {
   color: #0d2240;
   font-size: 32px;

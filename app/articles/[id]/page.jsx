@@ -2,9 +2,36 @@ import ArticlePage from '../../../src/views/ArticlePage'
 import { notFound } from 'next/navigation'
 import { getArticleInteractions, getPublicationBySlug, getRelatedPublications } from '../../../src/lib/data'
 
-export const metadata = {
-  title: 'Article',
-  description: 'Read this article from The Gospel Network Africa.',
+function shorten(value = '', limit) {
+  const text = String(value).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+  if (text.length <= limit) return text
+  const shortened = text.slice(0, limit - 1).replace(/\s+\S*$/, '').trim()
+  return `${shortened}…`
+}
+
+export async function generateMetadata({ params }) {
+  const article = await getPublicationBySlug((await params).id)
+  if (!article) return { title: 'Article' }
+
+  const title = shorten(article.title, 60)
+  const description = shorten(article.excerpt || article.subtitle || `An article by ${article.author}.`, 120)
+
+  return {
+    title,
+    description,
+    openGraph: {
+      type: 'article',
+      title,
+      description,
+      images: [{ url: article.image, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [article.image],
+    },
+  }
 }
 
 export default async function Page({ params }) {

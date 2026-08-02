@@ -32,8 +32,21 @@ const PUBLICATION_SUMMARY_SELECT = `
   topic:topics(id, title, slug, level)
 `
 
+const PUBLICATION_FALLBACK_IMAGES = [
+  '/images/publications/church-teaching.jpg',
+  '/images/publications/family-scripture.jpg',
+  '/images/publications/featured-study.jpg',
+  '/images/publications/morning-devotional.jpg',
+  '/images/publications/scripture-notes.jpg',
+]
+
+function publicationFallbackImage(value = '') {
+  const hash = [...String(value)].reduce((total, character) => ((total * 31) + character.charCodeAt(0)) >>> 0, 0)
+  return PUBLICATION_FALLBACK_IMAGES[hash % PUBLICATION_FALLBACK_IMAGES.length]
+}
+
 export function mapPublication(row) {
-  const image = row.cover_path && row.cover_path !== '/images/publications/featured-study.jpg' ? row.cover_path : ''
+  const image = row.cover_path || publicationFallbackImage(row.slug || row.id)
   const importedTags = Array.isArray(row.import_metadata?.tags) ? row.import_metadata.tags : []
   const importedCategories = Array.isArray(row.import_metadata?.categories) ? row.import_metadata.categories : []
   return {

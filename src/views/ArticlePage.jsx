@@ -114,7 +114,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
             </figure>
           )}
 
-          <div className="mx-auto mt-12 max-w-[800px] px-5 sm:px-6">
+          <div className="mx-auto mt-12 max-w-[880px] px-5 sm:px-6">
             <ArticleBody body={article.body} bodyFormat={article.bodyFormat} />
 
             <section className="mt-16 border-y border-midnight-navy/15 py-8">

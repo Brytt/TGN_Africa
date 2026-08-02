@@ -535,7 +535,7 @@ export default function ContentManager({ initialPublications = [], topics = [], 
 
               {previewPublication.image && <figure className="mx-auto mt-10 max-w-[1050px]"><img src={previewPublication.image} alt={`Featured image for ${plainText(previewPublication.title)}`} className="aspect-video w-full object-cover" /></figure>}
 
-              <div className="mx-auto mt-12 max-w-[800px]">
+              <div className="mx-auto mt-12 max-w-[880px]">
                 <ArticleBody body={previewPublication.body} bodyFormat={previewPublication.bodyFormat} emptyMessage="This publication does not have article body content yet. Select Edit to add the full text." />
 
                 <section className="mt-16 border-y border-midnight-navy/15 py-8">

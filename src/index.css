@@ -389,10 +389,10 @@ a:focus-visible {
   .tgn-article-body > p:first-of-type::first-letter {
     float: left;
     color: #0d2240;
-    font-size: 4.25em;
+    font-size: 3em;
     font-weight: 600;
-    line-height: 0.78;
-    margin: 0.1em 0.12em 0 0;
+    line-height: 0.82;
+    margin: 0.1em 0.07em 0 0;
   }
 }
 

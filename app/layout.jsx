@@ -8,9 +8,9 @@ export const metadata = {
   },
   description: 'The Gospel Network Africa — gospel-centered theological writing for the African church.',
   icons: {
-    icon: '/images/brand/tgn-africa-logo-transparent.png',
-    shortcut: '/images/brand/tgn-africa-logo-transparent.png',
-    apple: '/images/brand/tgn-africa-logo-transparent.png',
+    icon: '/images/brand/the-gospel-network-logo.jpeg',
+    shortcut: '/images/brand/the-gospel-network-logo.jpeg',
+    apple: '/images/brand/the-gospel-network-logo.jpeg',
   },
 }
 

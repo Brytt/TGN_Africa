@@ -2,10 +2,15 @@ import '../src/index.css'
 
 export const metadata = {
   title: {
-    default: 'TGN Africa | The Word of God. The Heart of Africa.',
-    template: '%s | TGN Africa',
+    default: 'TGN',
+    template: '%s | TGN',
   },
   description: 'The Gospel Network Africa — gospel-centered theological writing for the African church.',
+  icons: {
+    icon: '/images/brand/tgn-africa-logo-transparent.png',
+    shortcut: '/images/brand/tgn-africa-logo-transparent.png',
+    apple: '/images/brand/tgn-africa-logo-transparent.png',
+  },
 }
 
 export default function RootLayout({ children }) {

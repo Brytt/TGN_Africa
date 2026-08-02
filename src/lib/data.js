@@ -33,11 +33,12 @@ const PUBLICATION_SUMMARY_SELECT = `
 `
 
 const PUBLICATION_FALLBACK_IMAGES = [
-  '/images/publications/church-teaching.jpg',
-  '/images/publications/family-scripture.jpg',
-  '/images/publications/featured-study.jpg',
-  '/images/publications/morning-devotional.jpg',
-  '/images/publications/scripture-notes.jpg',
+  '/images/publications/fallbacks/scripture-dawn.jpg',
+  '/images/publications/fallbacks/congregational-worship.jpg',
+  '/images/publications/fallbacks/pastoral-teaching.jpg',
+  '/images/publications/fallbacks/prayer-at-sunrise.jpg',
+  '/images/publications/fallbacks/bible-study-fellowship.jpg',
+  '/images/publications/fallbacks/communion-table.jpg',
 ]
 
 function publicationFallbackImage(value = '') {

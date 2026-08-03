@@ -30,6 +30,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
   const [replyingTo, setReplyingTo] = useState(null)
   const [message, setMessage] = useState('')
   const [shareMessage, setShareMessage] = useState('')
+  const [shareOpen, setShareOpen] = useState(false)
   const [pendingAction, setPendingAction] = useState('')
 
   useEffect(() => {
@@ -81,32 +82,29 @@ export default function ArticlePage({ article, related = [], initialComments = [
     }
   }
 
-  const shareArticle = async () => {
+  const shareArticle = () => setShareOpen(true)
+
+  const copyArticleLink = async () => {
     const summary = article.excerpt || article.subtitle || `An article by ${article.author} on The Gospel Network Africa.`
-    const shareData = { title: article.title, text: `${article.title}\n\n${summary}`, url: window.location.href }
+    const shareText = `${article.title}\n\n${summary}\n\n${window.location.href}`
     try {
-      if (navigator.share) {
-        await navigator.share(shareData)
-        setShareMessage('Article shared.')
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareText)
       } else {
-        if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(shareData.url)
-        } else {
-          const textArea = document.createElement('textarea')
-          textArea.value = shareData.url
-          textArea.style.position = 'fixed'
-          textArea.style.opacity = '0'
-          document.body.appendChild(textArea)
-          textArea.select()
-          const copied = document.execCommand('copy')
-          textArea.remove()
-          if (!copied) throw new Error('Copy command failed')
-        }
-        setShareMessage('Article link copied.')
+        const textArea = document.createElement('textarea')
+        textArea.value = shareText
+        textArea.style.position = 'fixed'
+        textArea.style.opacity = '0'
+        document.body.appendChild(textArea)
+        textArea.select()
+        const copied = document.execCommand('copy')
+        textArea.remove()
+        if (!copied) throw new Error('Copy command failed')
       }
-    } catch (error) {
-      if (error?.name === 'AbortError') return
-      setShareMessage('Unable to share this article. Please copy the page address from your browser.')
+      setShareMessage('Article details and link copied.')
+      setShareOpen(false)
+    } catch {
+      setShareMessage('Unable to copy this article. Please copy the page address from your browser.')
     }
   }
 
@@ -231,6 +229,26 @@ export default function ArticlePage({ article, related = [], initialComments = [
           </div>
         </section>
       </main>
+      {shareOpen && (
+        <div className="fixed inset-0 z-[80] grid place-items-center bg-midnight-navy/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="share-article-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setShareOpen(false) }}>
+          <section className="w-full max-w-md overflow-hidden bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-midnight-navy/10 px-5 py-4">
+              <p className="tgn-article-sans text-[11px] font-bold uppercase tracking-[0.14em] text-midnight-navy">Share this article</p>
+              <button type="button" onClick={() => setShareOpen(false)} className="grid size-9 place-items-center text-midnight-navy/55 hover:bg-surface-container-low" aria-label="Close share panel"><span className="material-symbols-outlined">close</span></button>
+            </div>
+            <img src={article.image} alt={`Featured image for ${article.title}`} className="aspect-[1.91/1] w-full object-cover" />
+            <div className="p-5">
+              <h2 id="share-article-title" className="tgn-article-serif text-2xl font-semibold leading-tight text-midnight-navy">{article.title}</h2>
+              <p className="tgn-article-sans mt-3 line-clamp-3 text-sm leading-6 text-charcoal-text/65">{article.excerpt || article.subtitle || `An article by ${article.author} on The Gospel Network Africa.`}</p>
+              <p className="tgn-article-sans mt-4 flex items-center gap-2 border-t border-midnight-navy/10 pt-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-midnight-navy/45"><span className="material-symbols-outlined text-[16px]">language</span>tgnafrica.com</p>
+              <div className="mt-5 grid grid-cols-2 gap-2">
+                <a href={`https://wa.me/?text=${encodeURIComponent(`${article.title}\n\n${article.excerpt || article.subtitle || ''}\n\nhttps://www.tgnafrica.com/articles/${article.slug}`)}`} target="_blank" rel="noreferrer" className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-[#1f9d55] px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">chat</span>WhatsApp</a>
+                <button type="button" onClick={copyArticleLink} className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-midnight-navy px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">content_copy</span>Copy article</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
       {shareMessage && <p className="tgn-article-sans fixed bottom-5 left-1/2 z-50 -translate-x-1/2 bg-midnight-navy px-4 py-3 text-xs text-white shadow-lg" role="status">{shareMessage}</p>}
       <Footer />
     </div>

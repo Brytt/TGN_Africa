@@ -30,10 +30,17 @@ export default function ArticlePage({ article, related = [], initialComments = [
   const [replyingTo, setReplyingTo] = useState(null)
   const [message, setMessage] = useState('')
   const [shareMessage, setShareMessage] = useState('')
+  const [pendingAction, setPendingAction] = useState('')
 
   useEffect(() => {
     fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ publicationId: article.id, eventType: 'page_view' }) }).catch(() => {})
   }, [article.id])
+
+  useEffect(() => {
+    if (!shareMessage) return undefined
+    const timeout = window.setTimeout(() => setShareMessage(''), 3500)
+    return () => window.clearTimeout(timeout)
+  }, [shareMessage])
 
   const interact = async (action, payload = {}) => {
     if (!userId) {
@@ -47,15 +54,31 @@ export default function ArticlePage({ article, related = [], initialComments = [
   }
 
   const toggleLike = async () => {
-    const result = await interact('like')
-    if (!result) return
-    setLiked(result.active)
-    setLikeCount((count) => count + (result.active ? 1 : -1))
+    if (pendingAction) return
+    setPendingAction('like')
+    try {
+      const result = await interact('like')
+      if (!result) return
+      setLiked(result.active)
+      setLikeCount((count) => Math.max(0, count + (result.active ? 1 : -1)))
+    } catch {
+      setMessage('Unable to update your like. Please try again.')
+    } finally {
+      setPendingAction('')
+    }
   }
 
   const toggleBookmark = async () => {
-    const result = await interact('bookmark')
-    if (result) setBookmarked(result.active)
+    if (pendingAction) return
+    setPendingAction('bookmark')
+    try {
+      const result = await interact('bookmark')
+      if (result) setBookmarked(result.active)
+    } catch {
+      setMessage('Unable to update your bookmark. Please try again.')
+    } finally {
+      setPendingAction('')
+    }
   }
 
   const shareArticle = async () => {
@@ -88,10 +111,10 @@ export default function ArticlePage({ article, related = [], initialComments = [
 
   const articleActions = (showLabels = false) => (
     <div className="tgn-article-sans flex flex-wrap items-center gap-2">
-      <button type="button" onClick={toggleLike} aria-pressed={liked} className={`flex h-10 items-center gap-1.5 border px-3 text-xs ${liked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label={liked ? 'Unlike article' : 'Like article'}>
+      <button type="button" onClick={toggleLike} disabled={Boolean(pendingAction)} aria-pressed={liked} className={`flex h-10 items-center gap-1.5 border px-3 text-xs disabled:cursor-wait disabled:opacity-60 ${liked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label={liked ? 'Unlike article' : 'Like article'}>
         <span className="material-symbols-outlined text-lg">{liked ? 'favorite' : 'favorite_border'}</span>{showLabels && <span>{liked ? 'Liked' : 'Like'}</span>}{likeCount}
       </button>
-      <button type="button" onClick={toggleBookmark} aria-pressed={bookmarked} className={`flex h-10 items-center gap-1.5 border px-3 text-xs ${bookmarked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label={bookmarked ? 'Remove bookmark' : 'Save article'}>
+      <button type="button" onClick={toggleBookmark} disabled={Boolean(pendingAction)} aria-pressed={bookmarked} className={`flex h-10 items-center gap-1.5 border px-3 text-xs disabled:cursor-wait disabled:opacity-60 ${bookmarked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label={bookmarked ? 'Remove bookmark' : 'Save article'}>
         <span className="material-symbols-outlined text-lg">{bookmarked ? 'bookmark' : 'bookmark_border'}</span>{showLabels && <span>{bookmarked ? 'Saved' : 'Save'}</span>}
       </button>
       <button type="button" onClick={shareArticle} className="flex h-10 items-center gap-1.5 border border-midnight-navy/20 px-3 text-xs text-midnight-navy" aria-label="Share article">

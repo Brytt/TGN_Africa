@@ -17,6 +17,7 @@ export async function generateMetadata({ params }) {
   const title = shorten(article.title, 60)
   const description = shorten(article.excerpt || article.subtitle || `Read this article by ${article.author} on The Gospel Network Africa.`, 155)
   const canonicalPath = `/articles/${article.slug}`
+  const socialImage = `/api/og/article/${article.slug}`
 
   return {
     title,
@@ -31,13 +32,13 @@ export async function generateMetadata({ params }) {
       description,
       publishedTime: article.publishedAt,
       authors: [article.author],
-      images: [{ url: article.image, width: 1200, height: 630, alt: `Featured image for ${title}` }],
+      images: [{ url: socialImage, width: 1200, height: 630, type: 'image/jpeg', alt: `Featured image for ${title}` }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [article.image],
+      images: [socialImage],
     },
   }
 }

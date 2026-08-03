@@ -34,8 +34,10 @@ export async function POST(request) {
   if (auth.error) return auth.error
   const body = await request.json()
   const publicationBody = sanitizeArticleHtml(body.body || '', { plain: body.bodyFormat === 'plain' })
+  const slug = body.slug || slugify(body.title)
+  if (!slug) return failure('Add a title that can be used for the article link.')
   const row = {
-    slug: body.slug || `${slugify(body.title)}-${Date.now().toString(36)}`,
+    slug,
     title: body.title,
     subtitle: body.subtitle || null,
     excerpt: body.excerpt || null,
@@ -54,6 +56,7 @@ export async function POST(request) {
     updated_by: auth.user.id,
   }
   const { data, error } = await auth.supabase.from('publications').insert(row).select('id').single()
+  if (error?.code === '23505' && error.message?.includes('slug')) return failure('An article with this link already exists. Please use a distinct title.', 409)
   if (error) return failure(error)
   if (body.status === 'Published') {
     try {

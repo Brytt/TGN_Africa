@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import AdminSelect from './AdminSelect'
 
 const authorRoles = ['Founder', 'Managing Editor', 'Deputy Editor', 'Contributor', 'Guest Author']
@@ -22,6 +22,7 @@ function Avatar({ author, size = 'large' }) {
 }
 
 export default function AuthorManager({ initialAuthors = [], canManageAccess = false, canEditProfiles = false }) {
+  const photoInput = useRef(null)
   const [authors, setAuthors] = useState(initialAuthors)
   const [query, setQuery] = useState('')
   const [role, setRole] = useState('All roles')
@@ -30,6 +31,7 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
   const [previewAuthor, setPreviewAuthor] = useState(null)
   const [editingAuthor, setEditingAuthor] = useState(null)
   const [savingAuthor, setSavingAuthor] = useState(false)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [birthdayReminderDismissed, setBirthdayReminderDismissed] = useState(false)
 
   useEffect(() => {
@@ -126,8 +128,31 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
 
   const updateEditingAuthor = (field) => (event) => setEditingAuthor((current) => ({ ...current, [field]: event.target.value }))
 
+  const uploadAuthorPhoto = async (event) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+    setUploadingPhoto(true)
+    setNotice('Uploading contributor picture…')
+    try {
+      const form = new FormData()
+      form.set('file', file)
+      form.set('bucket', 'author-avatars')
+      const response = await fetch('/api/admin/upload', { method: 'POST', body: form })
+      const result = await response.json()
+      if (!response.ok) return setNotice(result.error || 'Unable to upload contributor picture.')
+      setEditingAuthor((current) => ({ ...current, image: result.path }))
+      setNotice('Picture uploaded. Save the profile to keep this change.')
+    } catch {
+      setNotice('Unable to upload contributor picture. Please try again.')
+    } finally {
+      setUploadingPhoto(false)
+    }
+  }
+
   const saveAuthor = async (event) => {
     event.preventDefault()
+    if (uploadingPhoto) return
     setSavingAuthor(true)
     try {
       const response = await fetch(`/api/admin/authors/${editingAuthor.id}`, {
@@ -309,20 +334,30 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
           <form onSubmit={saveAuthor} className="admin-scroll max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl md:p-8">
             <div className="flex items-start justify-between gap-4">
               <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Contributor profile</p><h2 id="edit-author-title" className="mt-2 text-2xl font-semibold text-slate-900">Edit {editingAuthor.name}</h2></div>
-              <button type="button" disabled={savingAuthor} onClick={() => setEditingAuthor(null)} className="grid size-10 place-items-center rounded-full text-slate-400 hover:bg-slate-50 disabled:opacity-40" aria-label="Close profile editor"><span className="material-symbols-outlined">close</span></button>
+              <button type="button" disabled={savingAuthor || uploadingPhoto} onClick={() => setEditingAuthor(null)} className="grid size-10 place-items-center rounded-full text-slate-400 hover:bg-slate-50 disabled:opacity-40" aria-label="Close profile editor"><span className="material-symbols-outlined">close</span></button>
+            </div>
+            <div className="mt-7 flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 sm:flex-row sm:items-center">
+              {editingAuthor.image
+                ? <img src={editingAuthor.image} alt={`Current profile for ${editingAuthor.name}`} className="size-24 shrink-0 rounded-2xl object-cover" />
+                : <span className="grid size-24 shrink-0 place-items-center rounded-2xl bg-midnight-navy/10 text-2xl font-bold text-midnight-navy">{editingAuthor.name.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase() || 'A'}</span>}
+              <div>
+                <input ref={photoInput} type="file" accept="image/png,image/jpeg,image/webp" onChange={uploadAuthorPhoto} className="hidden" />
+                <button type="button" disabled={uploadingPhoto || savingAuthor} onClick={() => photoInput.current?.click()} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-midnight-navy disabled:cursor-wait disabled:opacity-50"><span className="material-symbols-outlined text-[18px]">add_a_photo</span>{uploadingPhoto ? 'Uploading…' : editingAuthor.image ? 'Change profile picture' : 'Upload profile picture'}</button>
+                <p className="mt-2 text-[11px] text-slate-400">JPG, PNG or WebP, up to 5 MB. A square portrait works best.</p>
+              </div>
             </div>
             <div className="mt-7 grid gap-5 md:grid-cols-2">
               {[
                 ['name', 'Full name', 'text'], ['email', 'Email address', 'email'], ['phone', 'Phone number', 'tel'], ['dateOfBirth', 'Date of birth', 'date'],
                 ['qualification', 'Qualification', 'text'], ['church', 'Church', 'text'], ['denomination', 'Denomination', 'text'], ['expertise', 'Area of expertise', 'text'],
-                ['location', 'City', 'text'], ['country', 'Country', 'text'], ['linkedin', 'LinkedIn profile', 'url'], ['instagram', 'Instagram profile', 'url'], ['facebook', 'Facebook profile', 'url'], ['image', 'Profile image URL', 'url'],
+                ['location', 'City', 'text'], ['country', 'Country', 'text'], ['linkedin', 'LinkedIn profile', 'url'], ['instagram', 'Instagram profile', 'url'], ['facebook', 'Facebook profile', 'url'],
               ].map(([field, label, type]) => <label key={field} className="text-xs font-semibold text-slate-500">{label}<input required={field === 'name' || field === 'email'} type={type} value={editingAuthor[field] || ''} onChange={updateEditingAuthor(field)} className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-normal text-slate-900 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10" /></label>)}
               <label className="text-xs font-semibold text-slate-500 md:col-span-2">Full contributor biography<textarea value={editingAuthor.bio || ''} onChange={updateEditingAuthor('bio')} rows={8} className="mt-2 w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm font-normal leading-6 text-slate-900 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10" /></label>
               <label className="text-xs font-semibold text-slate-500 md:col-span-2">Concise article biography<textarea value={editingAuthor.shortBio || ''} onChange={updateEditingAuthor('shortBio')} rows={3} className="mt-2 w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm font-normal leading-6 text-slate-900 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10" /></label>
             </div>
             <div className="mt-7 flex justify-end gap-3 border-t border-slate-100 pt-5">
-              <button type="button" disabled={savingAuthor} onClick={() => setEditingAuthor(null)} className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 disabled:opacity-40">Cancel</button>
-              <button disabled={savingAuthor} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"><span className="material-symbols-outlined text-[18px]">save</span>{savingAuthor ? 'Saving…' : 'Save profile'}</button>
+              <button type="button" disabled={savingAuthor || uploadingPhoto} onClick={() => setEditingAuthor(null)} className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 disabled:opacity-40">Cancel</button>
+              <button disabled={savingAuthor || uploadingPhoto} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"><span className="material-symbols-outlined text-[18px]">save</span>{uploadingPhoto ? 'Uploading picture…' : savingAuthor ? 'Saving…' : 'Save profile'}</button>
             </div>
           </form>
         </div>

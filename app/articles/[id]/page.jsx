@@ -1,5 +1,5 @@
 import ArticlePage from '../../../src/views/ArticlePage'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { getArticleInteractions, getPublicationBySlug, getRelatedPublications } from '../../../src/lib/data'
 
 function shorten(value = '', limit) {
@@ -10,20 +10,28 @@ function shorten(value = '', limit) {
 }
 
 export async function generateMetadata({ params }) {
-  const article = await getPublicationBySlug((await params).id)
+  const { id } = await params
+  const article = await getPublicationBySlug(id)
   if (!article) return { title: 'Article' }
 
   const title = shorten(article.title, 60)
-  const description = shorten(article.excerpt || article.subtitle || `An article by ${article.author}.`, 120)
+  const description = shorten(article.excerpt || article.subtitle || `Read this article by ${article.author} on The Gospel Network Africa.`, 155)
+  const canonicalPath = `/articles/${article.slug}`
 
   return {
     title,
     description,
+    alternates: { canonical: canonicalPath },
+    authors: [{ name: article.author }],
     openGraph: {
       type: 'article',
+      url: canonicalPath,
+      siteName: 'The Gospel Network Africa',
       title,
       description,
-      images: [{ url: article.image, width: 1200, height: 630, alt: title }],
+      publishedTime: article.publishedAt,
+      authors: [article.author],
+      images: [{ url: article.image, width: 1200, height: 630, alt: `Featured image for ${title}` }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -38,6 +46,7 @@ export default async function Page({ params }) {
   const { id: slug } = await params
   const article = await getPublicationBySlug(slug)
   if (!article) notFound()
+  if (slug !== article.slug) permanentRedirect(`/articles/${article.slug}`)
   const [related, interactions] = await Promise.all([getRelatedPublications(article), getArticleInteractions(article.id)])
   return <ArticlePage article={article} related={related} initialComments={interactions.comments} userId={interactions.userId} initialLiked={interactions.liked} initialBookmarked={interactions.bookmarked} initialLikeCount={interactions.likeCount} />
 }

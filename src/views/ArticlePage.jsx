@@ -82,7 +82,8 @@ export default function ArticlePage({ article, related = [], initialComments = [
   }
 
   const shareArticle = async () => {
-    const shareData = { title: article.title, text: article.subtitle || article.title, url: window.location.href }
+    const summary = article.excerpt || article.subtitle || `An article by ${article.author} on The Gospel Network Africa.`
+    const shareData = { title: article.title, text: `${article.title}\n\n${summary}`, url: window.location.href }
     try {
       if (navigator.share) {
         await navigator.share(shareData)

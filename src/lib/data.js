@@ -184,12 +184,20 @@ export async function getPublications({ admin = false, limit, summary = false } 
 
 export async function getPublicationBySlug(slug) {
   const supabase = createPublicClient()
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('publications')
     .select(PUBLICATION_SELECT)
     .eq('slug', slug)
     .eq('status', 'published')
     .maybeSingle()
+  if (!data && !error) {
+    ;({ data, error } = await supabase
+      .from('publications')
+      .select(PUBLICATION_SELECT)
+      .contains('import_metadata', { previous_slugs: [slug] })
+      .eq('status', 'published')
+      .maybeSingle())
+  }
   if (error) return schemaFallback(error, null)
   if (!data) return null
   const { data: social } = data.author?.id

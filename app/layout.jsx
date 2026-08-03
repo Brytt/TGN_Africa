@@ -1,7 +1,9 @@
 import '../src/index.css'
 
+/* global process */
+
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tgn-africa-xi.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tgnafrica.com'),
   title: {
     default: 'TGN',
     template: '%s | TGN',

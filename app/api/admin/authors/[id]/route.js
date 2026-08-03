@@ -37,6 +37,9 @@ export async function PATCH(request, { params }) {
     if (error) return failure(error)
     return NextResponse.json({ success: true })
   }
+  if (!['Founder', 'Managing Editor', 'Deputy Editor'].includes(actingAuthor?.editorial_role)) {
+    return failure('Only the Founder, Managing Editor, or Deputy Editor can edit contributor profiles.', 403)
+  }
   const { error } = await auth.supabase.from('authors').update(authorRow(body)).eq('id', id)
   if (error) return failure(error)
   const { data: author, error: authorError } = await auth.supabase.from('authors').select('profile_id, editorial_role').eq('id', id).maybeSingle()

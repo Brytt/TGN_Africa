@@ -21,13 +21,15 @@ function Avatar({ author, size = 'large' }) {
     : <span className={`${sizeClass} grid shrink-0 place-items-center rounded-2xl bg-midnight-navy/10 font-bold text-midnight-navy`}>{initials}</span>
 }
 
-export default function AuthorManager({ initialAuthors = [], canManageAccess = false }) {
+export default function AuthorManager({ initialAuthors = [], canManageAccess = false, canEditProfiles = false }) {
   const [authors, setAuthors] = useState(initialAuthors)
   const [query, setQuery] = useState('')
   const [role, setRole] = useState('All roles')
   const [notice, setNotice] = useState('')
   const [activeMenu, setActiveMenu] = useState(null)
   const [previewAuthor, setPreviewAuthor] = useState(null)
+  const [editingAuthor, setEditingAuthor] = useState(null)
+  const [savingAuthor, setSavingAuthor] = useState(false)
   const [birthdayReminderDismissed, setBirthdayReminderDismissed] = useState(false)
 
   useEffect(() => {
@@ -122,6 +124,31 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
     window.setTimeout(() => setNotice(''), 3000)
   }
 
+  const updateEditingAuthor = (field) => (event) => setEditingAuthor((current) => ({ ...current, [field]: event.target.value }))
+
+  const saveAuthor = async (event) => {
+    event.preventDefault()
+    setSavingAuthor(true)
+    try {
+      const response = await fetch(`/api/admin/authors/${editingAuthor.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingAuthor),
+      })
+      const result = await response.json()
+      if (!response.ok) return setNotice(result.error || 'Unable to update contributor profile.')
+      setAuthors((current) => current.map((author) => author.id === editingAuthor.id ? editingAuthor : author))
+      setPreviewAuthor((current) => current?.id === editingAuthor.id ? editingAuthor : current)
+      setEditingAuthor(null)
+      setNotice(`${editingAuthor.name}'s profile was updated.`)
+      window.setTimeout(() => setNotice(''), 3000)
+    } catch {
+      setNotice('Unable to update contributor profile. Please try again.')
+    } finally {
+      setSavingAuthor(false)
+    }
+  }
+
   const removeAuthor = async (author) => {
     if (!window.confirm(`Permanently delete ${author.name}, their author profile and login account? This cannot be undone.`)) return
     const response = await fetch(`/api/admin/authors/${author.id}`, { method: 'DELETE' })
@@ -193,6 +220,7 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
                       {activeMenu === author.id && (
                         <div className="absolute right-0 top-[calc(100%-8px)] z-30 w-56 rounded-2xl border border-slate-100 bg-white p-2 text-left shadow-xl">
                           <button type="button" onClick={() => { setPreviewAuthor(author); setActiveMenu(null) }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[18px]">visibility</span>Preview profile</button>
+                          {canEditProfiles && <button type="button" onClick={() => { setEditingAuthor({ ...author }); setActiveMenu(null) }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50"><span className="material-symbols-outlined text-[18px]">edit</span>Edit profile</button>}
                           {canManageAccess && <><p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Change role</p>
                           {authorRoles.map((authorRole) => (
                             <button key={authorRole} type="button" onClick={() => changeAuthorRole(author, authorRole)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-slate-50 ${author.role === authorRole ? 'font-semibold text-midnight-navy' : 'text-slate-600'}`}>
@@ -274,6 +302,29 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
               </div>
             </div>
           </article>
+        </div>
+      )}
+      {editingAuthor && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-midnight-navy/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="edit-author-title" onMouseDown={(event) => { if (event.target === event.currentTarget && !savingAuthor) setEditingAuthor(null) }}>
+          <form onSubmit={saveAuthor} className="admin-scroll max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl md:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Contributor profile</p><h2 id="edit-author-title" className="mt-2 text-2xl font-semibold text-slate-900">Edit {editingAuthor.name}</h2></div>
+              <button type="button" disabled={savingAuthor} onClick={() => setEditingAuthor(null)} className="grid size-10 place-items-center rounded-full text-slate-400 hover:bg-slate-50 disabled:opacity-40" aria-label="Close profile editor"><span className="material-symbols-outlined">close</span></button>
+            </div>
+            <div className="mt-7 grid gap-5 md:grid-cols-2">
+              {[
+                ['name', 'Full name', 'text'], ['email', 'Email address', 'email'], ['phone', 'Phone number', 'tel'], ['dateOfBirth', 'Date of birth', 'date'],
+                ['qualification', 'Qualification', 'text'], ['church', 'Church', 'text'], ['denomination', 'Denomination', 'text'], ['expertise', 'Area of expertise', 'text'],
+                ['location', 'City', 'text'], ['country', 'Country', 'text'], ['linkedin', 'LinkedIn profile', 'url'], ['instagram', 'Instagram profile', 'url'], ['facebook', 'Facebook profile', 'url'], ['image', 'Profile image URL', 'url'],
+              ].map(([field, label, type]) => <label key={field} className="text-xs font-semibold text-slate-500">{label}<input required={field === 'name' || field === 'email'} type={type} value={editingAuthor[field] || ''} onChange={updateEditingAuthor(field)} className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-normal text-slate-900 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10" /></label>)}
+              <label className="text-xs font-semibold text-slate-500 md:col-span-2">Full contributor biography<textarea value={editingAuthor.bio || ''} onChange={updateEditingAuthor('bio')} rows={8} className="mt-2 w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm font-normal leading-6 text-slate-900 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10" /></label>
+              <label className="text-xs font-semibold text-slate-500 md:col-span-2">Concise article biography<textarea value={editingAuthor.shortBio || ''} onChange={updateEditingAuthor('shortBio')} rows={3} className="mt-2 w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm font-normal leading-6 text-slate-900 outline-none focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10" /></label>
+            </div>
+            <div className="mt-7 flex justify-end gap-3 border-t border-slate-100 pt-5">
+              <button type="button" disabled={savingAuthor} onClick={() => setEditingAuthor(null)} className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 disabled:opacity-40">Cancel</button>
+              <button disabled={savingAuthor} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"><span className="material-symbols-outlined text-[18px]">save</span>{savingAuthor ? 'Saving…' : 'Save profile'}</button>
+            </div>
+          </form>
         </div>
       )}
     </main>

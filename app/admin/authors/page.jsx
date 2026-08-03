@@ -7,5 +7,6 @@ export const metadata = {
 
 export default async function AdminAuthorsPage() {
   const [authors, currentAuthor] = await Promise.all([getAuthors({ admin: true }), getCurrentAuthor()])
-  return <AuthorManager initialAuthors={authors} canManageAccess={currentAuthor?.role === 'Founder'} />
+  const canEditProfiles = ['Founder', 'Managing Editor', 'Deputy Editor'].includes(currentAuthor?.role)
+  return <AuthorManager initialAuthors={authors} canManageAccess={currentAuthor?.role === 'Founder'} canEditProfiles={canEditProfiles} />
 }

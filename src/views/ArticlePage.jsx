@@ -29,6 +29,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
   const [commentText, setCommentText] = useState('')
   const [replyingTo, setReplyingTo] = useState(null)
   const [message, setMessage] = useState('')
+  const [shareMessage, setShareMessage] = useState('')
 
   useEffect(() => {
     fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ publicationId: article.id, eventType: 'page_view' }) }).catch(() => {})
@@ -56,6 +57,48 @@ export default function ArticlePage({ article, related = [], initialComments = [
     const result = await interact('bookmark')
     if (result) setBookmarked(result.active)
   }
+
+  const shareArticle = async () => {
+    const shareData = { title: article.title, text: article.subtitle || article.title, url: window.location.href }
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+        setShareMessage('Article shared.')
+      } else {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(shareData.url)
+        } else {
+          const textArea = document.createElement('textarea')
+          textArea.value = shareData.url
+          textArea.style.position = 'fixed'
+          textArea.style.opacity = '0'
+          document.body.appendChild(textArea)
+          textArea.select()
+          const copied = document.execCommand('copy')
+          textArea.remove()
+          if (!copied) throw new Error('Copy command failed')
+        }
+        setShareMessage('Article link copied.')
+      }
+    } catch (error) {
+      if (error?.name === 'AbortError') return
+      setShareMessage('Unable to share this article. Please copy the page address from your browser.')
+    }
+  }
+
+  const articleActions = (showLabels = false) => (
+    <div className="tgn-article-sans flex flex-wrap items-center gap-2">
+      <button type="button" onClick={toggleLike} aria-pressed={liked} className={`flex h-10 items-center gap-1.5 border px-3 text-xs ${liked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label={liked ? 'Unlike article' : 'Like article'}>
+        <span className="material-symbols-outlined text-lg">{liked ? 'favorite' : 'favorite_border'}</span>{showLabels && <span>{liked ? 'Liked' : 'Like'}</span>}{likeCount}
+      </button>
+      <button type="button" onClick={toggleBookmark} aria-pressed={bookmarked} className={`flex h-10 items-center gap-1.5 border px-3 text-xs ${bookmarked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label={bookmarked ? 'Remove bookmark' : 'Save article'}>
+        <span className="material-symbols-outlined text-lg">{bookmarked ? 'bookmark' : 'bookmark_border'}</span>{showLabels && <span>{bookmarked ? 'Saved' : 'Save'}</span>}
+      </button>
+      <button type="button" onClick={shareArticle} className="flex h-10 items-center gap-1.5 border border-midnight-navy/20 px-3 text-xs text-midnight-navy" aria-label="Share article">
+        <span className="material-symbols-outlined text-lg">share</span>{showLabels && <span>Share</span>}
+      </button>
+    </div>
+  )
 
   const submitComment = async (event) => {
     event.preventDefault()
@@ -100,10 +143,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
                   <a href={article.authorSlug ? `/authors/${article.authorSlug}` : '/authors'} className="text-[15px] font-semibold text-midnight-navy hover:underline">{article.author}</a>
                   <p className="mt-0.5 text-sm text-charcoal-text/55">{fullDate(article.publishedAt)} · {readLength(article.readingTime)}</p>
                 </div>
-                <div className="ml-auto flex items-center gap-2">
-                  <button onClick={toggleLike} className={`flex h-10 items-center gap-1.5 border px-3 text-xs ${liked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label={liked ? 'Unlike article' : 'Like article'}><span className="material-symbols-outlined text-lg">{liked ? 'favorite' : 'favorite_border'}</span>{likeCount}</button>
-                  <button onClick={toggleBookmark} className={`grid size-10 place-items-center border ${bookmarked ? 'border-midnight-navy bg-midnight-navy text-white' : 'border-midnight-navy/20 text-midnight-navy'}`} aria-label="Save article"><span className="material-symbols-outlined text-lg">bookmark</span></button>
-                </div>
+                <div className="ml-auto">{articleActions()}</div>
               </div>
             </div>
           </header>
@@ -116,6 +156,10 @@ export default function ArticlePage({ article, related = [], initialComments = [
 
           <div className="mx-auto mt-12 max-w-[880px] px-5 sm:px-6">
             <ArticleBody body={article.body} bodyFormat={article.bodyFormat} />
+
+            <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-midnight-navy/15 pt-6">
+              {articleActions(true)}
+            </div>
 
             <section className="mt-16 border-y border-midnight-navy/15 py-8">
               <div className="grid gap-6 sm:grid-cols-[96px_1fr]">
@@ -163,6 +207,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
           </div>
         </section>
       </main>
+      {shareMessage && <p className="tgn-article-sans fixed bottom-5 left-1/2 z-50 -translate-x-1/2 bg-midnight-navy px-4 py-3 text-xs text-white shadow-lg" role="status">{shareMessage}</p>}
       <Footer />
     </div>
   )

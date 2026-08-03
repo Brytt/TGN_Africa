@@ -63,6 +63,18 @@ function paginationItems(current, total) {
   return sorted.flatMap((page, index) => index && page - sorted[index - 1] > 1 ? ['…', page] : [page])
 }
 
+function topicHierarchy(topics, topicId, fallback = 'Uncategorized') {
+  for (const mainTopic of topics) {
+    if (mainTopic.id === topicId) return { mainTopic: mainTopic.title, subtopic: '' }
+    for (const subtopic of mainTopic.subtopics || []) {
+      if (subtopic.id === topicId || (subtopic.resources || []).some((resource) => resource.id === topicId)) {
+        return { mainTopic: mainTopic.title, subtopic: subtopic.title }
+      }
+    }
+  }
+  return { mainTopic: '', subtopic: fallback }
+}
+
 function SelectControl({ label, value, onChange, options }) {
   return <AdminSelect label={label} value={value} onChange={onChange} options={options} />
 }
@@ -239,6 +251,9 @@ export default function ContentManager({ initialPublications = [], topics = [], 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, pageCount)
   const visible = filtered.slice((safePage - 1) * pageSize, safePage * pageSize)
+  const previewTopic = previewPublication
+    ? topicHierarchy(topics, previewPublication.topicId, previewPublication.topic)
+    : { mainTopic: '', subtopic: '' }
 
   useEffect(() => {
     setPage(1)
@@ -522,7 +537,13 @@ export default function ContentManager({ initialPublications = [], topics = [], 
 
             <div className="px-5 pb-16 pt-10 sm:px-8 md:pt-14">
               <header className="mx-auto max-w-[900px]">
-                <p className="tgn-article-sans text-[13px] font-semibold uppercase tracking-[0.14em] text-midnight-navy">{previewPublication.topic || 'Uncategorized'}</p>
+                <div className="tgn-article-sans flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] uppercase tracking-[0.12em]">
+                  <span className="text-slate-400">Main topic</span>
+                  <span className="font-semibold text-midnight-navy">{previewTopic.mainTopic || 'Not selected'}</span>
+                  <span className="text-slate-300" aria-hidden="true">/</span>
+                  <span className="text-slate-400">Subtopic</span>
+                  <span className="font-semibold text-midnight-navy">{previewTopic.subtopic || 'Not selected'}</span>
+                </div>
                 <h2 id="publication-preview-title" className="tgn-article-serif mt-5 text-[clamp(2.5rem,6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-midnight-navy">{plainText(previewPublication.title)}</h2>
                 {previewPublication.subtitle && <p className="tgn-article-serif mt-5 max-w-[760px] text-[clamp(1.2rem,2.5vw,1.55rem)] leading-[1.4] text-slate-600">{plainText(previewPublication.subtitle)}</p>}
                 <div className="tgn-article-sans mt-8 flex items-center gap-4">

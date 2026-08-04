@@ -9,6 +9,14 @@ function shorten(value = '', limit) {
   return `${shortened}…`
 }
 
+function shareImageUrl(image) {
+  if (!image) return '/images/publications/fallbacks/scripture-dawn.jpg'
+  if (!image.includes('/storage/v1/object/public/')) return image
+  const transformed = image.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
+  const separator = transformed.includes('?') ? '&' : '?'
+  return `${transformed}${separator}width=480&height=270&resize=cover&quality=60`
+}
+
 export async function generateMetadata({ params }) {
   const { id } = await params
   const article = await getPublicationBySlug(id)
@@ -17,7 +25,7 @@ export async function generateMetadata({ params }) {
   const title = shorten(article.title, 60)
   const description = shorten(article.excerpt || article.subtitle || `Read this article by ${article.author} on The Gospel Network Africa.`, 155)
   const canonicalPath = `/articles/${article.slug}`
-  const socialImage = `/api/og/article/${article.slug}`
+  const socialImage = shareImageUrl(article.image)
 
   return {
     title,
@@ -32,16 +40,13 @@ export async function generateMetadata({ params }) {
       description,
       publishedTime: article.publishedAt,
       authors: [article.author],
-      images: [
-        { url: socialImage, secureUrl: socialImage, width: 1280, height: 720, type: 'image/jpeg', alt: `Featured image for ${title}` },
-        { url: article.image, secureUrl: article.image, alt: `Featured image for ${title}` },
-      ],
+      images: [{ url: socialImage, width: 480, height: 270, alt: `Featured image for ${title}` }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [socialImage, article.image],
+      images: [socialImage],
     },
   }
 }

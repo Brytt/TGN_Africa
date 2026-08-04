@@ -240,7 +240,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
               <h2 id="share-article-title" className="tgn-article-serif text-2xl font-semibold leading-tight text-midnight-navy">{article.title}</h2>
               <p className="tgn-article-sans mt-4 break-all border-t border-midnight-navy/10 pt-4 text-xs text-midnight-navy/55">https://www.tgnafrica.com/articles/{article.slug}</p>
               <div className="mt-5 grid grid-cols-2 gap-2">
-                <a href={`https://wa.me/?text=${encodeURIComponent(`${article.title}\n\nhttps://www.tgnafrica.com/articles/${article.slug}`)}`} target="_blank" rel="noreferrer" className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-[#1f9d55] px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">chat</span>WhatsApp</a>
+                <a href={`https://wa.me/?text=${encodeURIComponent(`https://www.tgnafrica.com/articles/${article.slug}`)}`} target="_blank" rel="noreferrer" className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-[#1f9d55] px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">chat</span>WhatsApp</a>
                 <button type="button" onClick={copyArticleLink} className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-midnight-navy px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">content_copy</span>Copy article</button>
               </div>
             </div>

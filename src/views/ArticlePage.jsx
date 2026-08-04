@@ -84,8 +84,22 @@ export default function ArticlePage({ article, related = [], initialComments = [
 
   const shareArticle = () => setShareOpen(true)
 
+  const openNativeShare = async () => {
+    const url = window.location.href
+    try {
+      if (!navigator.share) {
+        await copyArticleLink()
+        return
+      }
+      await navigator.share({ title: article.title, url })
+      setShareOpen(false)
+    } catch (error) {
+      if (error?.name !== 'AbortError') setShareMessage('Unable to open sharing. Please try Copy Link instead.')
+    }
+  }
+
   const copyArticleLink = async () => {
-    const shareText = `${article.title}\n\n${window.location.href}`
+    const shareText = window.location.href
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(shareText)
@@ -100,7 +114,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
         textArea.remove()
         if (!copied) throw new Error('Copy command failed')
       }
-      setShareMessage('Article details and link copied.')
+      setShareMessage('Article link copied.')
       setShareOpen(false)
     } catch {
       setShareMessage('Unable to copy this article. Please copy the page address from your browser.')
@@ -240,8 +254,8 @@ export default function ArticlePage({ article, related = [], initialComments = [
               <h2 id="share-article-title" className="tgn-article-serif text-2xl font-semibold leading-tight text-midnight-navy">{article.title}</h2>
               <p className="tgn-article-sans mt-4 break-all border-t border-midnight-navy/10 pt-4 text-xs text-midnight-navy/55">https://www.tgnafrica.com/articles/{article.slug}</p>
               <div className="mt-5 grid grid-cols-2 gap-2">
-                <a href={`https://wa.me/?text=${encodeURIComponent(`https://www.tgnafrica.com/articles/${article.slug}`)}`} target="_blank" rel="noreferrer" className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-[#1f9d55] px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">chat</span>WhatsApp</a>
-                <button type="button" onClick={copyArticleLink} className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-midnight-navy px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">content_copy</span>Copy article</button>
+                <button type="button" onClick={openNativeShare} className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 bg-midnight-navy px-4 text-xs font-semibold text-white"><span className="material-symbols-outlined text-[18px]">ios_share</span>Share</button>
+                <button type="button" onClick={copyArticleLink} className="tgn-article-sans inline-flex h-11 items-center justify-center gap-2 border border-midnight-navy/20 px-4 text-xs font-semibold text-midnight-navy"><span className="material-symbols-outlined text-[18px]">link</span>Copy Link</button>
               </div>
             </div>
           </section>

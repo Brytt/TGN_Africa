@@ -32,13 +32,16 @@ export async function generateMetadata({ params }) {
       description,
       publishedTime: article.publishedAt,
       authors: [article.author],
-      images: [{ url: socialImage, secureUrl: socialImage, width: 1280, height: 720, type: 'image/jpeg', alt: `Featured image for ${title}` }],
+      images: [
+        { url: socialImage, secureUrl: socialImage, width: 1280, height: 720, type: 'image/jpeg', alt: `Featured image for ${title}` },
+        { url: article.image, secureUrl: article.image, alt: `Featured image for ${title}` },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [socialImage],
+      images: [socialImage, article.image],
     },
   }
 }

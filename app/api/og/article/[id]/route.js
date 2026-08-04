@@ -15,15 +15,16 @@ export async function GET(request, { params }) {
     if (!source.ok) throw new Error(`Image request failed with ${source.status}`)
 
     const image = await sharp(Buffer.from(await source.arrayBuffer()))
-      .resize(1200, 630, { fit: 'cover', position: 'centre' })
-      .jpeg({ quality: 82, progressive: true, mozjpeg: true })
+      .resize(1280, 720, { fit: 'cover', position: 'centre' })
+      .jpeg({ quality: 78, progressive: true, mozjpeg: true })
       .toBuffer()
 
     return new Response(image, {
       headers: {
         'Content-Type': 'image/jpeg',
         'Content-Length': String(image.length),
-        'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
+        'Content-Disposition': `inline; filename="${article.slug}-share.jpg"`,
+        'Cache-Control': 'public, max-age=1209600, s-maxage=2592000, stale-while-revalidate=900',
       },
     })
   } catch (error) {

@@ -4,8 +4,8 @@ import Navbar from '../../src/components/Navbar'
 import { resourceCollections } from '../../src/data/resources'
 
 export const metadata = {
-  title: 'Creeds, Confessions, and Historic Documents',
-  description: 'Read historic Christian creeds, definitions, catechisms, confessions, and Protestant statements presented by The Gospel Network.',
+  title: 'Reformed and Evangelical Resources',
+  description: 'Read Reformation, Reformed, evangelical, and African theological documents presented by The Gospel Network.',
 }
 
 export default function ResourcesPage() {
@@ -24,7 +24,7 @@ export default function ResourcesPage() {
             </div>
             <div className="border-l-2 border-heritage-gold pl-6">
               <p className="font-display text-xl leading-8 text-midnight-navy/75">
-                A curated library of historic creeds, confessions, catechisms, and declarations gathered to help the saints of Africa understand, confess, defend, and teach biblical truth.
+                A curated library of Reformation, Reformed, evangelical, and African documents gathered to help the saints of Africa understand, confess, defend, and teach biblical truth.
               </p>
               <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-midnight-navy/40">Every historical document remains subordinate to Holy Scripture, our final and infallible authority.</p>
             </div>

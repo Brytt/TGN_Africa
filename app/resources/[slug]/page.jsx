@@ -22,6 +22,7 @@ export async function generateMetadata({ params }) {
 
 function parseDocument(raw) {
   const normalized = raw.replace(/\r\n?/g, '\n').trim()
+  if (/^Editorial Note\s*\n/i.test(normalized)) return { text: normalized, note: '', editorialOnly: true }
   const titleEnd = normalized.indexOf('\n')
   const noteMatch = /\nEditorial Note:?\s*\n/i.exec(normalized)
   const firstPageBreak = normalized.indexOf('\f')
@@ -40,7 +41,7 @@ function parseDocument(raw) {
 
   const cleanedLines = text.replaceAll('\f', '\n').trim().split('\n')
   if (/^[A-Z\s]+$/.test(cleanedLines[0]?.trim() || '')) cleanedLines.shift()
-  return { text: cleanedLines.join('\n').trim(), note }
+  return { text: cleanedLines.join('\n').trim(), note, editorialOnly: false }
 }
 
 function renderInlineEmphasis(line) {
@@ -56,7 +57,7 @@ function TextBlock({ text }) {
   return (
     <div className="resource-document-text">
       {lines.map((line, index) => {
-        if (/^(Of |The Holy Spirit$|The Sacraments$|Baptism$|The Lord's Supper$|Gratitude$|Prayer$|Preface$|Contents$|Summary Statement$|Articles? of |Articles? of$|Exposition$|Chapter\s+\d+|CHAPTER\s+[IVXLCDM]+|THE (FIRST|SECOND|THIRD|FOURTH|FIFTH) MAIN POINT|Article\s+([IVXLCDM]+|\d+)\.?$)/i.test(line)) {
+        if (/^(Editorial Note$|Of |The Holy Spirit$|The Sacraments$|Baptism$|The Lord's Supper$|Gratitude$|Prayer$|Preface$|Contents$|Summary Statement$|Articles? of |Articles? of$|Exposition$|Chapter\s+\d+|CHAPTER\s+[IVXLCDM]+|THE (FIRST|SECOND|THIRD|FOURTH|FIFTH) MAIN POINT|Article\s+([IVXLCDM]+|\d+)\.?$)/i.test(line)) {
           return <h2 key={index}>{line}</h2>
         }
         if (/^Question \d+\./.test(line)) {
@@ -107,16 +108,16 @@ export default async function ResourceDocumentPage({ params }) {
         </header>
 
         {parsed ? (
-          <div className="page-shell grid max-w-6xl gap-12 py-14 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:py-20">
+          <div className={`page-shell grid gap-12 py-14 lg:items-start lg:py-20 ${parsed.editorialOnly ? 'max-w-4xl' : 'max-w-6xl lg:grid-cols-[minmax(0,1fr)_340px]'}`}>
             <article>
               <div className="mb-10 flex items-center gap-4 border-b border-midnight-navy/15 pb-5">
                 <span className="grid size-10 place-items-center rounded-full bg-midnight-navy text-white"><span className="material-symbols-outlined text-[19px]">history_edu</span></span>
-                <div><p className="text-[9px] font-bold uppercase tracking-[0.16em] text-heritage-gold">Historical document</p><p className="mt-1 text-xs text-midnight-navy/45">The creedal or confessional text</p></div>
+                <div><p className="text-[9px] font-bold uppercase tracking-[0.16em] text-heritage-gold">{parsed.editorialOnly ? 'Editorial introduction' : 'Historical document'}</p><p className="mt-1 text-xs text-midnight-navy/45">{parsed.editorialOnly ? 'The supplied TGN editorial note' : 'The creedal or confessional text'}</p></div>
               </div>
               <TextBlock text={parsed.text} />
             </article>
 
-            <aside
+            {!parsed.editorialOnly && <aside
               className="resource-note-scroll border-t-4 border-heritage-gold bg-surface-container-low p-7 lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:overscroll-contain"
               tabIndex={0}
               aria-label="TGN editorial note; scroll to read the complete note"
@@ -131,7 +132,7 @@ export default async function ResourceDocumentPage({ params }) {
                 <p className="mt-6 text-sm leading-7 text-midnight-navy/65">This reader edition reproduces the supplied historical document. No additional TGN editorial commentary has been attached to this edition.</p>
               )}
               <p className="mt-7 border-t border-midnight-navy/10 pt-5 text-[10px] leading-5 text-midnight-navy/40">This editorial material is commentary from The Gospel Network. It is not part of the historical document itself.</p>
-            </aside>
+            </aside>}
           </div>
         ) : (
           <section className="page-shell max-w-4xl py-24 text-center">

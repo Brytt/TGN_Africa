@@ -4,11 +4,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        'midnight-navy': '#30445A',
+        'midnight-navy': '#0D2240',
         'parchment-ivory': '#FFFFFF',
         'heritage-gold': '#C5A059',
-        'charcoal-text': '#3C434A',
-        'slate-gray': '#69727A',
+        'charcoal-text': '#1A1A1A',
+        'slate-gray': '#6B6B6B',
         'surface-container-low': '#F6F3F2',
         'surface-container': '#F0EDED',
         'surface-container-high': '#EAE7E7',

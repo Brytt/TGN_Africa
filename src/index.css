@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color: #3c434a;
+  color: #1a1a1a;
   background: #ffffff;
   font-family: 'EB Garamond', Georgia, serif;
   font-synthesis: none;
@@ -322,7 +322,7 @@ a:focus-visible {
 .article-prose-html h2,
 .article-prose-html h3,
 .article-prose-html h4 {
-  color: #30445a;
+  color: #0d2240;
   font-family: var(--font-sans, sans-serif);
   font-weight: 650;
   line-height: 1.2;
@@ -334,10 +334,10 @@ a:focus-visible {
 .article-prose-html ul { list-style: disc; padding-left: 1.5em; }
 .article-prose-html ol { list-style: decimal; padding-left: 1.5em; }
 .article-prose-html li + li { margin-top: 0.45em; }
-.article-prose-html a { color: #30445a; text-decoration: underline; }
+.article-prose-html a { color: #0d2240; text-decoration: underline; }
 .article-prose-html blockquote {
   border-left: 3px solid #0d2240;
-  color: rgb(48 68 90 / 78%);
+  color: rgb(13 34 64 / 72%);
   font-style: italic;
   padding-left: 1.25em;
 }
@@ -348,7 +348,7 @@ a:focus-visible {
 }
 .article-prose-html figure { margin: 2em 0; }
 .article-prose-html figcaption {
-  color: rgb(48 68 90 / 62%);
+  color: rgb(13 34 64 / 55%);
   font-family: var(--font-sans, sans-serif);
   font-size: 0.72em;
   margin-top: 0.6em;
@@ -364,7 +364,7 @@ a:focus-visible {
 }
 
 .tgn-article-body {
-  color: #3c434a;
+  color: rgb(26 26 26 / 88%);
   font-family: 'Source Serif 4', 'EB Garamond', Georgia, serif;
   font-size: 19px;
   line-height: 1.7;
@@ -388,7 +388,7 @@ a:focus-visible {
 @media (min-width: 768px) {
   .tgn-article-body > p:first-of-type::first-letter {
     float: left;
-    color: #30445a;
+    color: #0d2240;
     font-size: 2.75em;
     font-weight: 600;
     line-height: 0.82;
@@ -397,7 +397,7 @@ a:focus-visible {
 }
 
 .tgn-article-body h2 {
-  color: #30445a;
+  color: #0d2240;
   font-size: 32px;
   font-weight: 600;
   line-height: 1.2;
@@ -405,7 +405,7 @@ a:focus-visible {
 }
 
 .tgn-article-body h3 {
-  color: #30445a;
+  color: #0d2240;
   font-size: 24px;
   font-weight: 600;
   line-height: 1.25;
@@ -414,7 +414,7 @@ a:focus-visible {
 
 .tgn-article-body blockquote {
   border-left: 3px solid #0d2240;
-  color: rgb(48 68 90 / 88%);
+  color: rgb(13 34 64 / 82%);
   font-size: 20px;
   font-weight: 600;
   line-height: 1.65;
@@ -440,14 +440,14 @@ a:focus-visible {
 }
 
 .tgn-article-body a {
-  color: #315f7d;
+  color: #0d4f8b;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
 .tgn-article-body strong {
-  color: #30445a;
+  color: #0d2240;
   font-weight: 700;
 }
 
@@ -464,7 +464,7 @@ a:focus-visible {
 }
 
 .tgn-article-body figcaption {
-  color: rgb(60 67 74 / 72%);
+  color: rgb(26 26 26 / 60%);
   font-family: 'Source Sans 3', 'Inter', ui-sans-serif, system-ui, sans-serif;
   font-size: 13px;
   line-height: 1.5;
@@ -508,7 +508,7 @@ a:focus-visible {
 
 .tgn-article-body th {
   background: rgb(13 34 64 / 6%);
-  color: #30445a;
+  color: #0d2240;
   font-weight: 700;
 }
 
@@ -591,7 +591,7 @@ a:focus-visible {
 }
 
 .resource-document-text {
-  color: #3c434a;
+  color: rgb(13 34 64 / 82%);
   font-family: 'Source Serif 4', 'EB Garamond', Georgia, serif;
   font-size: 19px;
   line-height: 1.82;
@@ -602,7 +602,7 @@ a:focus-visible {
 }
 
 .resource-inline-emphasis {
-  color: #30445a;
+  color: rgb(13 34 64 / 94%);
   font-size: inherit;
   font-weight: 600;
   letter-spacing: inherit;
@@ -610,7 +610,7 @@ a:focus-visible {
 
 .resource-document-text h2 {
   border-bottom: 1px solid rgb(13 34 64 / 14%);
-  color: #30445a;
+  color: #0d2240;
   font-size: 31px;
   font-weight: 600;
   line-height: 1.2;
@@ -629,7 +629,7 @@ a:focus-visible {
 }
 
 .resource-catechism-entry h3 {
-  color: #30445a;
+  color: #0d2240;
   font-size: 21px;
   font-weight: 650;
   line-height: 1.45;
@@ -640,7 +640,7 @@ a:focus-visible {
 }
 
 .resource-catechism-entry strong {
-  color: #30445a;
+  color: #0d2240;
   font-family: 'Source Sans 3', 'Inter', ui-sans-serif, system-ui, sans-serif;
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -650,7 +650,7 @@ a:focus-visible {
 
 .resource-question {
   border-top: 1px solid rgb(13 34 64 / 12%);
-  color: #30445a;
+  color: #0d2240;
   font-size: 21px;
   font-weight: 650;
   line-height: 1.45;
@@ -663,7 +663,7 @@ a:focus-visible {
 }
 
 .resource-answer strong {
-  color: #30445a;
+  color: #0d2240;
   font-family: 'Source Sans 3', 'Inter', ui-sans-serif, system-ui, sans-serif;
   font-size: 11px;
   letter-spacing: 0.08em;

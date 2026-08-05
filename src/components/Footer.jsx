@@ -28,7 +28,7 @@ export default function Footer() {
           <div className="flex shrink-0 flex-col items-center justify-center text-center lg:px-8">
             <div className="relative size-20 overflow-hidden" aria-hidden="true">
               <img
-                src="/images/brand/gye-nyame-footer.jpg"
+                src="/images/brand/gye-nyame-footer-transparent.png"
                 alt=""
                 className="h-full w-full object-contain"
               />

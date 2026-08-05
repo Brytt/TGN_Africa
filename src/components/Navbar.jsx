@@ -164,7 +164,7 @@ export default function Navbar() {
                       setAboutOpen(false)
                       setContributorsOpen(false)
                     }}
-                    className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
+                    className="flex items-center gap-1 text-[17px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={topicsOpen}
                     aria-controls="desktop-topics-menu"
@@ -183,9 +183,9 @@ export default function Navbar() {
                       <div className="mb-7 flex items-end justify-between border-b border-midnight-navy/15 pb-5">
                         <div className="flex items-center gap-4">
                           <span className="grid h-11 w-11 place-items-center rounded-full bg-midnight-navy text-white"><span className="material-symbols-outlined text-[20px]">library_books</span></span>
-                          <div><span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-midnight-navy/45">Topic Bank</span><p className="mt-1 font-display text-2xl text-midnight-navy">Explore theological resources</p></div>
+                          <div><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-midnight-navy/45">Topic Bank</span><p className="mt-1 font-display text-[1.7rem] text-midnight-navy">Explore theological resources</p></div>
                         </div>
-                        <a href="/topics" onClick={() => setTopicsOpen(false)} className="inline-flex items-center gap-2 border-b border-midnight-navy pb-1 text-[10px] font-semibold uppercase tracking-[0.13em] text-midnight-navy">
+                        <a href="/topics" onClick={() => setTopicsOpen(false)} className="inline-flex items-center gap-2 border-b border-midnight-navy pb-1 text-[11px] font-semibold uppercase tracking-[0.13em] text-midnight-navy">
                           View all topics →
                         </a>
                       </div>
@@ -194,7 +194,7 @@ export default function Navbar() {
                         {topicGroups.map((group, groupIndex) => (
                           <section key={group.label} className="min-h-[245px] border-l border-midnight-navy/10 px-6 first:border-l-0 first:pl-0 last:pr-0">
                             <div className="mb-4 flex items-start justify-between gap-3">
-                              <p className="text-[10px] font-semibold uppercase leading-4 tracking-[0.13em] text-midnight-navy">{group.label}</p>
+                              <p className="text-[11px] font-semibold uppercase leading-4 tracking-[0.13em] text-midnight-navy">{group.label}</p>
                               <span className="text-[10px] tabular-nums text-midnight-navy/25">{String(groupIndex + 1).padStart(2, '0')}</span>
                             </div>
                             <div className="mb-4 h-0.5 w-8 bg-heritage-gold" />
@@ -204,7 +204,7 @@ export default function Navbar() {
                                   <a
                                     href={`/topics/${topicSlugByTitle[topic]}`}
                                     onClick={() => setTopicsOpen(false)}
-                                    className="group/topic flex items-start justify-between gap-3 text-[13px] leading-[1.35] text-midnight-navy/65 transition-colors hover:text-midnight-navy"
+                                    className="group/topic flex items-start justify-between gap-3 text-[15px] leading-[1.4] text-midnight-navy/65 transition-colors hover:text-midnight-navy"
                                   >
                                     <span>{topic}</span><span className="shrink-0 text-heritage-gold opacity-0 transition-opacity group-hover/topic:opacity-100">→</span>
                                   </a>
@@ -240,7 +240,7 @@ export default function Navbar() {
                       setAboutOpen(false)
                       setSearchOpen(false)
                     }}
-                    className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
+                    className="flex items-center gap-1 text-[17px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={contributorsOpen}
                   >
@@ -249,14 +249,14 @@ export default function Navbar() {
                   </button>
                   <div id="desktop-contributors-menu" className={`absolute left-1/2 top-[calc(100%+25px)] w-[390px] -translate-x-1/2 border border-midnight-navy/10 bg-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${contributorsOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
                     <div className="flex items-end justify-between border-b border-midnight-navy/10 px-3 pb-3 pt-2">
-                      <div><p className="text-[9px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">Editorial team</p><p className="mt-1 font-display text-xl text-midnight-navy">Meet our contributors</p></div>
-                      <a href="/authors" onClick={() => setContributorsOpen(false)} className="text-[9px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all →</a>
+                      <div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">Editorial team</p><p className="mt-1 font-display text-2xl text-midnight-navy">Meet our contributors</p></div>
+                      <a href="/authors" onClick={() => setContributorsOpen(false)} className="text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all →</a>
                     </div>
                     <div className="grid grid-cols-2 gap-1 pt-2">
                       {contributorItems.map((contributor) => (
                         <a key={contributor.href} href={contributor.href} onClick={() => setContributorsOpen(false)} className="group px-3 py-3 hover:bg-[#f3f6fb]">
-                          <span className="block text-[13px] font-semibold text-midnight-navy">{contributor.name}</span>
-                          <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.1em] text-midnight-navy/40 group-hover:text-heritage-gold">{contributor.role}</span>
+                          <span className="block text-[15px] font-semibold text-midnight-navy">{contributor.name}</span>
+                          <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.1em] text-midnight-navy/40 group-hover:text-heritage-gold">{contributor.role}</span>
                         </a>
                       ))}
                     </div>
@@ -285,7 +285,7 @@ export default function Navbar() {
                       setContributorsOpen(false)
                       setSearchOpen(false)
                     }}
-                    className="flex items-center gap-1 text-[15px] font-medium text-black transition-opacity hover:opacity-55"
+                    className="flex items-center gap-1 text-[17px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={aboutOpen}
                     aria-controls="desktop-about-menu"
@@ -300,7 +300,7 @@ export default function Navbar() {
                     }`}
                   >
                     <div className="border-b border-midnight-navy/10 px-3 pb-3 pt-2">
-                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">About The Gospel Network</p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">About The Gospel Network</p>
                     </div>
                     <div className="grid gap-1 pt-2">
                       {aboutItems.map((aboutItem) => (
@@ -312,8 +312,8 @@ export default function Navbar() {
                         >
                           <GyeNyameIcon />
                           <span>
-                            <span className="block text-[13px] font-semibold text-midnight-navy">{aboutItem.label}</span>
-                            <span className="mt-0.5 block text-[10px] leading-4 text-midnight-navy/45">{aboutItem.description}</span>
+                            <span className="block text-[15px] font-semibold text-midnight-navy">{aboutItem.label}</span>
+                            <span className="mt-0.5 block text-[12px] leading-5 text-midnight-navy/45">{aboutItem.description}</span>
                           </span>
                           <span className="text-midnight-navy/25 transition-transform group-hover:translate-x-1 group-hover:text-heritage-gold">→</span>
                         </a>
@@ -325,7 +325,7 @@ export default function Navbar() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-[15px] font-medium text-black transition-opacity hover:opacity-55"
+                  className="text-[17px] font-medium text-black transition-opacity hover:opacity-55"
                 >
                   {item.label}
                 </a>
@@ -352,7 +352,7 @@ export default function Navbar() {
               setAboutOpen(false)
               setContributorsOpen(false)
             }}
-            className="flex items-center gap-2 text-[12px] font-medium text-black transition-opacity hover:opacity-55"
+            className="flex items-center gap-2 text-[14px] font-medium text-black transition-opacity hover:opacity-55"
             aria-label={searchOpen ? 'Close search' : 'Open search'}
             aria-expanded={searchOpen}
           >
@@ -361,7 +361,7 @@ export default function Navbar() {
           </button>
           <a
             href="/subscribe"
-            className="tgn-nav-subscribe hidden border border-midnight-navy bg-midnight-navy px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-white hover:text-midnight-navy xl:inline-flex"
+            className="tgn-nav-subscribe hidden border border-midnight-navy bg-midnight-navy px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-white hover:text-midnight-navy xl:inline-flex"
           >
             Subscribe
           </a>

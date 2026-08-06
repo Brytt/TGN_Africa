@@ -46,7 +46,7 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
       <main className="font-sans">
         <section className="py-12 md:py-16">
           <div className="page-shell">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-black/40">TGN Africa library</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-black/40">The Gospel Network library</p>
             <h1 className="tgn-display-heading mt-3 text-4xl text-black md:text-5xl">Publications</h1>
             {featured.length > 0 && <div className="mt-10 grid gap-5 lg:grid-cols-[minmax(0,2.15fr)_minmax(280px,0.85fr)]">
               {featured.map((article, index) => <a key={article.id} href={`/articles/${article.slug}`} className={`group overflow-hidden border border-black/10 bg-white ${index === 0 && article.image ? 'grid md:grid-cols-[1.2fr_0.8fr]' : 'flex flex-col'}`}>

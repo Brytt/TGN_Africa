@@ -13,6 +13,30 @@ const menuOptions = [
   ['topics', 'Topics'],
 ]
 
+const emptyGuestAuthor = {
+  name: '',
+  email: '',
+  phone: '',
+  dateOfBirth: '',
+  role: 'Guest Author',
+  isStaff: false,
+  menuAccess: [],
+  qualification: '',
+  church: '',
+  denomination: '',
+  location: '',
+  country: '',
+  bio: '',
+  shortBio: '',
+  expertise: '',
+  linkedin: '',
+  instagram: '',
+  facebook: '',
+  image: '',
+  status: 'Active',
+  publications: 0,
+}
+
 function Avatar({ author, size = 'large' }) {
   const initials = author.name.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()
   const sizeClass = size === 'large' ? 'h-12 w-12 text-sm' : 'h-10 w-10 text-xs'
@@ -128,6 +152,11 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
 
   const updateEditingAuthor = (field) => (event) => setEditingAuthor((current) => ({ ...current, [field]: event.target.value }))
 
+  const beginGuestAuthor = () => {
+    setEditingAuthor({ ...emptyGuestAuthor, isNew: true })
+    setNotice('')
+  }
+
   const uploadAuthorPhoto = async (event) => {
     const file = event.target.files?.[0]
     event.target.value = ''
@@ -155,17 +184,22 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
     if (uploadingPhoto) return
     setSavingAuthor(true)
     try {
-      const response = await fetch(`/api/admin/authors/${editingAuthor.id}`, {
-        method: 'PATCH',
+      const isNew = editingAuthor.isNew
+      const response = await fetch(isNew ? '/api/admin/authors' : `/api/admin/authors/${editingAuthor.id}`, {
+        method: isNew ? 'POST' : 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingAuthor),
+        body: JSON.stringify({ ...editingAuthor, role: isNew ? 'Guest Author' : editingAuthor.role }),
       })
       const result = await response.json()
-      if (!response.ok) return setNotice(result.error || 'Unable to update contributor profile.')
-      setAuthors((current) => current.map((author) => author.id === editingAuthor.id ? editingAuthor : author))
-      setPreviewAuthor((current) => current?.id === editingAuthor.id ? editingAuthor : current)
+      if (!response.ok) return setNotice(result.error || `Unable to ${isNew ? 'add' : 'update'} contributor profile.`)
+      const savedAuthor = { ...editingAuthor, id: result.data?.id || editingAuthor.id }
+      delete savedAuthor.isNew
+      setAuthors((current) => isNew
+        ? [...current, savedAuthor].sort((left, right) => left.name.localeCompare(right.name))
+        : current.map((author) => author.id === editingAuthor.id ? savedAuthor : author))
+      setPreviewAuthor((current) => current?.id === editingAuthor.id ? savedAuthor : current)
       setEditingAuthor(null)
-      setNotice(`${editingAuthor.name}'s profile was updated.`)
+      setNotice(isNew ? `${editingAuthor.name} was added as a guest contributor.` : `${editingAuthor.name}'s profile was updated.`)
       window.setTimeout(() => setNotice(''), 3000)
     } catch {
       setNotice('Unable to update contributor profile. Please try again.')
@@ -188,10 +222,13 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
     <main className="admin-scroll min-h-0 flex-1 overflow-y-auto px-6 pb-10 pt-6 xl:px-10">
       <div className="mx-auto max-w-[1180px]">
         <div className="mb-6">
-          <div>
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Contributor network</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Staff and guest authors</h2>
             <p className="mt-1 text-sm text-slate-500">The six staff members are clearly identified. Everyone else remains a Guest Author and is not counted as staff.</p>
+            </div>
+            {canEditProfiles && <button type="button" onClick={beginGuestAuthor} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-midnight-navy px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-midnight-navy/90"><span className="material-symbols-outlined text-[19px]">person_add</span>Add guest contributor</button>}
           </div>
         </div>
 
@@ -333,7 +370,7 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-midnight-navy/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="edit-author-title" onMouseDown={(event) => { if (event.target === event.currentTarget && !savingAuthor) setEditingAuthor(null) }}>
           <form onSubmit={saveAuthor} className="admin-scroll max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl md:p-8">
             <div className="flex items-start justify-between gap-4">
-              <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Contributor profile</p><h2 id="edit-author-title" className="mt-2 text-2xl font-semibold text-slate-900">Edit {editingAuthor.name}</h2></div>
+              <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">{editingAuthor.isNew ? 'Guest contributor' : 'Contributor profile'}</p><h2 id="edit-author-title" className="mt-2 text-2xl font-semibold text-slate-900">{editingAuthor.isNew ? 'Add guest contributor' : `Edit ${editingAuthor.name}`}</h2>{editingAuthor.isNew && <p className="mt-1 text-sm text-slate-500">This creates an author profile without staff or login access.</p>}</div>
               <button type="button" disabled={savingAuthor || uploadingPhoto} onClick={() => setEditingAuthor(null)} className="grid size-10 place-items-center rounded-full text-slate-400 hover:bg-slate-50 disabled:opacity-40" aria-label="Close profile editor"><span className="material-symbols-outlined">close</span></button>
             </div>
             <div className="mt-7 flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 sm:flex-row sm:items-center">
@@ -357,7 +394,7 @@ export default function AuthorManager({ initialAuthors = [], canManageAccess = f
             </div>
             <div className="mt-7 flex justify-end gap-3 border-t border-slate-100 pt-5">
               <button type="button" disabled={savingAuthor || uploadingPhoto} onClick={() => setEditingAuthor(null)} className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 disabled:opacity-40">Cancel</button>
-              <button disabled={savingAuthor || uploadingPhoto} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"><span className="material-symbols-outlined text-[18px]">save</span>{uploadingPhoto ? 'Uploading picture…' : savingAuthor ? 'Saving…' : 'Save profile'}</button>
+              <button disabled={savingAuthor || uploadingPhoto} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"><span className="material-symbols-outlined text-[18px]">save</span>{uploadingPhoto ? 'Uploading picture…' : savingAuthor ? 'Saving…' : editingAuthor.isNew ? 'Add contributor' : 'Save profile'}</button>
             </div>
           </form>
         </div>

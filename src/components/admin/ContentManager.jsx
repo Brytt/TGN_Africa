@@ -170,7 +170,7 @@ function PublicationEditor({ draft, onChange, onCancel, onSave, editing = false,
                   aria-describedby="author-help"
                 >
                   <option value="">Select a contributor</option>
-                  {authors.map((author) => <option key={author.id} value={author.id}>{author.name}</option>)}
+                  {authors.filter((author) => author.status === 'Active').map((author) => <option key={author.id} value={author.id}>{author.name}{author.role === 'Guest Author' ? ' — Guest' : ''}</option>)}
                 </select>
                 <span className="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">expand_more</span>
               </div>

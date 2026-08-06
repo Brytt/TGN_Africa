@@ -33,6 +33,8 @@ export async function POST(request) {
   const auth = await requireStaff(['admin', 'editor'])
   if (auth.error) return auth.error
   const body = await request.json()
+  if (!body.name?.trim()) return failure('Add the guest contributor’s full name.')
+  if (!body.email?.trim()) return failure('Add the guest contributor’s email address.')
   const { data, error } = await auth.supabase.from('authors').insert(authorRow(body)).select('id').single()
   if (error) return failure(error)
   return NextResponse.json({ data }, { status: 201 })

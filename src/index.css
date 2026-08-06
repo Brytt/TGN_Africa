@@ -909,3 +909,41 @@ a:focus-visible {
     transform: translateY(0);
   }
 }
+
+/* Final public dark-mode contrast guard. Keep this after document typography so
+   historical resources and imported article HTML cannot restore dark ink. */
+html[data-theme='dark'] body:not(:has(.admin-app)) .article-prose-html,
+html[data-theme='dark'] body:not(:has(.admin-app)) .article-prose-html h2,
+html[data-theme='dark'] body:not(:has(.admin-app)) .article-prose-html h3,
+html[data-theme='dark'] body:not(:has(.admin-app)) .article-prose-html h4,
+html[data-theme='dark'] body:not(:has(.admin-app)) .article-prose-html a,
+html[data-theme='dark'] body:not(:has(.admin-app)) .article-prose-html blockquote,
+html[data-theme='dark'] body:not(:has(.admin-app)) .article-prose-html figcaption,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body h2,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body h3,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body strong,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body blockquote,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body th,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body a,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body > p:first-of-type::first-letter,
+html[data-theme='dark'] body:not(:has(.admin-app)) .resource-document-text,
+html[data-theme='dark'] body:not(:has(.admin-app)) .resource-document-text h2,
+html[data-theme='dark'] body:not(:has(.admin-app)) .resource-inline-emphasis,
+html[data-theme='dark'] body:not(:has(.admin-app)) .resource-catechism-entry h3,
+html[data-theme='dark'] body:not(:has(.admin-app)) .resource-catechism-entry strong,
+html[data-theme='dark'] body:not(:has(.admin-app)) .resource-question,
+html[data-theme='dark'] body:not(:has(.admin-app)) .resource-answer strong {
+  color: #edf2f8 !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body figcaption {
+  color: rgb(237 242 248 / 78%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-slate-'],
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-gray-'],
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-zinc-'],
+html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-neutral-'] {
+  color: #edf2f8 !important;
+}

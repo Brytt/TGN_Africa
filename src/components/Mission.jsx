@@ -16,7 +16,7 @@ export default function Mission() {
           </div>
           <div className="mx-auto mb-5 h-px w-10 bg-midnight-navy" />
           <span className="eyebrow mb-5 block italic tracking-[0.32em] text-charcoal-text/40">Our Mission</span>
-          <h2 className="font-display text-[clamp(1.8rem,3.4vw,3.1rem)] italic leading-[1.12] text-midnight-navy">
+          <h2 className="tgn-display-heading text-[clamp(1.8rem,3.4vw,3.1rem)] italic leading-[1.12] text-midnight-navy">
             <span className="block">Declaring the Whole Counsel of God</span>
             <strong className="mt-1 block whitespace-nowrap italic text-midnight-navy">for the Saints of Africa</strong>
           </h2>

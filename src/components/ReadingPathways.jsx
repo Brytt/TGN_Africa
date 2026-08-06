@@ -7,7 +7,7 @@ export default function ReadingPathways() {
       <div className="page-shell max-w-6xl">
         <Reveal className="mb-14 text-center">
           <span className="eyebrow text-heritage-gold">Step by Step</span>
-          <h2 className="mt-2 font-display text-5xl italic text-midnight-navy md:text-6xl">Reading Pathways</h2>
+          <h2 className="tgn-display-heading mt-2 text-5xl italic text-midnight-navy md:text-6xl">Reading Pathways</h2>
         </Reveal>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch">

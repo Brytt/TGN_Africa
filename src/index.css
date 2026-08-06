@@ -57,7 +57,37 @@ html[data-theme='dark'] body:not(:has(.admin-app)) .text-midnight-navy {
 html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-black/'],
 html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-charcoal-text/'],
 html[data-theme='dark'] body:not(:has(.admin-app)) [class*='text-midnight-navy/'] {
-  color: rgb(220 229 240 / 68%) !important;
+  color: rgb(220 229 240 / 78%) !important;
+}
+
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-black/40'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-midnight-navy/40'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-charcoal-text/40'] {
+  color: rgb(13 34 64 / 60%) !important;
+}
+
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-black/45'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-midnight-navy/45'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-charcoal-text/45'] {
+  color: rgb(13 34 64 / 64%) !important;
+}
+
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-black/50'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-midnight-navy/50'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-charcoal-text/50'] {
+  color: rgb(13 34 64 / 68%) !important;
+}
+
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-black/55'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-midnight-navy/55'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-charcoal-text/55'] {
+  color: rgb(13 34 64 / 72%) !important;
+}
+
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-black/60'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-midnight-navy/60'],
+html:not([data-theme='dark']) body:not(:has(.admin-app)) [class*='text-charcoal-text/60'] {
+  color: rgb(13 34 64 / 74%) !important;
 }
 
 html[data-theme='dark'] body:not(:has(.admin-app)) [class*='border-black/'],
@@ -137,6 +167,31 @@ html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-body blockquote 
   color: #edf2f8;
 }
 
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-article-subtitle {
+  color: #d7e0eb !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-supporting-copy {
+  color: rgb(220 229 240 / 82%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-statement-copy {
+  color: rgb(232 237 245 / 86%) !important;
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-about-card:hover,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-about-card:focus-visible {
+  background-color: #15283c !important;
+  border-color: rgb(197 160 89 / 42%) !important;
+  box-shadow: inset 4px 0 0 rgb(197 160 89 / 78%);
+}
+
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-about-card:hover .tgn-about-card-icon,
+html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-about-card:focus-visible .tgn-about-card-icon {
+  background-color: #c5a059 !important;
+  color: #071321 !important;
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
@@ -164,6 +219,24 @@ a:focus-visible {
 
   .editorial-button {
     @apply inline-flex items-center justify-center border border-transparent px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-500;
+  }
+
+  .tgn-display-heading {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  .tgn-supporting-copy {
+    color: rgb(13 34 64 / 74%);
+  }
+
+  .tgn-statement-copy {
+    color: rgb(13 34 64 / 76%);
+  }
+
+  .tgn-article-subtitle {
+    color: rgb(26 26 26 / 76%);
   }
 
   .material-symbols-outlined {

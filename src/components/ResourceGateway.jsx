@@ -61,8 +61,8 @@ export default function ResourceGateway({ publications = [] }) {
         <Reveal className="mb-10 grid gap-7 border-t border-midnight-navy/20 pt-6 md:grid-cols-[1fr_auto] md:items-end">
           <div className="max-w-2xl">
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-heritage-gold">From the Archives</span>
-            <h2 className="mt-3 font-display text-4xl font-semibold tracking-[-0.025em] text-midnight-navy md:text-6xl">Worth reading again.</h2>
-            <p className="mt-4 max-w-xl text-base leading-7 text-charcoal-text/60">
+            <h2 className="tgn-display-heading mt-3 text-4xl text-midnight-navy md:text-6xl">Worth reading again.</h2>
+            <p className="tgn-supporting-copy mt-4 max-w-xl text-[17px] leading-7">
               Rediscover faithful articles from across the years, selected afresh each time you visit.
             </p>
           </div>

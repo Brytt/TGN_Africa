@@ -36,7 +36,7 @@ export default function Hero() {
           <span className="mt-2 text-[clamp(2rem,4.4vw,3.9rem)] font-medium tracking-[0.17em]">Gospel</span>
           <span className="mt-2 translate-x-[0.24em] text-[clamp(0.8rem,1.5vw,1.2rem)] font-semibold tracking-[0.48em]">Network</span>
         </div>
-        <h1 key={statement} className="hero-quote-transition mx-auto max-w-6xl font-display text-[clamp(2.8rem,6.5vw,6rem)] font-medium leading-[0.98] tracking-[-0.035em] text-midnight-navy">
+        <h1 key={statement} className="hero-quote-transition tgn-display-heading mx-auto max-w-6xl text-[clamp(2.8rem,6.5vw,6rem)] leading-[0.98] text-midnight-navy">
           {heroStatements[statement]}
         </h1>
         <p className="hero-reveal hero-delay-1 mt-6 font-body text-[10px] font-semibold uppercase tracking-[0.2em] text-midnight-navy/40">Acts 20:26–27</p>

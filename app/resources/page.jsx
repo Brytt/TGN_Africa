@@ -18,12 +18,12 @@ export default function ResourcesPage() {
           <div className="page-shell grid gap-10 py-16 lg:grid-cols-[1fr_340px] lg:items-end lg:py-24">
             <div>
               <p className="eyebrow text-heritage-gold">Resources</p>
-              <h1 className="mt-6 max-w-4xl font-display text-[clamp(3.5rem,7vw,6.8rem)] leading-[0.9] tracking-[-0.035em] text-midnight-navy">
+              <h1 className="tgn-display-heading mt-6 max-w-4xl text-[clamp(3.5rem,7vw,6.8rem)] leading-[0.9] text-midnight-navy">
                 The faith once for all delivered to the saints.
               </h1>
             </div>
             <div className="border-l-2 border-heritage-gold pl-6">
-              <p className="font-display text-xl leading-8 text-midnight-navy/75">
+              <p className="tgn-supporting-copy font-display text-[21px] leading-8">
                 A curated library of ancient creeds and definitions alongside Reformation, Reformed, evangelical, and African documents gathered to help the saints of Africa understand, confess, defend, and teach biblical truth.
               </p>
               <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-midnight-navy/40">Every historical document remains subordinate to Holy Scripture, our final and infallible authority.</p>
@@ -37,9 +37,9 @@ export default function ResourcesPage() {
               <div className="grid gap-7 border-b border-midnight-navy/15 pb-9 lg:grid-cols-[1fr_420px] lg:items-end">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-heritage-gold">{collection.eyebrow}</p>
-                  <h2 className="mt-4 font-display text-4xl leading-tight text-midnight-navy md:text-5xl">{collection.title}</h2>
+                  <h2 className="tgn-display-heading mt-4 text-4xl leading-tight text-midnight-navy md:text-5xl">{collection.title}</h2>
                 </div>
-                <p className="text-sm leading-7 text-midnight-navy/55">{collection.description}</p>
+                <p className="tgn-supporting-copy text-[15px] leading-7">{collection.description}</p>
               </div>
 
               <div className="mt-8 divide-y divide-midnight-navy/10 border-y border-midnight-navy/10">

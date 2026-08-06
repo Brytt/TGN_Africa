@@ -7,7 +7,7 @@ export default function Categories() {
       <div className="page-shell">
         <Reveal className="mb-16 text-center md:mb-24">
           <span className="eyebrow mb-5 block tracking-[0.36em] text-heritage-gold">Topic Taxonomy</span>
-          <h2 className="font-display text-5xl leading-[0.95] text-midnight-navy md:text-7xl">
+          <h2 className="tgn-display-heading text-5xl leading-[0.95] text-midnight-navy md:text-7xl">
             Questions the
             <br />
             Gospel Answers

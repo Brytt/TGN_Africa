@@ -102,7 +102,7 @@ export default async function ResourceDocumentPage({ params }) {
               <span className="bg-midnight-navy px-3 py-1.5 text-white">{document.type}</span>
               <span className="text-midnight-navy/40">{document.collection}</span>
             </div>
-            <h1 className="mt-6 max-w-4xl font-display text-[clamp(3rem,7vw,6rem)] leading-[0.94] tracking-[-0.03em] text-midnight-navy">{document.title}</h1>
+            <h1 className="tgn-display-heading mt-6 max-w-4xl text-[clamp(3rem,7vw,6rem)] leading-[0.94] text-midnight-navy">{document.title}</h1>
             <p className="mt-6 font-display text-2xl text-heritage-gold">{document.date}</p>
           </div>
         </header>

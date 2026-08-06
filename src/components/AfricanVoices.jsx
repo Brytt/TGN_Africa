@@ -18,9 +18,9 @@ export default function AfricanVoices({ contributors = [] }) {
         <Reveal className="mb-9 flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
             <span className="eyebrow text-midnight-navy">Contributor network</span>
-            <h2 className="mt-3 font-display text-4xl leading-none text-midnight-navy md:text-5xl">Leading voices.<br /><em>One gospel.</em></h2>
+            <h2 className="tgn-display-heading mt-3 text-4xl leading-none text-midnight-navy md:text-5xl">Leading voices.<br /><em>One gospel.</em></h2>
           </div>
-          <div className="max-w-md md:text-right"><p className="text-sm leading-6 text-charcoal-text/60">Authors are ranked by editorial responsibility and published contribution.</p><a href="/about#contributors" className="mt-3 inline-flex text-[10px] font-semibold uppercase tracking-[0.14em] text-midnight-navy">Meet the network →</a></div>
+          <div className="max-w-md md:text-right"><p className="tgn-supporting-copy text-[15px] leading-6">Authors are ranked by editorial responsibility and published contribution.</p><a href="/about#contributors" className="mt-3 inline-flex text-[10px] font-semibold uppercase tracking-[0.14em] text-midnight-navy">Meet the network →</a></div>
         </Reveal>
       </div>
       {carousel.length > 0 && <div className="contributor-marquee flex w-max gap-4 px-5 motion-reduce:flex-wrap motion-reduce:justify-center">

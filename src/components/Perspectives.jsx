@@ -8,7 +8,7 @@ export default function Perspectives() {
         <Reveal className="mb-16 flex flex-col justify-between gap-8 md:mb-24 md:flex-row md:items-end">
           <div>
             <span className="eyebrow mb-4 block text-heritage-gold">Editorial Curation</span>
-            <h2 className="font-display text-5xl leading-none text-midnight-navy md:text-7xl">Current Perspectives</h2>
+            <h2 className="tgn-display-heading text-5xl leading-none text-midnight-navy md:text-7xl">Current Perspectives</h2>
           </div>
           <a href="#latest" className="eyebrow w-fit border-b border-midnight-navy/20 pb-2 transition-colors hover:border-heritage-gold hover:text-heritage-gold">
             Browse all articles
@@ -30,10 +30,10 @@ export default function Perspectives() {
                 </span>
               </div>
               <span className="eyebrow mb-5 block text-heritage-gold">Theology & Society</span>
-              <h3 className="max-w-2xl font-display text-4xl leading-tight text-midnight-navy transition-colors group-hover:text-heritage-gold md:text-6xl">
+              <h3 className="tgn-display-heading max-w-2xl text-4xl leading-tight text-midnight-navy transition-colors group-hover:text-heritage-gold md:text-6xl">
                 The Christian Home as a Means of God’s Grace
               </h3>
-              <p className="mt-6 max-w-2xl text-lg font-light leading-8 text-charcoal-text/60">
+              <p className="tgn-supporting-copy mt-6 max-w-2xl text-[19px] leading-8">
                 Exploring how the daily rhythms of a faithful household become a primary conduit for the sanctifying work of the Holy Spirit within our modern African context.
               </p>
               <span className="mt-8 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.2em]">

@@ -14,10 +14,10 @@ export default async function ManagingEditorMessagePage() {
       {editor && (
         <div className="mb-10 grid items-center gap-6 border-y border-midnight-navy/10 py-6 sm:grid-cols-[110px_1fr]">
           {editor.image ? <img src={editor.image} alt={editor.name} className="aspect-square w-[110px] object-cover" /> : <div className="grid size-[110px] place-items-center bg-midnight-navy text-2xl text-white">ME</div>}
-          <div><p className="text-[9px] font-bold uppercase tracking-[0.17em] text-heritage-gold">Managing Editor</p><h2 className="mt-2 font-display text-3xl text-midnight-navy">{editor.name}</h2></div>
+          <div><p className="text-[9px] font-bold uppercase tracking-[0.17em] text-heritage-gold">Managing Editor</p><h2 className="tgn-display-heading mt-2 text-3xl text-midnight-navy">{editor.name}</h2></div>
         </div>
       )}
-      <article className="space-y-7 text-base leading-8 text-midnight-navy/70 md:text-lg md:leading-9">
+      <article className="tgn-statement-copy space-y-7 text-[17px] leading-8 md:text-[19px] md:leading-9">
         <p>When I joined The Gospel Network (TGN) in 2023, I entered a work that had already been faithfully sustained for many years. It is a privilege now to assume greater editorial responsibility and to help strengthen the platform for the work ahead.</p>
         <p>I am grateful for the founding vision of Kwesi Sena and for the faithful labors of the brothers who have written, edited, and sustained this ministry over the years.</p>
         <p>I write as a Christian, a South African, a husband, a father, and an elder in my local church. My Reformed Baptist convictions shape how I approach Scripture, theology, the local church, and editorial ministry.</p>
@@ -32,7 +32,7 @@ export default async function ManagingEditorMessagePage() {
         <p>My hope is that, one faithful article at a time, TGN will help believers across Africa know the Scriptures more clearly, discern error more carefully, love Christ more deeply, and stand more firmly in the faith once for all delivered to the saints.</p>
         <p className="font-display text-2xl italic text-midnight-navy">May we not shrink from declaring the whole counsel of God.</p>
         <footer className="border-t border-midnight-navy/15 pt-7">
-          <p className="font-display text-2xl text-midnight-navy">Michael Franco Smit</p>
+          <p className="tgn-display-heading text-2xl text-midnight-navy">Michael Franco Smit</p>
           <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-heritage-gold">Managing Editor</p>
         </footer>
       </article>

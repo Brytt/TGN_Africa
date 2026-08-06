@@ -26,12 +26,46 @@ const LEGACY_TGN_HOSTS = new Set([
   'www.thegospelnetworkgh.com',
 ])
 
+const LEGACY_TGN_DOWNLOADS = new Map([
+  [
+    'thegospelnetwork.files.wordpress.com/2017/04/christ-our-sin-bearer_the-lamb-of-god.pdf',
+    '/downloads/christ-our-sin-bearer-the-lamb-of-god.pdf',
+  ],
+  [
+    'thegospelnetwork.wordpress.com/wp-content/uploads/2017/04/christ-our-sin-bearer_the-lamb-of-god.pdf',
+    '/downloads/christ-our-sin-bearer-the-lamb-of-god.pdf',
+  ],
+  [
+    'thegospelnetwork.files.wordpress.com/2016/12/a-child-is-born_a-son-is-given1.pdf',
+    '/downloads/a-child-is-born-a-son-is-given.pdf',
+  ],
+  [
+    'thegospelnetwork.wordpress.com/wp-content/uploads/2016/12/a-child-is-born_a-son-is-given1.pdf',
+    '/downloads/a-child-is-born-a-son-is-given.pdf',
+  ],
+  [
+    'tgnghana.org/wp-content/uploads/2026/04/christ_our_sin_bearer.pdf',
+    '/downloads/christ-our-sin-bearer.pdf',
+  ],
+])
+
+function cleanImportedHref(value) {
+  return String(value)
+    .trim()
+    .replace(/^\\?&quot;/i, '')
+    .replace(/\\?&quot;$/i, '')
+    .replace(/^http:\/\/\\?&quot;(?=https?:\/\/)/i, '')
+}
+
 export function normalizeArticleHref(value = '') {
-  const href = String(value).trim()
+  const href = cleanImportedHref(value)
   if (!/^https?:\/\//i.test(href)) return href
 
   try {
     const url = new URL(href)
+    const downloadKey = `${url.hostname.toLowerCase()}${url.pathname.toLowerCase()}`
+    const localDownload = LEGACY_TGN_DOWNLOADS.get(downloadKey)
+    if (localDownload) return localDownload
     if (!LEGACY_TGN_HOSTS.has(url.hostname.toLowerCase())) return href
 
     const segments = url.pathname.split('/').filter(Boolean)

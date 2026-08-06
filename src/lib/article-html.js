@@ -17,6 +17,41 @@ export const ARTICLE_ATTRIBUTES = {
   h3: ['style'],
 }
 
+const LEGACY_TGN_HOSTS = new Set([
+  'tgnghana.org',
+  'www.tgnghana.org',
+  'thegospelnetwork.wordpress.com',
+  'www.thegospelnetwork.wordpress.com',
+  'thegospelnetworkgh.com',
+  'www.thegospelnetworkgh.com',
+])
+
+export function normalizeArticleHref(value = '') {
+  const href = String(value).trim()
+  if (!/^https?:\/\//i.test(href)) return href
+
+  try {
+    const url = new URL(href)
+    if (!LEGACY_TGN_HOSTS.has(url.hostname.toLowerCase())) return href
+
+    const segments = url.pathname.split('/').filter(Boolean)
+    if (!segments.length) return '/articles'
+    if (segments[0].toLowerCase() === 'wp-content') return href
+
+    const legacySlug = [...segments].reverse().map((segment) => decodeURIComponent(segment)).find((segment) => segment !== ']') || ''
+    const slug = legacySlug
+      .replace(/[^a-z0-9-]+/gi, '-')
+      .replace(/^-+|-+$/g, '')
+      .toLowerCase()
+
+    if (!slug) return '/articles'
+    if (slug === 'about') return '/about'
+    return `/articles/${slug}`
+  } catch {
+    return href
+  }
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -53,11 +88,16 @@ export function sanitizeArticleHtml(value = '', { plain = false } = {}) {
       b: 'strong',
       i: 'em',
       a: (tagName, attribs) => {
-        const external = /^https?:\/\//i.test(attribs.href || '')
+        const href = normalizeArticleHref(attribs.href || '')
+        const external = /^https?:\/\//i.test(href)
+        const safeAttribs = { ...attribs }
+        delete safeAttribs.target
+        delete safeAttribs.rel
         return {
           tagName,
           attribs: {
-            ...attribs,
+            ...safeAttribs,
+            href,
             ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}),
           },
         }

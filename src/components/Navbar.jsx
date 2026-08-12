@@ -9,6 +9,14 @@ const topicSlugByTitle = Object.fromEntries(topicGroups.flatMap((group) => group
   title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
 ]))
 
+function GyeNyameIcon() {
+  return (
+    <span className="relative block size-9 shrink-0 overflow-hidden rounded-full bg-white" aria-hidden="true">
+      <img src="/images/brand/gye-nyame-reference.jpeg" alt="" className="absolute left-1/2 top-1/2 w-[81px] max-w-none -translate-x-1/2 -translate-y-[40.5%]" />
+    </span>
+  )
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [topicsOpen, setTopicsOpen] = useState(false)
@@ -304,7 +312,7 @@ export default function Navbar() {
                           onClick={() => setAboutOpen(false)}
                           className="group grid grid-cols-[38px_1fr_auto] items-center gap-3 px-3 py-3 transition-colors hover:bg-[#f3f6fb]"
                         >
-                          <span className="grid size-9 place-items-center rounded-full bg-midnight-navy/5 text-midnight-navy" aria-hidden="true"><span className="material-symbols-outlined text-[18px]">{aboutItem.icon}</span></span>
+                          <GyeNyameIcon />
                           <span>
                             <span className="block text-[15px] font-semibold text-midnight-navy">{aboutItem.label}</span>
                             <span className="mt-0.5 block text-[12px] leading-5 text-midnight-navy/45">{aboutItem.description}</span>
@@ -527,7 +535,7 @@ export default function Navbar() {
                           }}
                           className="flex items-center gap-3 border-b border-midnight-navy/10 py-3 last:border-0"
                         >
-                          <span className="grid size-9 place-items-center rounded-full bg-midnight-navy/5 text-midnight-navy" aria-hidden="true"><span className="material-symbols-outlined text-[18px]">{aboutItem.icon}</span></span>
+                          <GyeNyameIcon />
                           <span className="min-w-0 flex-1 text-[13px] font-medium text-midnight-navy">{aboutItem.label}</span>
                           <span className="text-midnight-navy/35">→</span>
                         </a>

@@ -1,43 +1,54 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import AnnouncementBar from '../../src/components/AnnouncementBar'
 import Footer from '../../src/components/Footer'
 import Navbar from '../../src/components/Navbar'
 
 export default function SubscribePage() {
-  const [notice, setNotice] = useState('')
   const [subscribed, setSubscribed] = useState(false)
   const [welcomeEmailSent, setWelcomeEmailSent] = useState(false)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const successRef = useRef(null)
+
+  useEffect(() => {
+    if (!subscribed) return undefined
+    successRef.current?.focus()
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setSubscribed(false)
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [subscribed])
 
   const subscribe = async (event) => {
     event.preventDefault()
+    const formElement = event.currentTarget
     setSaving(true)
     setError('')
-    const form = new FormData(event.currentTarget)
-    const response = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        displayName: form.get('displayName'),
-        email: form.get('email'),
-        company: form.get('company'),
-        consent: form.get('consent') === 'on',
-      }),
-    })
-    const result = await response.json()
-    setSaving(false)
-    if (!response.ok) return setError(result.error || 'Unable to subscribe.')
-    event.currentTarget.reset()
-    setNotice('You are subscribed. New publications will be delivered to your inbox.')
-    setWelcomeEmailSent(Boolean(result.welcomeEmailSent))
-    setSubscribed(true)
-  }
-
-  const closeSuccess = () => {
-    window.location.href = '/'
+    const form = new FormData(formElement)
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          displayName: form.get('displayName'),
+          email: form.get('email'),
+          company: form.get('company'),
+          consent: form.get('consent') === 'on',
+        }),
+      })
+      const result = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(result.error || 'Unable to subscribe right now. Please try again.')
+      formElement.reset()
+      setWelcomeEmailSent(Boolean(result.welcomeEmailSent))
+      setSubscribed(true)
+    } catch (requestError) {
+      setError(requestError.message || 'Unable to subscribe right now. Please check your connection and try again.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return <div className="min-h-screen bg-[#f7f7f6] text-black">
@@ -47,8 +58,7 @@ export default function SubscribePage() {
         <div className="bg-midnight-navy p-8 text-center text-white md:p-12"><img src="/images/brand/the-gospel-network-footer-logo-transparent.png" alt="The Gospel Network" className="mx-auto h-28 w-28 object-contain" /><p className="mt-10 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/45">Our mission</p><h1 className="mt-4 font-display text-4xl not-italic leading-tight md:text-5xl">Declaring the Whole Counsel of God <span className="not-italic">for the Saints of Africa.</span></h1><p className="mx-auto mt-6 max-w-md text-sm leading-7 text-white/60">The Gospel Network exists to declare the whole counsel of God for the saints of Africa by publishing faithful, clear, and pastorally useful biblical resources that proclaim Christ, strengthen local churches, confront error, and equip believers for maturity and faithful living.</p></div>
         <form onSubmit={subscribe} className="p-8 text-center not-italic md:p-12">
           <h2 className="text-2xl font-semibold">Subscribe for free</h2><p className="mt-2 text-sm leading-6 text-black/50">No paid plan. Unsubscribe at any time from any email.</p>
-          {notice && <p className="mt-6 bg-emerald-50 p-4 text-sm text-emerald-700">{notice}</p>}
-          {error && <p className="mt-6 bg-red-50 p-4 text-sm text-red-600">{error}</p>}
+          {error && <p role="alert" aria-live="assertive" className="mt-6 border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">{error}</p>}
           <label className="mt-7 block text-xs font-semibold text-black/55">Name <span className="font-normal text-black/30">(optional)</span><input name="displayName" className="mt-2 w-full border border-black/15 px-4 py-3 text-left text-sm not-italic outline-none focus:border-midnight-navy" /></label>
           <label className="mt-5 block text-xs font-semibold text-black/55">Email address<input required type="email" name="email" className="mt-2 w-full border border-black/15 px-4 py-3 text-left text-sm not-italic outline-none focus:border-midnight-navy" /></label>
           <label className="hidden">Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
@@ -58,21 +68,20 @@ export default function SubscribePage() {
       </div>
     </main>
     {subscribed && (
-      <div className="fixed inset-0 z-[100] grid place-items-center bg-midnight-navy/75 p-5 backdrop-blur-md" role="dialog" aria-modal="true" aria-labelledby="subscription-success-title">
-        <div className="relative w-full max-w-xl overflow-hidden border-t-4 border-heritage-gold bg-white px-7 py-10 text-center shadow-[0_30px_100px_rgba(0,0,0,0.35)] md:px-12 md:py-14">
-          <div className="mx-auto grid size-20 place-items-center rounded-full bg-emerald-50 text-emerald-600">
-            <span className="material-symbols-outlined text-[44px]">mark_email_read</span>
+      <div className="fixed inset-0 z-[100] grid place-items-center bg-midnight-navy/70 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="subscription-success-title">
+        <div ref={successRef} tabIndex={-1} className="relative w-full max-w-md overflow-hidden border-t-4 border-heritage-gold bg-white px-7 py-8 text-center shadow-[0_30px_100px_rgba(0,0,0,0.4)] outline-none md:px-9 md:py-9">
+          <button type="button" onClick={() => setSubscribed(false)} className="absolute right-4 top-4 grid size-9 place-items-center rounded-full text-midnight-navy/45 transition-colors hover:bg-midnight-navy/5 hover:text-midnight-navy" aria-label="Close subscription confirmation"><span className="material-symbols-outlined text-[20px]">close</span></button>
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+            <span className="material-symbols-outlined text-[36px]">mark_email_read</span>
           </div>
           <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.2em] text-heritage-gold">Subscription confirmed</p>
-          <h2 id="subscription-success-title" className="mt-3 font-display text-4xl leading-tight text-midnight-navy md:text-5xl">Thank you for subscribing.</h2>
-          <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-black/60">
+          <h2 id="subscription-success-title" className="mt-3 font-display text-3xl leading-tight text-midnight-navy md:text-4xl">Thank you for subscribing.</h2>
+          <p aria-live="polite" className="mx-auto mt-4 max-w-sm text-sm leading-6 text-black/60">
             {welcomeEmailSent
               ? 'Welcome to The Gospel Network. A confirmation email is on its way to your inbox. We’ll write to you whenever a new publication is released.'
               : 'Welcome to The Gospel Network. Your address has been saved and you’ll receive an email whenever a new publication is released.'}
           </p>
-          <button type="button" onClick={closeSuccess} className="mt-8 inline-flex items-center gap-3 bg-midnight-navy px-7 py-4 text-xs font-bold uppercase tracking-[0.12em] text-white">
-            Close and return home <span aria-hidden="true">→</span>
-          </button>
+          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row"><button type="button" onClick={() => setSubscribed(false)} className="border border-midnight-navy/20 px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] text-midnight-navy">Close</button><a href="/articles" className="bg-midnight-navy px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white">Explore articles →</a></div>
         </div>
       </div>
     )}

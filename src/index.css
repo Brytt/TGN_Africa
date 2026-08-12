@@ -134,6 +134,7 @@ html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-contributors-menu,
 html[data-theme='dark'] body:not(:has(.admin-app)) #desktop-about-menu,
 html[data-theme='dark'] body:not(:has(.admin-app)) .tgn-navbar > [class*='absolute'][class*='top-full'] {
   background-color: #0b1a2a !important;
+  background-image: none !important;
   border-color: rgb(226 234 244 / 16%) !important;
 }
 

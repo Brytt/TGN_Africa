@@ -9,14 +9,6 @@ const topicSlugByTitle = Object.fromEntries(topicGroups.flatMap((group) => group
   title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
 ]))
 
-function GyeNyameIcon() {
-  return (
-    <span className="relative block size-9 shrink-0 overflow-hidden rounded-full bg-white" aria-hidden="true">
-      <img src="/images/brand/gye-nyame-reference.jpeg" alt="" className="absolute left-1/2 top-1/2 w-[81px] max-w-none -translate-x-1/2 -translate-y-[40.5%]" />
-    </span>
-  )
-}
-
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [topicsOpen, setTopicsOpen] = useState(false)
@@ -243,13 +235,14 @@ export default function Navbar() {
                     className="flex items-center gap-1 text-[17px] font-medium text-black transition-opacity hover:opacity-55"
                     aria-haspopup="true"
                     aria-expanded={contributorsOpen}
+                    aria-controls="desktop-contributors-menu"
                   >
                     Contributors
                     <span className={`material-symbols-outlined text-[17px] transition-transform ${contributorsOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                   </button>
-                  <div id="desktop-contributors-menu" className={`absolute left-1/2 top-[calc(100%+25px)] w-[390px] -translate-x-1/2 border border-midnight-navy/10 bg-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${contributorsOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
-                    <div className="flex items-end justify-between border-b border-midnight-navy/10 px-3 pb-3 pt-2">
-                      <div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">Editorial team</p><p className="mt-1 font-display text-2xl text-midnight-navy">Meet our contributors</p></div>
+                  <div id="desktop-contributors-menu" className={`absolute left-1/2 top-[calc(100%+25px)] w-[420px] -translate-x-1/2 border border-midnight-navy/15 bg-gradient-to-b from-[#f3f6fb] to-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${contributorsOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
+                    <div className="flex items-end justify-between border-b border-midnight-navy/15 px-3 pb-4 pt-3">
+                      <div className="flex items-center gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-midnight-navy text-white"><span className="material-symbols-outlined text-[19px]">groups</span></span><div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-midnight-navy/45">Editorial team</p><p className="mt-1 font-display text-[1.7rem] leading-none text-midnight-navy">Meet our contributors</p></div></div>
                       <a href="/authors" onClick={() => setContributorsOpen(false)} className="text-[10px] font-bold uppercase tracking-[0.12em] text-midnight-navy">View all →</a>
                     </div>
                     <div className="grid grid-cols-2 gap-1 pt-2">
@@ -295,12 +288,13 @@ export default function Navbar() {
                   </button>
                   <div
                     id="desktop-about-menu"
-                    className={`absolute right-0 top-[calc(100%+25px)] w-[430px] border border-midnight-navy/10 bg-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${
+                    className={`absolute right-0 top-[calc(100%+25px)] w-[460px] border border-midnight-navy/15 bg-gradient-to-b from-[#f3f6fb] to-white p-3 shadow-[0_24px_60px_rgba(13,34,64,0.16)] transition-all duration-200 ${
                       aboutOpen ? 'pointer-events-auto visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'
                     }`}
                   >
-                    <div className="border-b border-midnight-navy/10 px-3 pb-3 pt-2">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-midnight-navy/40">About The Gospel Network</p>
+                    <div className="flex items-center gap-3 border-b border-midnight-navy/15 px-3 pb-4 pt-3">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-midnight-navy text-white"><span className="material-symbols-outlined text-[19px]">info</span></span>
+                      <div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-midnight-navy/45">About The Gospel Network</p><p className="mt-1 font-display text-[1.7rem] leading-none text-midnight-navy">Discover our story</p></div>
                     </div>
                     <div className="grid gap-1 pt-2">
                       {aboutItems.map((aboutItem) => (
@@ -310,7 +304,7 @@ export default function Navbar() {
                           onClick={() => setAboutOpen(false)}
                           className="group grid grid-cols-[38px_1fr_auto] items-center gap-3 px-3 py-3 transition-colors hover:bg-[#f3f6fb]"
                         >
-                          <GyeNyameIcon />
+                          <span className="grid size-9 place-items-center rounded-full bg-midnight-navy/5 text-midnight-navy" aria-hidden="true"><span className="material-symbols-outlined text-[18px]">{aboutItem.icon}</span></span>
                           <span>
                             <span className="block text-[15px] font-semibold text-midnight-navy">{aboutItem.label}</span>
                             <span className="mt-0.5 block text-[12px] leading-5 text-midnight-navy/45">{aboutItem.description}</span>
@@ -533,7 +527,7 @@ export default function Navbar() {
                           }}
                           className="flex items-center gap-3 border-b border-midnight-navy/10 py-3 last:border-0"
                         >
-                          <GyeNyameIcon />
+                          <span className="grid size-9 place-items-center rounded-full bg-midnight-navy/5 text-midnight-navy" aria-hidden="true"><span className="material-symbols-outlined text-[18px]">{aboutItem.icon}</span></span>
                           <span className="min-w-0 flex-1 text-[13px] font-medium text-midnight-navy">{aboutItem.label}</span>
                           <span className="text-midnight-navy/35">→</span>
                         </a>

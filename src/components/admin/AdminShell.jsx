@@ -199,13 +199,13 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
       <div className="admin-shell flex min-h-screen w-full flex-col overflow-hidden bg-[#f5f5f7] xl:h-screen xl:min-h-0 xl:flex-row">
         <aside className={`admin-sidebar relative z-40 flex shrink-0 items-center justify-between border-b border-black/[0.06] bg-white/78 px-5 py-4 shadow-[1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[260px]' : 'xl:w-[82px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
-            <div className="relative flex items-center justify-center xl:min-h-[116px] xl:w-full">
+            <div className="relative flex items-center justify-center xl:min-h-[104px] xl:w-full">
               <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="group flex min-w-0 flex-col items-center justify-center rounded-2xl text-center" aria-label="The Gospel Network admin home">
-                <span className={`relative shrink-0 overflow-hidden transition-transform duration-300 group-hover:scale-[1.025] ${sidebarExpanded ? 'h-[82px] w-[82px]' : 'h-[58px] w-[58px]'}`}>
+                <span className={`relative shrink-0 overflow-hidden transition-transform duration-300 group-hover:scale-[1.025] ${sidebarExpanded ? 'h-[76px] w-[76px]' : 'h-[58px] w-[58px]'}`}>
                   <img
-                    src="/images/brand/tgn-africa-logo-transparent.png"
+                    src="/images/brand/the-gospel-network-logo.jpeg"
                     alt="The Gospel Network"
-                    className="absolute inset-0 h-full w-full object-contain"
+                    className="absolute inset-0 h-full w-full scale-[1.1] object-contain mix-blend-multiply"
                   />
                 </span>
                 {sidebarExpanded && <span className="hidden min-w-0 xl:block"><span className="mt-1 block truncate text-[12px] font-semibold uppercase tracking-[0.12em] text-midnight-navy">The Gospel Network</span></span>}
@@ -222,7 +222,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
               )}
             </div>
 
-            <nav className={`${mobileOpen ? 'flex' : 'hidden'} absolute left-4 right-4 top-[72px] flex-col gap-5 rounded-[22px] border border-black/[0.06] bg-white/95 p-3 shadow-[0_20px_60px_rgba(15,23,42,0.14)] backdrop-blur-2xl sm:static sm:flex sm:flex-row sm:gap-1 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none xl:mt-7 xl:flex-col xl:gap-5`} aria-label="Admin navigation">
+            <nav className={`${mobileOpen ? 'flex' : 'hidden'} absolute left-4 right-4 top-[72px] flex-col gap-5 rounded-[22px] border border-black/[0.06] bg-white/95 p-3 shadow-[0_20px_60px_rgba(15,23,42,0.14)] backdrop-blur-2xl sm:static sm:flex sm:flex-row sm:gap-1 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none xl:mt-2 xl:flex-col xl:gap-5`} aria-label="Admin navigation">
               {navGroups.map((group) => (
                 <div key={group.label} className="flex flex-col gap-1 sm:flex-row xl:flex-col">
                   {sidebarExpanded && <p className="hidden px-3 pb-1 text-[9px] font-semibold uppercase tracking-[0.13em] text-slate-400 xl:block">{group.label}</p>}

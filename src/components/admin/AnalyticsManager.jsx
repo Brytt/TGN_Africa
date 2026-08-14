@@ -222,18 +222,21 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
   return (
     <main className="admin-scroll min-h-0 flex-1 overflow-y-auto bg-slate-50/50 px-6 pb-10 pt-6 xl:px-10">
       <div className="admin-report mx-auto max-w-[1180px]">
-        <div className="admin-report-toolbar mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div className="admin-report-toolbar mb-6 overflow-visible rounded-[32px] bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-7 py-8 text-white shadow-[0_24px_70px_rgba(13,34,64,0.20)] md:px-10 md:py-10">
+          <div className="flex flex-col justify-between gap-7 md:flex-row md:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-midnight-navy">Performance report</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Analytics</h2>
-            <p className="mt-1 text-sm text-slate-500">Measure editorial output and reader engagement.</p>
+            <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white/50"><span className="size-1.5 rounded-full bg-heritage-gold" />Editorial intelligence</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">Your publishing pulse.</h2>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-white/55">A clear view of editorial output, reader attention, audience growth, and the work that needs your attention.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="admin-dashboard-controls flex flex-wrap items-center gap-3">
             <AdminSelect label="Reporting period" value={period} onChange={setPeriod} options={[...Object.keys(periodConfig), 'Custom range']} />
             {period === 'Custom range' && <DateRangePicker from={customFrom} to={customTo} onFromChange={setCustomFrom} onToChange={setCustomTo} />}
-            <button type="button" onClick={exportCsv} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-midnight-navy/20 hover:text-midnight-navy"><span className="material-symbols-outlined text-[18px]">download</span>Export CSV</button>
-            <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-4 py-2.5 text-sm font-medium text-white hover:opacity-90"><span className="material-symbols-outlined text-[18px]">print</span>Print report</button>
+            <button type="button" onClick={exportCsv} className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-medium text-white backdrop-blur hover:bg-white/15"><span className="material-symbols-outlined text-[18px]">download</span>Export</button>
+            <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-midnight-navy shadow-lg hover:bg-white/90"><span className="material-symbols-outlined text-[18px]">print</span>Print report</button>
           </div>
+          </div>
+          <div className="mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-6"><div><strong className="block text-2xl font-semibold">{report.views.toLocaleString()}</strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Total views</span></div><div><strong className="block text-2xl font-semibold">{report.published}</strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Published</span></div><div><strong className="block text-2xl font-semibold">{activeSubscribers.length.toLocaleString()}</strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Subscribers</span></div></div>
         </div>
 
         <header className="admin-print-header mb-6 hidden border-b-2 border-midnight-navy pb-5">

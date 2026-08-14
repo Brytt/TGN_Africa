@@ -292,6 +292,7 @@ a:focus-visible {
 
 .admin-app {
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background: #f5f5f7;
 }
 
 .admin-app *,
@@ -303,6 +304,62 @@ a:focus-visible {
 .admin-scroll {
   scrollbar-color: #cbd5e1 transparent;
   scrollbar-width: thin;
+  background-color: #f5f5f7 !important;
+}
+
+.admin-app main.admin-scroll > div,
+.admin-app main.admin-scroll > form {
+  animation: admin-surface-enter 360ms ease-out both;
+}
+
+.admin-app main.admin-scroll article.bg-white,
+.admin-app main.admin-scroll section.bg-white {
+  border-color: rgb(15 23 42 / 6%) !important;
+  box-shadow: 0 8px 30px rgb(15 23 42 / 4.5%);
+}
+
+.admin-app main.admin-scroll input:not([type='checkbox']):not([type='radio']),
+.admin-app main.admin-scroll textarea,
+.admin-app main.admin-scroll select {
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.admin-app main.admin-scroll input:not([type='checkbox']):not([type='radio']):focus,
+.admin-app main.admin-scroll textarea:focus,
+.admin-app main.admin-scroll select:focus {
+  border-color: rgb(13 34 64 / 28%) !important;
+  box-shadow: 0 0 0 4px rgb(13 34 64 / 7%);
+}
+
+.admin-app main.admin-scroll table thead {
+  background: rgb(248 250 252 / 72%);
+}
+
+.admin-app main.admin-scroll table tbody tr {
+  transition: background-color 160ms ease;
+}
+
+.admin-app main.admin-scroll table tbody tr:hover {
+  background: rgb(248 250 252 / 72%);
+}
+
+.admin-dashboard-controls [role='listbox'] {
+  color: #334155;
+}
+
+.admin-dashboard-controls button[aria-haspopup='listbox'] {
+  border-color: rgb(255 255 255 / 16%);
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+}
+
+.admin-dashboard-controls button[aria-haspopup='listbox'] .material-symbols-outlined {
+  color: rgb(255 255 255 / 60%);
+}
+
+@keyframes admin-surface-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .admin-scroll::-webkit-scrollbar {

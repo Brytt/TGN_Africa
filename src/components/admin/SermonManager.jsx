@@ -122,6 +122,8 @@ export default function SermonManager({ initialSermons = [] }) {
 
   const save = async (event) => {
     event.preventDefault()
+    const requestedStatus = event.nativeEvent?.submitter?.value || draft.status
+    const submission = { ...draft, status: requestedStatus }
     const validationError = validateMedia()
     if (validationError) {
       setSaveError(validationError)
@@ -135,7 +137,7 @@ export default function SermonManager({ initialSermons = [] }) {
     let result
     try {
       response = await fetch(editingId ? `/api/admin/sermons/${editingId}` : '/api/admin/sermons', {
-        method: editingId ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(draft), signal: controller.signal,
+        method: editingId ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submission), signal: controller.signal,
       })
       result = await response.json()
     } catch (error) {
@@ -147,10 +149,10 @@ export default function SermonManager({ initialSermons = [] }) {
     }
     setSaving(false)
     if (!response.ok) return setSaveError(result.error || 'Unable to save sermon')
-    const saved = { ...draft, id: editingId || result.data.id, date: new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(new Date(`${draft.preachedAt}T12:00:00`)) }
+    const saved = { ...submission, id: editingId || result.data.id, date: new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(new Date(`${draft.preachedAt}T12:00:00`)) }
     setSermons((current) => editingId ? current.map((item) => item.id === editingId ? saved : item) : [saved, ...current])
     setEditorOpen(false)
-    setNotice(editingId ? 'Sermon updated.' : 'Sermon created.')
+    setNotice(requestedStatus === 'Published' ? 'Sermon published and is now visible on the website.' : requestedStatus === 'Archived' ? 'Sermon archived and removed from the public website.' : 'Sermon saved as a draft.')
   }
 
   const remove = async (sermon) => {
@@ -163,7 +165,7 @@ export default function SermonManager({ initialSermons = [] }) {
   }
 
   if (editorOpen) return <main className="admin-scroll min-h-0 flex-1 overflow-y-auto bg-slate-50/50 p-6 xl:p-10"><form onSubmit={save} className="mx-auto max-w-[1050px]">
-    <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><button type="button" onClick={() => setEditorOpen(false)} className="mb-3 text-xs font-semibold text-slate-500">← Back to sermons</button><h1 className="text-2xl font-semibold text-midnight-navy">{editingId ? 'Edit sermon' : 'Add sermon'}</h1><p className="mt-1 text-sm text-slate-500">Publish audio, video, or both from one sermon record.</p></div><button disabled={saving || Boolean(uploadingMedia)} className="rounded-full bg-midnight-navy px-6 py-3 text-sm font-semibold text-white disabled:opacity-50">{uploadingMedia ? 'Media uploading…' : saving ? 'Saving…' : 'Save sermon'}</button></div>
+    <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><button type="button" onClick={() => setEditorOpen(false)} className="mb-3 text-xs font-semibold text-slate-500">← Back to sermons</button><h1 className="text-2xl font-semibold text-midnight-navy">{editingId ? 'Edit sermon' : 'Add sermon'}</h1><p className="mt-1 text-sm text-slate-500">Publish audio, video, or both from one sermon record.</p></div><div className="flex flex-wrap gap-3">{editingId && <button type="submit" value="Archived" disabled={saving || Boolean(uploadingMedia)} className="rounded-full border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500 disabled:opacity-50">Archive</button>}<button type="submit" value="Draft" disabled={saving || Boolean(uploadingMedia)} className="rounded-full border border-midnight-navy px-5 py-3 text-sm font-semibold text-midnight-navy disabled:opacity-50">{saving ? 'Saving…' : 'Save draft'}</button><button type="submit" value="Published" disabled={saving || Boolean(uploadingMedia)} className="inline-flex items-center gap-2 rounded-full bg-midnight-navy px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"><span className="material-symbols-outlined text-[18px]">publish</span>{uploadingMedia ? 'Media uploading…' : saving ? 'Publishing…' : draft.status === 'Published' ? 'Update published sermon' : 'Publish sermon'}</button></div></div>
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_330px]">
       <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
         <label className="block text-xs font-semibold text-slate-500">TITLE<input required value={draft.title} onChange={update('title')} className={`${fieldClass} text-lg font-semibold`} placeholder="The title of the sermon" /></label>
@@ -176,7 +178,7 @@ export default function SermonManager({ initialSermons = [] }) {
           {(draft.mediaType === 'video' || draft.mediaType === 'both') && <div className="mt-6"><p className="text-xs font-semibold text-slate-500">VIDEO SOURCE</p><div className="mt-2 grid grid-cols-2 rounded-xl bg-slate-200/70 p-1">{[['file', 'Upload file'], ['link', 'Use link']].map(([value, label]) => <button key={value} type="button" onClick={() => chooseMediaSource('video', value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${mediaSources.video === value ? 'bg-white text-midnight-navy shadow-sm' : 'text-slate-500'}`}>{label}</button>)}</div>{mediaSources.video === 'file' ? <><label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-midnight-navy/25 bg-white px-4 py-5 text-sm font-semibold text-midnight-navy hover:bg-midnight-navy/5"><span className="material-symbols-outlined">video_file</span>{uploadingMedia === 'video' ? 'Uploading video…' : draft.videoUrl ? 'Replace video file' : 'Choose video file'}<input type="file" accept="video/mp4,video/webm,video/quicktime,.m4v" onChange={uploadMedia('video')} disabled={Boolean(uploadingMedia)} className="hidden" /></label><p className="mt-2 text-[11px] text-slate-400">Maximum file size: 50 MB. YouTube or Vimeo is recommended for larger video.</p>{draft.videoUrl && <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-emerald-50 px-3 py-2"><span className="truncate text-xs text-emerald-700">Video file ready</span><button type="button" onClick={() => setDraft((current) => ({ ...current, videoUrl: '' }))} className="text-xs font-semibold text-red-600">Remove</button></div>}</> : <label className="mt-3 block text-xs font-semibold text-slate-500">VIDEO URL<input required type="url" value={draft.videoUrl} onChange={update('videoUrl')} className={fieldClass} placeholder="YouTube, Vimeo, or direct video URL" /></label>}</div>}
         </div>
       </section>
-      <aside className="space-y-5"><section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm"><h2 className="font-semibold text-midnight-navy">Publishing</h2><div className="mt-4"><AdminSelect label="Sermon status" variant="field" value={draft.status} onChange={(status) => setDraft((current) => ({ ...current, status }))} options={['Draft', 'Published', 'Archived']} /></div><label className="mt-4 block text-xs font-semibold text-slate-500">CUSTOM LINK <span className="font-normal text-slate-400">(optional)</span><input value={draft.slug} onChange={update('slug')} className={fieldClass} placeholder="generated-from-title" /></label></section>
+      <aside className="space-y-5"><section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm"><h2 className="font-semibold text-midnight-navy">Publishing</h2><div className="mt-4 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3"><span className="text-xs font-semibold text-slate-500">Current status</span><span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-midnight-navy shadow-sm">{draft.status}</span></div><label className="mt-4 block text-xs font-semibold text-slate-500">CUSTOM LINK <span className="font-normal text-slate-400">(optional)</span><input value={draft.slug} onChange={update('slug')} className={fieldClass} placeholder="generated-from-title" /></label></section>
         {(draft.mediaType === 'video' || draft.mediaType === 'both') && <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm"><h2 className="font-semibold text-midnight-navy">Video cover image</h2><p className="mt-1 text-xs leading-5 text-slate-400">Shown before the video is played and in sermon listings.</p><label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold"><span className="material-symbols-outlined text-[17px]">upload</span>{uploading ? 'Uploading…' : 'Upload cover'}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadCover} disabled={uploading} className="hidden" /></label><div className="mt-4 aspect-[16/10] overflow-hidden rounded-2xl bg-slate-50">{draft.image ? <img src={draft.image} alt="" className="h-full w-full object-cover" /> : <span className="grid h-full place-items-center text-xs text-slate-400">No video cover selected</span>}</div></section>}
       </aside>
     </div>

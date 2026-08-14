@@ -6,6 +6,7 @@ import { createClient } from '../../lib/supabase/browser'
 
 const emptySermon = { title: '', slug: '', speaker: '', scripture: '', series: '', description: '', mediaType: 'audio', audioUrl: '', videoUrl: '', image: '', status: 'Draft', preachedAt: new Date().toISOString().slice(0, 10), publishedAt: '' }
 const fieldClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-midnight-navy/40 focus:ring-2 focus:ring-midnight-navy/10'
+const maximumMediaFileSize = 50 * 1024 * 1024
 
 export default function SermonManager({ initialSermons = [] }) {
   const [sermons, setSermons] = useState(initialSermons)
@@ -17,7 +18,7 @@ export default function SermonManager({ initialSermons = [] }) {
   const [saveError, setSaveError] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadingMedia, setUploadingMedia] = useState('')
-  const [mediaSources, setMediaSources] = useState({ audio: 'file', video: 'file' })
+  const [mediaSources, setMediaSources] = useState({ audio: 'link', video: 'link' })
   const [notice, setNotice] = useState('')
   const update = (field) => (event) => setDraft((current) => ({ ...current, [field]: event.target.value }))
   const visible = useMemo(() => {
@@ -29,8 +30,8 @@ export default function SermonManager({ initialSermons = [] }) {
     setEditingId(sermon?.id || null)
     setDraft(sermon ? { ...sermon, status: sermon.status || 'Draft' } : emptySermon)
     setMediaSources({
-      audio: sermon?.audioUrl && !sermon.audioUrl.includes('/storage/v1/object/public/sermon-media/') ? 'link' : 'file',
-      video: sermon?.videoUrl && !sermon.videoUrl.includes('/storage/v1/object/public/sermon-media/') ? 'link' : 'file',
+      audio: !sermon || (sermon.audioUrl && !sermon.audioUrl.includes('/storage/v1/object/public/sermon-media/')) ? 'link' : 'file',
+      video: !sermon || (sermon.videoUrl && !sermon.videoUrl.includes('/storage/v1/object/public/sermon-media/')) ? 'link' : 'file',
     })
     setEditorOpen(true)
     setNotice('')
@@ -91,8 +92,12 @@ export default function SermonManager({ initialSermons = [] }) {
     if (!file) return
     const expectedPrefix = kind === 'audio' ? 'audio/' : 'video/'
     if (!file.type.startsWith(expectedPrefix)) return window.alert(`Please select an ${kind} file.`)
-    const maximumSize = kind === 'audio' ? 250 * 1024 * 1024 : 1024 * 1024 * 1024
-    if (file.size > maximumSize) return window.alert(`${kind === 'audio' ? 'Audio' : 'Video'} files must be smaller than ${kind === 'audio' ? '250 MB' : '1 GB'}.`)
+    if (file.size > maximumMediaFileSize) {
+      setSaveError(`${kind === 'audio' ? 'Audio' : 'Video'} file is ${(file.size / 1024 / 1024).toFixed(1)} MB. This Supabase project currently accepts files up to 50 MB. Compress the file, or choose “Use link” and add a YouTube, Vimeo, podcast, or direct media link.`)
+      event.target.value = ''
+      return
+    }
+    setSaveError('')
     setUploadingMedia(kind)
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -104,7 +109,13 @@ export default function SermonManager({ initialSermons = [] }) {
     const path = `${user.id}/${kind}/${crypto.randomUUID()}.${extension}`
     const { error } = await supabase.storage.from('sermon-media').upload(path, file, { contentType: file.type, cacheControl: '3600', upsert: false })
     setUploadingMedia('')
-    if (error) return window.alert(error.message || `${kind} upload failed.`)
+    if (error) {
+      const message = error.message?.toLowerCase().includes('maximum allowed size') || error.message?.toLowerCase().includes('too large')
+        ? 'Supabase rejected this file because it exceeds the project-wide upload limit. Use a file smaller than 50 MB or switch to “Use link”.'
+        : (error.message || `${kind} upload failed.`)
+      setSaveError(message)
+      return
+    }
     const { data } = supabase.storage.from('sermon-media').getPublicUrl(path)
     setDraft((current) => ({ ...current, [`${kind}Url`]: data.publicUrl }))
   }
@@ -161,8 +172,8 @@ export default function SermonManager({ initialSermons = [] }) {
         <label className="mt-5 block text-xs font-semibold text-slate-500">DESCRIPTION<textarea rows={7} value={draft.description} onChange={update('description')} className={`${fieldClass} resize-y leading-6`} placeholder="Introduce the sermon and its main burden…" /></label>
         {saveError && <div role="alert" className="mt-5 flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700"><span className="material-symbols-outlined text-[19px]">error</span><span>{saveError}</span></div>}
         <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-5"><p className="text-xs font-semibold text-slate-500">MEDIA</p><div className="mt-3"><AdminSelect label="Media type" variant="field" value={draft.mediaType} onChange={changeMediaType} options={[{ label: 'Audio only', value: 'audio' }, { label: 'Video only', value: 'video' }, { label: 'Video and audio', value: 'both' }]} /></div>
-          {(draft.mediaType === 'audio' || draft.mediaType === 'both') && <div className="mt-5"><p className="text-xs font-semibold text-slate-500">AUDIO SOURCE</p><div className="mt-2 grid grid-cols-2 rounded-xl bg-slate-200/70 p-1">{[['file', 'Upload file'], ['link', 'Use link']].map(([value, label]) => <button key={value} type="button" onClick={() => chooseMediaSource('audio', value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${mediaSources.audio === value ? 'bg-white text-midnight-navy shadow-sm' : 'text-slate-500'}`}>{label}</button>)}</div>{mediaSources.audio === 'file' ? <><label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-midnight-navy/25 bg-white px-4 py-5 text-sm font-semibold text-midnight-navy hover:bg-midnight-navy/5"><span className="material-symbols-outlined">audio_file</span>{uploadingMedia === 'audio' ? 'Uploading audio…' : draft.audioUrl ? 'Replace audio file' : 'Choose audio file'}<input type="file" accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg,audio/webm,.m4a" onChange={uploadMedia('audio')} disabled={Boolean(uploadingMedia)} className="hidden" /></label>{draft.audioUrl && <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-emerald-50 px-3 py-2"><span className="truncate text-xs text-emerald-700">Audio file ready</span><button type="button" onClick={() => setDraft((current) => ({ ...current, audioUrl: '' }))} className="text-xs font-semibold text-red-600">Remove</button></div>}</> : <label className="mt-3 block text-xs font-semibold text-slate-500">AUDIO URL<input required type="url" value={draft.audioUrl} onChange={update('audioUrl')} className={fieldClass} placeholder="https://…/sermon.mp3" /></label>}</div>}
-          {(draft.mediaType === 'video' || draft.mediaType === 'both') && <div className="mt-6"><p className="text-xs font-semibold text-slate-500">VIDEO SOURCE</p><div className="mt-2 grid grid-cols-2 rounded-xl bg-slate-200/70 p-1">{[['file', 'Upload file'], ['link', 'Use link']].map(([value, label]) => <button key={value} type="button" onClick={() => chooseMediaSource('video', value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${mediaSources.video === value ? 'bg-white text-midnight-navy shadow-sm' : 'text-slate-500'}`}>{label}</button>)}</div>{mediaSources.video === 'file' ? <><label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-midnight-navy/25 bg-white px-4 py-5 text-sm font-semibold text-midnight-navy hover:bg-midnight-navy/5"><span className="material-symbols-outlined">video_file</span>{uploadingMedia === 'video' ? 'Uploading video…' : draft.videoUrl ? 'Replace video file' : 'Choose video file'}<input type="file" accept="video/mp4,video/webm,video/quicktime,.m4v" onChange={uploadMedia('video')} disabled={Boolean(uploadingMedia)} className="hidden" /></label>{draft.videoUrl && <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-emerald-50 px-3 py-2"><span className="truncate text-xs text-emerald-700">Video file ready</span><button type="button" onClick={() => setDraft((current) => ({ ...current, videoUrl: '' }))} className="text-xs font-semibold text-red-600">Remove</button></div>}</> : <label className="mt-3 block text-xs font-semibold text-slate-500">VIDEO URL<input required type="url" value={draft.videoUrl} onChange={update('videoUrl')} className={fieldClass} placeholder="YouTube, Vimeo, or direct video URL" /></label>}</div>}
+          {(draft.mediaType === 'audio' || draft.mediaType === 'both') && <div className="mt-5"><p className="text-xs font-semibold text-slate-500">AUDIO SOURCE</p><div className="mt-2 grid grid-cols-2 rounded-xl bg-slate-200/70 p-1">{[['file', 'Upload file'], ['link', 'Use link']].map(([value, label]) => <button key={value} type="button" onClick={() => chooseMediaSource('audio', value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${mediaSources.audio === value ? 'bg-white text-midnight-navy shadow-sm' : 'text-slate-500'}`}>{label}</button>)}</div>{mediaSources.audio === 'file' ? <><label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-midnight-navy/25 bg-white px-4 py-5 text-sm font-semibold text-midnight-navy hover:bg-midnight-navy/5"><span className="material-symbols-outlined">audio_file</span>{uploadingMedia === 'audio' ? 'Uploading audio…' : draft.audioUrl ? 'Replace audio file' : 'Choose audio file'}<input type="file" accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg,audio/webm,.m4a" onChange={uploadMedia('audio')} disabled={Boolean(uploadingMedia)} className="hidden" /></label><p className="mt-2 text-[11px] text-slate-400">Maximum file size: 50 MB. Use Link for larger audio.</p>{draft.audioUrl && <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-emerald-50 px-3 py-2"><span className="truncate text-xs text-emerald-700">Audio file ready</span><button type="button" onClick={() => setDraft((current) => ({ ...current, audioUrl: '' }))} className="text-xs font-semibold text-red-600">Remove</button></div>}</> : <label className="mt-3 block text-xs font-semibold text-slate-500">AUDIO URL<input required type="url" value={draft.audioUrl} onChange={update('audioUrl')} className={fieldClass} placeholder="https://…/sermon.mp3" /></label>}</div>}
+          {(draft.mediaType === 'video' || draft.mediaType === 'both') && <div className="mt-6"><p className="text-xs font-semibold text-slate-500">VIDEO SOURCE</p><div className="mt-2 grid grid-cols-2 rounded-xl bg-slate-200/70 p-1">{[['file', 'Upload file'], ['link', 'Use link']].map(([value, label]) => <button key={value} type="button" onClick={() => chooseMediaSource('video', value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${mediaSources.video === value ? 'bg-white text-midnight-navy shadow-sm' : 'text-slate-500'}`}>{label}</button>)}</div>{mediaSources.video === 'file' ? <><label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-midnight-navy/25 bg-white px-4 py-5 text-sm font-semibold text-midnight-navy hover:bg-midnight-navy/5"><span className="material-symbols-outlined">video_file</span>{uploadingMedia === 'video' ? 'Uploading video…' : draft.videoUrl ? 'Replace video file' : 'Choose video file'}<input type="file" accept="video/mp4,video/webm,video/quicktime,.m4v" onChange={uploadMedia('video')} disabled={Boolean(uploadingMedia)} className="hidden" /></label><p className="mt-2 text-[11px] text-slate-400">Maximum file size: 50 MB. YouTube or Vimeo is recommended for larger video.</p>{draft.videoUrl && <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-emerald-50 px-3 py-2"><span className="truncate text-xs text-emerald-700">Video file ready</span><button type="button" onClick={() => setDraft((current) => ({ ...current, videoUrl: '' }))} className="text-xs font-semibold text-red-600">Remove</button></div>}</> : <label className="mt-3 block text-xs font-semibold text-slate-500">VIDEO URL<input required type="url" value={draft.videoUrl} onChange={update('videoUrl')} className={fieldClass} placeholder="YouTube, Vimeo, or direct video URL" /></label>}</div>}
         </div>
       </section>
       <aside className="space-y-5"><section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm"><h2 className="font-semibold text-midnight-navy">Publishing</h2><div className="mt-4"><AdminSelect label="Sermon status" variant="field" value={draft.status} onChange={(status) => setDraft((current) => ({ ...current, status }))} options={['Draft', 'Published', 'Archived']} /></div><label className="mt-4 block text-xs font-semibold text-slate-500">CUSTOM LINK <span className="font-normal text-slate-400">(optional)</span><input value={draft.slug} onChange={update('slug')} className={fieldClass} placeholder="generated-from-title" /></label></section>

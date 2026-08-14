@@ -203,9 +203,9 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
               <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="group flex min-w-0 flex-col items-center justify-center rounded-2xl text-center" aria-label="The Gospel Network admin home">
                 <span className={`relative shrink-0 overflow-hidden transition-transform duration-300 group-hover:scale-[1.025] ${sidebarExpanded ? 'h-[82px] w-[82px]' : 'h-[58px] w-[58px]'}`}>
                   <img
-                    src="/images/brand/the-gospel-network-logo.jpeg"
+                    src="/images/brand/tgn-africa-logo-transparent.png"
                     alt="The Gospel Network"
-                    className="absolute inset-0 h-full w-full scale-[1.16] object-contain mix-blend-multiply"
+                    className="absolute inset-0 h-full w-full object-contain"
                   />
                 </span>
                 {sidebarExpanded && <span className="hidden min-w-0 xl:block"><span className="mt-1 block truncate text-[12px] font-semibold uppercase tracking-[0.12em] text-midnight-navy">The Gospel Network</span></span>}
@@ -380,15 +380,15 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
             </div>
           </header>
           <div className="flex min-h-0 flex-1 flex-col">
-            <section className="admin-page-heading mx-5 mt-5 shrink-0 overflow-hidden rounded-[26px] bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-5 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] md:mx-8 md:px-8 xl:mx-10">
+            {!['/admin', '/admin/analytics'].includes(pathname) && <section className="admin-page-heading mx-5 mt-5 shrink-0 overflow-hidden rounded-[26px] border border-[#dedbd4] bg-gradient-to-br from-[#f6f1e8] via-[#efede8] to-[#e5e6e8] px-6 py-5 shadow-[0_14px_38px_rgba(71,76,83,0.08)] md:mx-8 md:px-8 xl:mx-10">
               <div className="flex items-center gap-4">
-                <span className="h-8 w-1 rounded-full bg-white/75" />
+                <span className="h-8 w-1 rounded-full bg-midnight-navy/55" />
                 <div>
-                  <h2 className="text-xl font-semibold tracking-[-0.025em] text-white md:text-2xl">{pageTitle}</h2>
-                  <p className="mt-1 text-xs leading-5 text-white/55 md:text-sm">{pageDescription}</p>
+                  <h2 className="text-xl font-semibold tracking-[-0.025em] text-midnight-navy md:text-2xl">{pageTitle}</h2>
+                  <p className="mt-1 text-xs leading-5 text-slate-500 md:text-sm">{pageDescription}</p>
                 </div>
               </div>
-            </section>
+            </section>}
             {children}
           </div>
         </div>

@@ -200,14 +200,15 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         <aside className={`admin-sidebar relative z-40 flex shrink-0 items-center justify-between border-b border-black/[0.06] bg-white/78 px-5 py-4 shadow-[1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[260px]' : 'xl:w-[82px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
             <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
-              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center rounded-2xl" aria-label="The Gospel Network admin home">
-                <span className={`relative shrink-0 transition-transform hover:scale-[1.015] ${sidebarExpanded ? 'h-[92px] w-[178px]' : 'h-[58px] w-[58px]'}`}>
+              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3 rounded-2xl" aria-label="The Gospel Network admin home">
+                <span className="relative h-[72px] w-[72px] shrink-0 overflow-hidden transition-transform hover:scale-[1.025]">
                   <img
-                    src={sidebarExpanded ? '/images/brand/the-gospel-network-full-logo.jpeg' : '/images/brand/the-gospel-network-logo.jpeg'}
+                    src="/images/brand/the-gospel-network-logo.jpeg"
                     alt="The Gospel Network"
-                    className="absolute inset-0 h-full w-full object-contain"
+                    className="absolute inset-0 h-full w-full scale-[1.12] object-contain mix-blend-multiply"
                   />
                 </span>
+                {sidebarExpanded && <span className="hidden min-w-0 xl:block"><span className="block truncate text-[13px] font-semibold tracking-[-0.015em] text-slate-900">The Gospel Network</span></span>}
               </Link>
               {sidebarExpanded && (
                 <button type="button" onClick={() => setSidebarExpanded(false)} className="hidden h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-black/[0.05] hover:text-slate-700 xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
@@ -260,7 +261,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="admin-topbar sticky top-0 z-30 min-h-[136px] border-b border-white/10 bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-6 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] xl:px-10 xl:py-7">
+          <header className="admin-topbar sticky top-0 z-30 min-h-[108px] border-b border-white/10 bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-5 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] xl:px-10 xl:py-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="admin-greeting flex min-w-0 items-center gap-4">
               <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[15px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-white/10 text-white'}`}>
@@ -268,10 +269,10 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
               </span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/45">
-                  <span className="admin-greeting-copy">{isBirthday ? `Happy birthday, ${firstName}` : `${greeting}, ${firstName}`}</span><span>/</span><span className="text-white/65">{authorTier}</span>
+                  <span>The Gospel Network</span><span>/</span><span className="text-white/65">{authorTier}</span>
                 </div>
-                <h1 className="mt-1 truncate text-[24px] font-semibold tracking-[-0.035em] text-white">{pageTitle}</h1>
-                <p className="mt-1 hidden text-xs text-white/55 md:block">{pageDescription}</p>
+                <h1 className="admin-greeting-copy mt-1 truncate text-[20px] font-semibold tracking-[-0.025em] text-white">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
+                <p className="mt-1 hidden text-xs text-white/55 md:block">{isBirthday ? 'Wishing you a joyful celebration from the editorial team. 🎈' : 'Welcome to your editorial workspace.'}</p>
               </div>
               <span className="ml-2 hidden h-9 w-px bg-white/10 2xl:block" />
               <span className="hidden items-center gap-2 text-xs text-white/45 2xl:flex">
@@ -375,7 +376,18 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
             </div>
             </div>
           </header>
-          {children}
+          <div className="flex min-h-0 flex-1 flex-col">
+            <section className="admin-page-heading mx-5 mt-5 shrink-0 overflow-hidden rounded-[26px] bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-5 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] md:mx-8 md:px-8 xl:mx-10">
+              <div className="flex items-center gap-4">
+                <span className="h-8 w-1 rounded-full bg-white/75" />
+                <div>
+                  <h2 className="text-xl font-semibold tracking-[-0.025em] text-white md:text-2xl">{pageTitle}</h2>
+                  <p className="mt-1 text-xs leading-5 text-white/55 md:text-sm">{pageDescription}</p>
+                </div>
+              </div>
+            </section>
+            {children}
+          </div>
         </div>
       </div>
     </div>

@@ -200,19 +200,14 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         <aside className={`admin-sidebar relative z-40 flex shrink-0 items-center justify-between border-b border-black/[0.06] bg-white/78 px-5 py-4 shadow-[1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[260px]' : 'xl:w-[82px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
             <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
-              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3 rounded-2xl" aria-label="The Gospel Network admin home">
-                <span className="relative h-[68px] w-[68px] shrink-0 transition-transform hover:scale-[1.025]">
+              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center rounded-2xl" aria-label="The Gospel Network admin home">
+                <span className={`relative shrink-0 transition-transform hover:scale-[1.015] ${sidebarExpanded ? 'h-[92px] w-[178px]' : 'h-[58px] w-[58px]'}`}>
                   <img
-                    src="/images/brand/tgn-africa-logo-transparent.png"
-                    alt=""
+                    src={sidebarExpanded ? '/images/brand/the-gospel-network-full-logo.jpeg' : '/images/brand/the-gospel-network-logo.jpeg'}
+                    alt="The Gospel Network"
                     className="absolute inset-0 h-full w-full object-contain"
                   />
                 </span>
-                {sidebarExpanded && (
-                  <span className="hidden min-w-0 xl:block">
-                    <span className="block truncate text-[13px] font-semibold tracking-[-0.015em] text-slate-900">The Gospel Network</span>
-                  </span>
-                )}
               </Link>
               {sidebarExpanded && (
                 <button type="button" onClick={() => setSidebarExpanded(false)} className="hidden h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-black/[0.05] hover:text-slate-700 xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
@@ -265,21 +260,21 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="admin-topbar sticky top-0 z-30 min-h-[108px] border-b border-black/[0.055] bg-white/72 px-6 py-5 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-2xl xl:px-10 xl:py-6">
+          <header className="admin-topbar sticky top-0 z-30 min-h-[136px] border-b border-white/10 bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-6 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] xl:px-10 xl:py-7">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="admin-greeting flex min-w-0 items-center gap-4">
-              <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[15px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-midnight-navy/[0.08] text-midnight-navy'}`}>
+              <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[15px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-white/10 text-white'}`}>
                 <span className={`material-symbols-outlined text-[23px] ${isBirthday ? '' : 'admin-wave'}`}>{isBirthday ? 'cake' : 'waving_hand'}</span>
               </span>
               <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                  <span>The Gospel Network</span><span>/</span><span className="text-midnight-navy/60">{authorTier}</span>
+                <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/45">
+                  <span className="admin-greeting-copy">{isBirthday ? `Happy birthday, ${firstName}` : `${greeting}, ${firstName}`}</span><span>/</span><span className="text-white/65">{authorTier}</span>
                 </div>
-                <h1 className="admin-greeting-copy truncate text-[19px] font-semibold tracking-[-0.025em] text-slate-900">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
-                <p className="mt-0.5 hidden text-xs text-slate-400 md:block">{isBirthday ? 'Wishing you a joyful celebration from the editorial team. 🎈' : 'Welcome to your editorial workspace.'}</p>
+                <h1 className="mt-1 truncate text-[24px] font-semibold tracking-[-0.035em] text-white">{pageTitle}</h1>
+                <p className="mt-1 hidden text-xs text-white/55 md:block">{pageDescription}</p>
               </div>
-              <span className="ml-2 hidden h-8 w-px bg-slate-100 2xl:block" />
-              <span className="hidden items-center gap-2 text-xs text-slate-400 2xl:flex">
+              <span className="ml-2 hidden h-9 w-px bg-white/10 2xl:block" />
+              <span className="hidden items-center gap-2 text-xs text-white/45 2xl:flex">
                 <span className="material-symbols-outlined text-[17px]">calendar_today</span>
                 {new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date())}
               </span>
@@ -294,7 +289,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                     setSearchOpen(true)
                   }}
                   onFocus={() => setSearchOpen(true)}
-                  className="w-full rounded-xl border border-black/[0.035] bg-black/[0.035] py-2.5 pl-11 pr-4 text-[13px] text-slate-900 outline-none ring-midnight-navy/10 placeholder:text-slate-400 focus:bg-white focus:ring-2"
+                  className="w-full rounded-xl border border-white/10 bg-white/10 py-3 pl-11 pr-4 text-[13px] text-white outline-none ring-white/15 placeholder:text-white/40 focus:bg-white/15 focus:ring-2"
                   placeholder="Search content..."
                   aria-label="Search all content"
                 />
@@ -316,12 +311,12 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                 )}
               </div>
               {isFounder && (
-                <Link href="/admin/settings" prefetch={false} onMouseEnter={() => router.prefetch('/admin/settings')} className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-500 transition-colors hover:border-midnight-navy/20 hover:text-midnight-navy sm:flex" title="Settings" aria-label="Settings">
+                <Link href="/admin/settings" prefetch={false} onMouseEnter={() => router.prefetch('/admin/settings')} className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white sm:flex" title="Settings" aria-label="Settings">
                   <span className="material-symbols-outlined text-[20px]">settings</span>
                 </Link>
               )}
               <div className="relative" ref={notificationsRef}>
-                <button type="button" onClick={() => { setNotificationsOpen((value) => !value); setPreviewNotification(null) }} className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/[0.05] bg-white/60 text-slate-600 shadow-sm transition-colors hover:bg-white" aria-label={`${unreadNotifications} unread notifications`} aria-expanded={notificationsOpen}>
+                <button type="button" onClick={() => { setNotificationsOpen((value) => !value); setPreviewNotification(null) }} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/75 shadow-sm transition-colors hover:bg-white/20 hover:text-white" aria-label={`${unreadNotifications} unread notifications`} aria-expanded={notificationsOpen}>
                   <span className="material-symbols-outlined text-[20px]">notifications</span>
                   {unreadNotifications > 0 && <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full border-2 border-white bg-red-500 px-1 text-[9px] font-bold text-white">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
                 </button>
@@ -361,13 +356,13 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                 )}
               </div>
               <div className="relative hidden sm:block" ref={profileRef}>
-                <button type="button" onClick={() => setProfileOpen((value) => !value)} className="flex items-center gap-3 rounded-full border border-black/[0.05] bg-white/55 p-1 pr-3 shadow-sm transition-colors hover:bg-white" aria-expanded={profileOpen}>
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-midnight-navy/10 text-sm font-semibold text-midnight-navy">{displayName.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</span>
+                <button type="button" onClick={() => setProfileOpen((value) => !value)} className="flex items-center gap-3 rounded-full border border-white/10 bg-white/10 p-1.5 pr-3 shadow-sm transition-colors hover:bg-white/20" aria-expanded={profileOpen}>
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-sm font-semibold text-midnight-navy">{displayName.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</span>
                   <span className="hidden text-left 2xl:block">
-                    <span className="block text-xs font-semibold text-slate-900">{displayName}</span>
-                    <span className="block text-[11px] text-slate-500">{authorTier}</span>
+                    <span className="block text-xs font-semibold text-white">{displayName}</span>
+                    <span className="block text-[11px] text-white/50">{authorTier}</span>
                   </span>
-                  <span className="material-symbols-outlined text-[18px] text-slate-400">expand_more</span>
+                  <span className="material-symbols-outlined text-[18px] text-white/45">expand_more</span>
                 </button>
                 {profileOpen && (
                   <div className="absolute right-0 top-[calc(100%+10px)] w-52 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
@@ -380,18 +375,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
             </div>
             </div>
           </header>
-          <div className="flex min-h-0 flex-1 flex-col">
-            <section className="admin-page-heading mx-5 mt-5 shrink-0 overflow-hidden rounded-[26px] bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-5 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] md:mx-8 md:px-8 xl:mx-10">
-              <div className="flex items-center gap-4">
-                <span className="h-8 w-1 rounded-full bg-white/75" />
-                <div>
-                  <h2 className="text-xl font-semibold tracking-[-0.025em] text-white md:text-2xl">{pageTitle}</h2>
-                  <p className="mt-1 text-xs leading-5 text-white/55 md:text-sm">{pageDescription}</p>
-                </div>
-              </div>
-            </section>
-            {children}
-          </div>
+          {children}
         </div>
       </div>
     </div>

@@ -316,6 +316,24 @@ a:focus-visible {
 .admin-app main.admin-scroll section.bg-white {
   border-color: rgb(15 23 42 / 6%) !important;
   box-shadow: 0 8px 30px rgb(15 23 42 / 4.5%);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 320ms ease, border-color 320ms ease;
+}
+
+.admin-app main.admin-scroll article.bg-white:hover,
+.admin-app main.admin-scroll section.bg-white:hover {
+  border-color: rgb(13 34 64 / 10%) !important;
+  box-shadow: 0 18px 45px rgb(13 34 64 / 8%);
+  transform: translateY(-2px);
+}
+
+.admin-app main.admin-scroll a,
+.admin-app main.admin-scroll button {
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.admin-app main.admin-scroll button:active,
+.admin-app main.admin-scroll a:active {
+  transform: scale(0.985);
 }
 
 .admin-app main.admin-scroll input:not([type='checkbox']):not([type='radio']),
@@ -360,6 +378,62 @@ a:focus-visible {
 @keyframes admin-surface-enter {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-greeting > * {
+  animation: admin-greeting-enter 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-greeting > *:nth-child(2) { animation-delay: 70ms; }
+.admin-greeting > *:nth-child(3) { animation-delay: 120ms; }
+.admin-greeting > *:nth-child(4) { animation-delay: 150ms; }
+
+.admin-stat-card {
+  animation: admin-card-enter 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--card-delay, 0ms);
+}
+
+.admin-stat-card:hover .admin-stat-icon {
+  background: #0d2240;
+  color: #fff;
+  transform: translateY(-2px) scale(1.04);
+}
+
+.admin-stat-icon {
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), background-color 250ms ease, color 250ms ease;
+}
+
+.admin-chart-line {
+  animation: admin-chart-draw 1.1s cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+  stroke-dasharray: 1500;
+}
+
+.admin-chart-area { animation: admin-chart-fade 800ms ease-out 300ms both; }
+.admin-chart-bar { animation: admin-bar-grow 700ms cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: bottom; }
+
+@keyframes admin-greeting-enter {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes admin-card-enter {
+  from { opacity: 0; transform: translateY(16px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes admin-chart-draw {
+  from { stroke-dashoffset: 1500; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes admin-chart-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes admin-bar-grow {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
 }
 
 .admin-scroll::-webkit-scrollbar {

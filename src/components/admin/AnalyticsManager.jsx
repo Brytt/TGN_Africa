@@ -30,6 +30,27 @@ const fromDateValue = (value, endOfDay = false) => {
   return new Date(year, month - 1, day, endOfDay ? 23 : 0, endOfDay ? 59 : 0, endOfDay ? 59 : 0, endOfDay ? 999 : 0)
 }
 
+function AnimatedNumber({ value, decimals = 0, suffix = '' }) {
+  const [display, setDisplay] = useState(0)
+
+  useEffect(() => {
+    const target = Number(value) || 0
+    const duration = 900
+    const started = performance.now()
+    let frame
+    const tick = (now) => {
+      const progress = Math.min(1, (now - started) / duration)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplay(target * eased)
+      if (progress < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [value])
+
+  return <>{display.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}{suffix}</>
+}
+
 function DateCalendar({ label, value, onChange, min, max }) {
   const selected = fromDateValue(value)
   const [viewYear, setViewYear] = useState(selected.getFullYear())
@@ -171,6 +192,11 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
   }, [analyticsEvents, publications, range])
 
   const chartMax = Math.max(1, ...report.visibleMonths.map((item) => metric === 'Views' ? item.views : item.published))
+  const areaPoints = report.visibleMonths.map((item, index) => {
+    const x = report.visibleMonths.length === 1 ? 500 : (index / (report.visibleMonths.length - 1)) * 1000
+    const y = 210 - (item.views / Math.max(1, ...report.visibleMonths.map((month) => month.views))) * 185
+    return `${x},${y}`
+  }).join(' ')
   const activeSubscribers = subscribers.filter((subscriber) => subscriber.status === 'active')
   const newSubscribers = activeSubscribers.filter((subscriber) => {
     const date = new Date(subscriber.consented_at || subscriber.created_at)
@@ -236,7 +262,7 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
             <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-midnight-navy shadow-lg hover:bg-white/90"><span className="material-symbols-outlined text-[18px]">print</span>Print report</button>
           </div>
           </div>
-          <div className="mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-6"><div><strong className="block text-2xl font-semibold">{report.views.toLocaleString()}</strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Total views</span></div><div><strong className="block text-2xl font-semibold">{report.published}</strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Published</span></div><div><strong className="block text-2xl font-semibold">{activeSubscribers.length.toLocaleString()}</strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Subscribers</span></div></div>
+          <div className="mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-6"><div><strong className="block text-2xl font-semibold"><AnimatedNumber value={report.views} /></strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Total views</span></div><div><strong className="block text-2xl font-semibold"><AnimatedNumber value={report.published} /></strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Published</span></div><div><strong className="block text-2xl font-semibold"><AnimatedNumber value={activeSubscribers.length} /></strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Subscribers</span></div></div>
         </div>
 
         <header className="admin-print-header mb-6 hidden border-b-2 border-midnight-navy pb-5">
@@ -264,15 +290,15 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
 
         <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="Performance summary">
           {[
-            { label: 'Total views', value: report.views.toLocaleString(), icon: 'visibility' },
+            { label: 'Total views', value: report.views, icon: 'visibility' },
             { label: 'Published', value: report.published, icon: 'task_alt' },
-            { label: 'Completed reads', value: report.engaged.toLocaleString(), icon: 'group' },
-            { label: 'Active subscribers', value: activeSubscribers.length.toLocaleString(), icon: 'mark_email_read', detail: `${newSubscribers.toLocaleString()} joined in period` },
-            { label: 'Average read time', value: `${report.avgRead.toFixed(1)} min`, icon: 'schedule' },
-          ].map((item) => (
-            <article key={item.label} className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-              <div className="flex items-start justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[21px]">{item.icon}</span></span><span className="max-w-[150px] text-right text-[10px] font-medium text-slate-400">{item.detail || periodLabel}</span></div>
-              <strong className="mt-5 block text-3xl font-semibold tracking-tight text-slate-900">{item.value}</strong>
+            { label: 'Completed reads', value: report.engaged, icon: 'group' },
+            { label: 'Active subscribers', value: activeSubscribers.length, icon: 'mark_email_read', detail: `${newSubscribers.toLocaleString()} joined in period` },
+            { label: 'Average read time', value: report.avgRead, decimals: 1, suffix: ' min', icon: 'schedule' },
+          ].map((item, index) => (
+            <article key={item.label} className="admin-stat-card rounded-3xl border border-slate-100 bg-white p-5 shadow-sm" style={{ '--card-delay': `${index * 65}ms` }}>
+              <div className="flex items-start justify-between"><span className="admin-stat-icon grid h-10 w-10 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[21px]">{item.icon}</span></span><span className="max-w-[150px] text-right text-[10px] font-medium text-slate-400">{item.detail || periodLabel}</span></div>
+              <strong className="mt-5 block text-3xl font-semibold tracking-tight text-slate-900"><AnimatedNumber value={item.value} decimals={item.decimals} suffix={item.suffix} /></strong>
               <p className="mt-1 text-xs text-slate-500">{item.label}</p>
             </article>
           ))}
@@ -285,18 +311,34 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
               <div className="admin-report-control"><AdminSelect label="Chart metric" value={metric} onChange={setMetric} options={['Views', 'Publications']} /></div>
             </div>
             <div className="overflow-x-auto">
-              <div className="flex h-64 min-w-full items-end gap-3 border-b border-slate-200 px-2 pt-5">
-                {report.visibleMonths.map((item) => {
-                  const value = metric === 'Views' ? item.views : item.published
-                  return (
+              {metric === 'Views' ? (
+                <div className="min-w-[620px]">
+                  <svg viewBox="0 0 1000 230" className="h-56 w-full overflow-visible" preserveAspectRatio="none" role="img" aria-label="Monthly page views area chart">
+                    <defs><linearGradient id="adminArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0D2240" stopOpacity="0.22" /><stop offset="100%" stopColor="#0D2240" stopOpacity="0" /></linearGradient></defs>
+                    {[25, 85, 145, 205].map((y) => <line key={y} x1="0" y1={y} x2="1000" y2={y} stroke="#e8edf3" strokeWidth="1" />)}
+                    <polygon className="admin-chart-area" points={`0,220 ${areaPoints} 1000,220`} fill="url(#adminArea)" />
+                    <polyline className="admin-chart-line" points={areaPoints} fill="none" stroke="#0D2240" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                    {report.visibleMonths.map((item, index) => {
+                      const [x, y] = areaPoints.split(' ')[index].split(',')
+                      return <circle key={item.key} cx={x} cy={y} r="6" fill="white" stroke="#0D2240" strokeWidth="4"><title>{item.month}: {item.views.toLocaleString()} views</title></circle>
+                    })}
+                  </svg>
+                  <div className="flex justify-between gap-3">{report.visibleMonths.map((item) => <span key={item.key} className="min-w-10 text-center text-[10px] text-slate-400">{item.month}</span>)}</div>
+                </div>
+              ) : (
+                <div className="flex h-64 min-w-[620px] items-end gap-3 border-b border-slate-200 px-2 pt-5">
+                  {report.visibleMonths.map((item, index) => (
                     <div key={item.key} className="group flex h-full min-w-12 flex-1 flex-col items-center justify-end">
-                      <span className="mb-2 text-[10px] font-semibold text-slate-500 opacity-0 group-hover:opacity-100">{value.toLocaleString()}</span>
-                      <div className="w-full max-w-9 rounded-t-xl bg-midnight-navy transition-opacity hover:opacity-80" style={{ height: `${Math.max(8, (value / chartMax) * 88)}%` }} />
+                      <span className="mb-2 text-[10px] font-semibold text-slate-500 opacity-0 transition-opacity group-hover:opacity-100">{item.published} published · {item.drafts} drafts</span>
+                      <div className="flex h-[88%] w-full items-end justify-center gap-1.5">
+                        <div className="admin-chart-bar w-full max-w-5 rounded-t-lg bg-midnight-navy" style={{ height: `${Math.max(8, (item.published / chartMax) * 100)}%`, animationDelay: `${index * 55}ms` }} />
+                        <div className="admin-chart-bar w-full max-w-5 rounded-t-lg bg-midnight-navy/20" style={{ height: `${Math.max(5, (item.drafts / chartMax) * 100)}%`, animationDelay: `${index * 55 + 80}ms` }} />
+                      </div>
                       <span className="mt-3 whitespace-nowrap text-[10px] text-slate-400">{item.month}</span>
                     </div>
-                  )
-                })}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </article>
 

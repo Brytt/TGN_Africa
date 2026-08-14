@@ -182,10 +182,10 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
   return (
     <div className="admin-app min-h-screen bg-[#f5f5f7] text-slate-700 antialiased xl:h-screen">
       <div className="admin-shell flex min-h-screen w-full flex-col overflow-hidden bg-[#f5f5f7] xl:h-screen xl:min-h-0 xl:flex-row">
-        <aside className={`admin-sidebar relative z-40 flex shrink-0 items-center justify-between border-b border-black/[0.06] bg-white/78 px-5 py-3.5 shadow-[1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-4 ${sidebarExpanded ? 'xl:w-[248px]' : 'xl:w-[82px]'}`}>
+        <aside className={`admin-sidebar relative z-40 flex shrink-0 items-center justify-between border-b border-black/[0.06] bg-white/78 px-5 py-4 shadow-[1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[260px]' : 'xl:w-[82px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
             <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
-              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3 rounded-2xl" aria-label="TGN Admin home">
+              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3 rounded-2xl" aria-label="The Gospel Network admin home">
                 <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-white shadow-[0_5px_18px_rgba(15,23,42,0.08)] transition-transform hover:scale-[1.02]">
                   <img
                     src="/images/brand/the-gospel-network-logo.jpeg"
@@ -195,8 +195,8 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                 </span>
                 {sidebarExpanded && (
                   <span className="hidden min-w-0 xl:block">
-                    <span className="block truncate text-[13px] font-semibold tracking-[-0.01em] text-slate-900">TGN Africa</span>
-                    <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400">Editorial Studio</span>
+                    <span className="block truncate text-[13px] font-semibold tracking-[-0.015em] text-slate-900">The Gospel Network</span>
+                    <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.16em] text-midnight-navy/45">Africa · Editorial Studio</span>
                   </span>
                 )}
               </Link>
@@ -228,7 +228,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                       )
                     }
                     return (
-                      <Link key={item.label} href={item.href} prefetch={false} onMouseEnter={() => router.prefetch(item.href)} onFocus={() => router.prefetch(item.href)} onClick={() => setMobileOpen(false)} title={!sidebarExpanded ? item.label : undefined} className={`${itemClass} ${active ? 'bg-midnight-navy/[0.09] text-midnight-navy shadow-[inset_0_0_0_1px_rgba(13,34,64,0.035)]' : 'text-slate-500 hover:bg-black/[0.045] hover:text-slate-900'}`} aria-current={active ? 'page' : undefined} aria-label={item.label}>
+                      <Link key={item.label} href={item.href} prefetch={false} onMouseEnter={() => router.prefetch(item.href)} onFocus={() => router.prefetch(item.href)} onClick={() => setMobileOpen(false)} title={!sidebarExpanded ? item.label : undefined} className={`${itemClass} ${active ? 'bg-midnight-navy/[0.10] text-midnight-navy shadow-[inset_0_0_0_1px_rgba(13,34,64,0.05),0_7px_20px_rgba(13,34,64,0.08)]' : 'text-slate-500 hover:bg-midnight-navy/[0.065] hover:text-midnight-navy hover:shadow-[0_6px_18px_rgba(13,34,64,0.06)]'}`} aria-current={active ? 'page' : undefined} aria-label={item.label}>
                         <span className={`material-symbols-outlined shrink-0 text-[20px] ${active ? '[font-variation-settings:FILL_1,wght_450,GRAD_0,opsz_24]' : ''}`}>{item.icon}</span>
                         <span className={`text-[13px] font-medium tracking-[-0.005em] sm:hidden ${sidebarExpanded ? 'xl:block' : 'xl:hidden'}`}>{item.label}</span>
                       </Link>
@@ -240,7 +240,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
           </div>
 
           <div className={`flex items-center gap-1 xl:flex-col ${sidebarExpanded ? 'xl:items-stretch' : 'xl:items-center'}`}>
-            <a href="/" className={`flex h-10 items-center gap-3 rounded-[11px] text-slate-500 transition-colors hover:bg-black/[0.045] hover:text-slate-900 ${sidebarExpanded ? 'xl:px-3' : 'w-10 justify-center'}`} aria-label="View public website">
+            <a href="/" className={`flex h-10 items-center gap-3 rounded-[11px] text-slate-500 transition-all hover:bg-midnight-navy/[0.065] hover:text-midnight-navy hover:shadow-[0_6px_18px_rgba(13,34,64,0.06)] ${sidebarExpanded ? 'xl:px-3' : 'w-10 justify-center'}`} aria-label="View public website">
               <span className="material-symbols-outlined shrink-0 text-[21px]">open_in_new</span>
               {sidebarExpanded && <span className="hidden text-sm font-medium xl:block">View website</span>}
             </a>
@@ -251,15 +251,15 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="admin-topbar sticky top-0 z-30 border-b border-black/[0.055] bg-white/72 px-6 py-3.5 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-2xl xl:px-10">
+          <header className="admin-topbar sticky top-0 z-30 min-h-[88px] border-b border-black/[0.055] bg-white/72 px-6 py-4 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-2xl xl:px-10 xl:py-[18px]">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex min-w-0 items-center gap-3">
+            <div className="admin-greeting flex min-w-0 items-center gap-4">
               <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-[13px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-midnight-navy/[0.08] text-midnight-navy'}`}>
                 <span className="material-symbols-outlined text-[22px]">{isBirthday ? 'cake' : 'waving_hand'}</span>
               </span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                  <span>TGN Africa Admin</span><span>/</span><span className="text-midnight-navy/60">{authorTier}</span>
+                  <span>The Gospel Network</span><span>/</span><span className="text-midnight-navy/60">{authorTier}</span>
                 </div>
                 <h1 className="truncate text-[17px] font-semibold tracking-[-0.018em] text-slate-900">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
                 <p className="mt-0.5 hidden text-xs text-slate-400 md:block">{isBirthday ? 'Wishing you a joyful celebration from the editorial team. 🎈' : 'Welcome to your editorial workspace.'}</p>

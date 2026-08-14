@@ -199,24 +199,24 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
       <div className="admin-shell flex min-h-screen w-full flex-col overflow-hidden bg-[#f5f5f7] xl:h-screen xl:min-h-0 xl:flex-row">
         <aside className={`admin-sidebar relative z-40 flex shrink-0 items-center justify-between border-b border-black/[0.06] bg-white/78 px-5 py-4 shadow-[1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[260px]' : 'xl:w-[82px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
-            <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
-              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3 rounded-2xl" aria-label="The Gospel Network admin home">
-                <span className="relative h-[72px] w-[72px] shrink-0 overflow-hidden transition-transform hover:scale-[1.025]">
+            <div className="relative flex items-center justify-center xl:min-h-[116px] xl:w-full">
+              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="group flex min-w-0 flex-col items-center justify-center rounded-2xl text-center" aria-label="The Gospel Network admin home">
+                <span className={`relative shrink-0 overflow-hidden transition-transform duration-300 group-hover:scale-[1.025] ${sidebarExpanded ? 'h-[82px] w-[82px]' : 'h-[58px] w-[58px]'}`}>
                   <img
                     src="/images/brand/the-gospel-network-logo.jpeg"
                     alt="The Gospel Network"
-                    className="absolute inset-0 h-full w-full scale-[1.12] object-contain mix-blend-multiply"
+                    className="absolute inset-0 h-full w-full scale-[1.16] object-contain mix-blend-multiply"
                   />
                 </span>
-                {sidebarExpanded && <span className="hidden min-w-0 xl:block"><span className="block truncate text-[13px] font-semibold tracking-[-0.015em] text-slate-900">The Gospel Network</span></span>}
+                {sidebarExpanded && <span className="hidden min-w-0 xl:block"><span className="mt-1 block truncate text-[12px] font-semibold uppercase tracking-[0.12em] text-midnight-navy">The Gospel Network</span></span>}
               </Link>
               {sidebarExpanded && (
-                <button type="button" onClick={() => setSidebarExpanded(false)} className="hidden h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-black/[0.05] hover:text-slate-700 xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
+                <button type="button" onClick={() => setSidebarExpanded(false)} className="absolute right-0 top-0 hidden h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-midnight-navy/[0.07] hover:text-midnight-navy xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
                   <span className="material-symbols-outlined text-[19px]">left_panel_close</span>
                 </button>
               )}
               {!sidebarExpanded && (
-                <button type="button" onClick={() => setSidebarExpanded(true)} className="hidden h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-black/[0.05] hover:text-slate-700 xl:flex" aria-label="Expand sidebar" title="Expand sidebar">
+                <button type="button" onClick={() => setSidebarExpanded(true)} className="absolute -bottom-1 left-1/2 hidden h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-midnight-navy/[0.07] hover:text-midnight-navy xl:flex" aria-label="Expand sidebar" title="Expand sidebar">
                   <span className="material-symbols-outlined text-[19px]">left_panel_open</span>
                 </button>
               )}
@@ -261,8 +261,11 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="admin-topbar sticky top-0 z-30 min-h-[108px] border-b border-white/10 bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-5 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] xl:px-10 xl:py-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <header className="admin-topbar sticky top-0 z-30 isolate min-h-[118px] overflow-hidden border-b border-white/10 bg-[#07182d] px-6 py-6 text-white shadow-[0_20px_55px_rgba(13,34,64,0.18)] xl:px-10 xl:py-7">
+            <span className="admin-topbar-orb admin-topbar-orb-one" aria-hidden="true" />
+            <span className="admin-topbar-orb admin-topbar-orb-two" aria-hidden="true" />
+            <span className="admin-topbar-grid" aria-hidden="true" />
+            <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="admin-greeting flex min-w-0 items-center gap-4">
               <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[15px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-white/10 text-white'}`}>
                 <span className={`material-symbols-outlined text-[23px] ${isBirthday ? '' : 'admin-wave'}`}>{isBirthday ? 'cake' : 'waving_hand'}</span>
@@ -282,7 +285,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
             </div>
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <div className="relative min-w-0 flex-1 lg:w-[300px] lg:flex-none" ref={searchRef}>
-                <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[19px] text-slate-400">search</span>
+                <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[19px] text-white/45">search</span>
                 <input
                   value={query}
                   onChange={(event) => {

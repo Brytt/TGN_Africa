@@ -12,7 +12,7 @@ async function loadActivity(auth) {
     const published = item.status === 'published'
     const eventTime = published ? item.published_at || item.created_at : item.updated_at
     return {
-      id: `publication-${item.id}-${eventTime}`,
+      id: `publication-${item.id}`,
       type: published ? 'publication' : 'draft',
       icon: published ? 'publish' : 'draft',
       title: published ? 'Publication published' : 'Draft activity',
@@ -55,10 +55,14 @@ export async function GET() {
     loadActivity(auth),
     auth.supabase.from('admin_notification_states').select('notification_id, read_at, cleared_at').eq('user_id', auth.user.id),
   ])
-  const states = new Map((statesResult.data || []).map((state) => [state.notification_id, state]))
+  const stateRows = statesResult.data || []
+  const states = new Map(stateRows.map((state) => [state.notification_id, state]))
+  const stateFor = (item) => states.get(item.id) || (item.type === 'publication' || item.type === 'draft'
+    ? stateRows.find((state) => state.notification_id.startsWith(`${item.id}-`))
+    : null)
   const data = activity
-    .filter((item) => !states.get(item.id)?.cleared_at)
-    .map((item) => ({ ...item, read: Boolean(states.get(item.id)?.read_at) }))
+    .filter((item) => !stateFor(item)?.cleared_at)
+    .map((item) => ({ ...item, read: Boolean(stateFor(item)?.read_at) }))
   return NextResponse.json({ data })
 }
 
@@ -73,8 +77,8 @@ export async function PATCH(request) {
     user_id: auth.user.id,
     notification_id: notificationId,
     read_at: now,
-    cleared_at: body.action === 'clear' ? now : null,
   }
+  if (body.action === 'clear') row.cleared_at = now
   const { error } = await auth.supabase.from('admin_notification_states').upsert(row, { onConflict: 'user_id,notification_id' })
   if (error) return NextResponse.json({ error: 'Unable to update this notification.' }, { status: 400 })
   return NextResponse.json({ success: true })

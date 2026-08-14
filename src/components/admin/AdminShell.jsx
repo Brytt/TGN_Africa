@@ -180,13 +180,13 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
   if (pathname === '/admin/login') return children
 
   return (
-    <div className="admin-app min-h-screen bg-white text-slate-700 antialiased xl:h-screen">
-      <div className="admin-shell flex min-h-screen w-full flex-col overflow-hidden bg-white xl:h-screen xl:min-h-0 xl:flex-row">
-        <aside className={`relative z-40 flex shrink-0 items-center justify-between border-b border-midnight-navy/10 bg-white px-5 py-4 transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-5 ${sidebarExpanded ? 'xl:w-[248px]' : 'xl:w-[88px]'}`}>
+    <div className="admin-app min-h-screen bg-[#f5f5f7] text-slate-700 antialiased xl:h-screen">
+      <div className="admin-shell flex min-h-screen w-full flex-col overflow-hidden bg-[#f5f5f7] xl:h-screen xl:min-h-0 xl:flex-row">
+        <aside className={`admin-sidebar relative z-40 flex shrink-0 items-center justify-between border-b border-black/[0.06] bg-white/78 px-5 py-3.5 shadow-[1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl transition-[width] duration-300 xl:flex-col xl:items-stretch xl:border-b-0 xl:border-r xl:px-3 xl:py-4 ${sidebarExpanded ? 'xl:w-[248px]' : 'xl:w-[82px]'}`}>
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
             <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
-              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3" aria-label="TGN Admin home">
-                <span className="relative h-16 w-14 shrink-0 transition-opacity hover:opacity-90">
+              <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3 rounded-2xl" aria-label="TGN Admin home">
+                <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-white shadow-[0_5px_18px_rgba(15,23,42,0.08)] transition-transform hover:scale-[1.02]">
                   <img
                     src="/images/brand/the-gospel-network-logo.jpeg"
                     alt=""
@@ -195,30 +195,30 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                 </span>
                 {sidebarExpanded && (
                   <span className="hidden min-w-0 xl:block">
-                    <span className="block truncate text-sm font-bold tracking-tight text-midnight-navy">TGN Africa</span>
-                    <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">Editorial</span>
+                    <span className="block truncate text-[13px] font-semibold tracking-[-0.01em] text-slate-900">TGN Africa</span>
+                    <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400">Editorial Studio</span>
                   </span>
                 )}
               </Link>
               {sidebarExpanded && (
-                <button type="button" onClick={() => setSidebarExpanded(false)} className="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50 hover:text-midnight-navy xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
+                <button type="button" onClick={() => setSidebarExpanded(false)} className="hidden h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-black/[0.05] hover:text-slate-700 xl:flex" aria-label="Use icon-only sidebar" title="Icon-only sidebar">
                   <span className="material-symbols-outlined text-[19px]">left_panel_close</span>
                 </button>
               )}
               {!sidebarExpanded && (
-                <button type="button" onClick={() => setSidebarExpanded(true)} className="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50 hover:text-midnight-navy xl:flex" aria-label="Expand sidebar" title="Expand sidebar">
+                <button type="button" onClick={() => setSidebarExpanded(true)} className="hidden h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-black/[0.05] hover:text-slate-700 xl:flex" aria-label="Expand sidebar" title="Expand sidebar">
                   <span className="material-symbols-outlined text-[19px]">left_panel_open</span>
                 </button>
               )}
             </div>
 
-            <nav className={`${mobileOpen ? 'flex' : 'hidden'} absolute left-4 right-4 top-[76px] flex-col gap-5 rounded-3xl border border-slate-100 bg-white p-3 shadow-xl sm:static sm:flex sm:flex-row sm:gap-1 sm:border-0 sm:p-0 sm:shadow-none xl:mt-8 xl:flex-col xl:gap-6`} aria-label="Admin navigation">
+            <nav className={`${mobileOpen ? 'flex' : 'hidden'} absolute left-4 right-4 top-[72px] flex-col gap-5 rounded-[22px] border border-black/[0.06] bg-white/95 p-3 shadow-[0_20px_60px_rgba(15,23,42,0.14)] backdrop-blur-2xl sm:static sm:flex sm:flex-row sm:gap-1 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none xl:mt-7 xl:flex-col xl:gap-5`} aria-label="Admin navigation">
               {navGroups.map((group) => (
                 <div key={group.label} className="flex flex-col gap-1 sm:flex-row xl:flex-col">
-                  {sidebarExpanded && <p className="hidden px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400 xl:block">{group.label}</p>}
+                  {sidebarExpanded && <p className="hidden px-3 pb-1 text-[9px] font-semibold uppercase tracking-[0.13em] text-slate-400 xl:block">{group.label}</p>}
                   {group.items.filter(canSeeItem).map((item) => {
                     const active = item.href && (pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href)))
-                    const itemClass = `group flex h-11 items-center gap-3 rounded-xl px-3 transition-colors sm:w-11 sm:justify-center sm:px-0 xl:w-full ${sidebarExpanded ? 'xl:justify-start xl:px-3' : 'xl:justify-center xl:px-0'}`
+                    const itemClass = `group flex h-10 items-center gap-3 rounded-[11px] px-3 transition-all duration-200 sm:w-10 sm:justify-center sm:px-0 xl:w-full ${sidebarExpanded ? 'xl:justify-start xl:px-3' : 'xl:justify-center xl:px-0'}`
                     if (item.disabled) {
                       return (
                         <button key={item.label} type="button" disabled title={`${item.label} — coming soon`} className={`${itemClass} text-slate-300`} aria-label={`${item.label}, coming soon`}>
@@ -228,9 +228,9 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                       )
                     }
                     return (
-                      <Link key={item.label} href={item.href} prefetch={false} onMouseEnter={() => router.prefetch(item.href)} onFocus={() => router.prefetch(item.href)} onClick={() => setMobileOpen(false)} title={!sidebarExpanded ? item.label : undefined} className={`${itemClass} ${active ? 'bg-midnight-navy text-white shadow-sm' : 'text-slate-500 hover:bg-midnight-navy/5 hover:text-midnight-navy'}`} aria-current={active ? 'page' : undefined} aria-label={item.label}>
-                        <span className="material-symbols-outlined shrink-0 text-[21px]">{item.icon}</span>
-                        <span className={`text-sm font-medium sm:hidden ${sidebarExpanded ? 'xl:block' : 'xl:hidden'}`}>{item.label}</span>
+                      <Link key={item.label} href={item.href} prefetch={false} onMouseEnter={() => router.prefetch(item.href)} onFocus={() => router.prefetch(item.href)} onClick={() => setMobileOpen(false)} title={!sidebarExpanded ? item.label : undefined} className={`${itemClass} ${active ? 'bg-midnight-navy/[0.09] text-midnight-navy shadow-[inset_0_0_0_1px_rgba(13,34,64,0.035)]' : 'text-slate-500 hover:bg-black/[0.045] hover:text-slate-900'}`} aria-current={active ? 'page' : undefined} aria-label={item.label}>
+                        <span className={`material-symbols-outlined shrink-0 text-[20px] ${active ? '[font-variation-settings:FILL_1,wght_450,GRAD_0,opsz_24]' : ''}`}>{item.icon}</span>
+                        <span className={`text-[13px] font-medium tracking-[-0.005em] sm:hidden ${sidebarExpanded ? 'xl:block' : 'xl:hidden'}`}>{item.label}</span>
                       </Link>
                     )
                   })}
@@ -240,7 +240,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
           </div>
 
           <div className={`flex items-center gap-1 xl:flex-col ${sidebarExpanded ? 'xl:items-stretch' : 'xl:items-center'}`}>
-            <a href="/" className={`flex h-11 items-center gap-3 rounded-xl text-slate-500 transition-colors hover:bg-midnight-navy/5 hover:text-midnight-navy ${sidebarExpanded ? 'xl:px-3' : 'w-11 justify-center'}`} aria-label="View public website">
+            <a href="/" className={`flex h-10 items-center gap-3 rounded-[11px] text-slate-500 transition-colors hover:bg-black/[0.045] hover:text-slate-900 ${sidebarExpanded ? 'xl:px-3' : 'w-10 justify-center'}`} aria-label="View public website">
               <span className="material-symbols-outlined shrink-0 text-[21px]">open_in_new</span>
               {sidebarExpanded && <span className="hidden text-sm font-medium xl:block">View website</span>}
             </a>
@@ -251,17 +251,17 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="sticky top-0 z-30 border-b border-midnight-navy/10 bg-gradient-to-r from-[#f4f7ff] via-white to-[#fff8e8] px-6 py-4 shadow-[0_8px_30px_rgba(15,28,75,0.04)] xl:px-10">
+          <header className="admin-topbar sticky top-0 z-30 border-b border-black/[0.055] bg-white/72 px-6 py-3.5 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-2xl xl:px-10">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-midnight-navy text-white'}`}>
+              <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-[13px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-midnight-navy/[0.08] text-midnight-navy'}`}>
                 <span className="material-symbols-outlined text-[22px]">{isBirthday ? 'cake' : 'waving_hand'}</span>
               </span>
               <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+                <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                   <span>TGN Africa Admin</span><span>/</span><span className="text-midnight-navy/60">{authorTier}</span>
                 </div>
-                <h1 className="truncate text-xl font-semibold tracking-tight text-midnight-navy">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
+                <h1 className="truncate text-[17px] font-semibold tracking-[-0.018em] text-slate-900">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
                 <p className="mt-0.5 hidden text-xs text-slate-400 md:block">{isBirthday ? 'Wishing you a joyful celebration from the editorial team. 🎈' : 'Welcome to your editorial workspace.'}</p>
               </div>
               <span className="ml-2 hidden h-8 w-px bg-slate-100 2xl:block" />
@@ -280,7 +280,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                     setSearchOpen(true)
                   }}
                   onFocus={() => setSearchOpen(true)}
-                  className="w-full rounded-full border-0 bg-slate-50 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none ring-midnight-navy/20 placeholder:text-slate-400 focus:ring-2"
+                  className="w-full rounded-xl border border-black/[0.035] bg-black/[0.035] py-2.5 pl-11 pr-4 text-[13px] text-slate-900 outline-none ring-midnight-navy/10 placeholder:text-slate-400 focus:bg-white focus:ring-2"
                   placeholder="Search content..."
                   aria-label="Search all content"
                 />
@@ -307,7 +307,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                 </Link>
               )}
               <div className="relative" ref={notificationsRef}>
-                <button type="button" onClick={() => { setNotificationsOpen((value) => !value); setPreviewNotification(null) }} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-600 hover:bg-slate-50" aria-label={`${unreadNotifications} unread notifications`} aria-expanded={notificationsOpen}>
+                <button type="button" onClick={() => { setNotificationsOpen((value) => !value); setPreviewNotification(null) }} className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/[0.05] bg-white/60 text-slate-600 shadow-sm transition-colors hover:bg-white" aria-label={`${unreadNotifications} unread notifications`} aria-expanded={notificationsOpen}>
                   <span className="material-symbols-outlined text-[20px]">notifications</span>
                   {unreadNotifications > 0 && <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full border-2 border-white bg-red-500 px-1 text-[9px] font-bold text-white">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
                 </button>
@@ -347,7 +347,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                 )}
               </div>
               <div className="relative hidden sm:block" ref={profileRef}>
-                <button type="button" onClick={() => setProfileOpen((value) => !value)} className="flex items-center gap-3 rounded-full border border-slate-100 p-1 pr-3 hover:bg-slate-50" aria-expanded={profileOpen}>
+                <button type="button" onClick={() => setProfileOpen((value) => !value)} className="flex items-center gap-3 rounded-full border border-black/[0.05] bg-white/55 p-1 pr-3 shadow-sm transition-colors hover:bg-white" aria-expanded={profileOpen}>
                   <span className="grid h-9 w-9 place-items-center rounded-full bg-midnight-navy/10 text-sm font-semibold text-midnight-navy">{displayName.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</span>
                   <span className="hidden text-left 2xl:block">
                     <span className="block text-xs font-semibold text-slate-900">{displayName}</span>

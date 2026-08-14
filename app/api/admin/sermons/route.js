@@ -15,6 +15,8 @@ function sermonRow(body, userId) {
       return { error: 'Add a valid media URL before saving.' }
     }
   }
+  if (body.audioUrl && !/\.(mp3|m4a|wav|ogg|oga|webm)(\?.*)?$/i.test(body.audioUrl)) return { error: 'Audio must use a direct MP3, M4A, WAV, OGG, or WebM link.' }
+  if (body.videoUrl && !/\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(body.videoUrl) && !/(youtube\.com|youtu\.be|vimeo\.com)/i.test(body.videoUrl)) return { error: 'Video must use a direct MP4/WebM, YouTube, or Vimeo link.' }
   return {
     slug: body.slug?.trim() || slugify(body.title),
     title: body.title.trim(),

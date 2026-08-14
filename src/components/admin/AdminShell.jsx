@@ -28,6 +28,20 @@ const navGroups = [
   },
 ]
 
+const pageHeaders = {
+  '/admin': ['Dashboard', 'Overview of your platform activity and analytics'],
+  '/admin/analytics': ['Analytics', 'Understand publishing performance and audience growth'],
+  '/admin/content': ['Articles & content', 'Create, review and manage your editorial library'],
+  '/admin/sermons': ['Sermons', 'Manage audio, video and published teaching'],
+  '/admin/comments': ['Comments', 'Review conversations and moderate community activity'],
+  '/admin/authors': ['Authors', 'Manage contributors, profiles and editorial access'],
+  '/admin/subscribers': ['Subscribers', 'Understand and manage your growing audience'],
+  '/admin/email-updates': ['Email updates', 'Create and send updates to your subscribers'],
+  '/admin/topics': ['Categories & topics', 'Organise the subjects across your publication'],
+  '/admin/account': ['My account', 'Manage your profile and personal preferences'],
+  '/admin/settings': ['Settings', 'Configure your editorial platform and permissions'],
+}
+
 export default function AdminShell({ children, profile, authorTier = 'Guest Author', menuAccess = [], dateOfBirth = '' }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -129,6 +143,7 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
   }, [])
 
   const unreadNotifications = notifications.filter((item) => !item.read).length
+  const [pageTitle, pageDescription] = pageHeaders[pathname] || ['Editorial workspace', 'Manage The Gospel Network publishing platform']
 
   const previewActivity = async (item) => {
     setPreviewNotification(item)
@@ -186,9 +201,9 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
           <div className="flex min-w-0 items-center gap-3 xl:flex-col xl:items-stretch">
             <div className={`flex items-center ${sidebarExpanded ? 'xl:justify-between' : 'xl:flex-col xl:justify-center xl:gap-1'}`}>
               <Link href="/admin" prefetch={false} onMouseEnter={() => router.prefetch('/admin')} className="flex min-w-0 items-center gap-3 rounded-2xl" aria-label="The Gospel Network admin home">
-                <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-white shadow-[0_5px_18px_rgba(15,23,42,0.08)] transition-transform hover:scale-[1.02]">
+                <span className="relative h-[68px] w-[68px] shrink-0 transition-transform hover:scale-[1.025]">
                   <img
-                    src="/images/brand/the-gospel-network-logo.jpeg"
+                    src="/images/brand/tgn-africa-logo-transparent.png"
                     alt=""
                     className="absolute inset-0 h-full w-full object-contain"
                   />
@@ -196,7 +211,6 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
                 {sidebarExpanded && (
                   <span className="hidden min-w-0 xl:block">
                     <span className="block truncate text-[13px] font-semibold tracking-[-0.015em] text-slate-900">The Gospel Network</span>
-                    <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.16em] text-midnight-navy/45">Africa · Editorial Studio</span>
                   </span>
                 )}
               </Link>
@@ -251,17 +265,17 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="admin-topbar sticky top-0 z-30 min-h-[88px] border-b border-black/[0.055] bg-white/72 px-6 py-4 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-2xl xl:px-10 xl:py-[18px]">
+          <header className="admin-topbar sticky top-0 z-30 min-h-[108px] border-b border-black/[0.055] bg-white/72 px-6 py-5 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-2xl xl:px-10 xl:py-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="admin-greeting flex min-w-0 items-center gap-4">
-              <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-[13px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-midnight-navy/[0.08] text-midnight-navy'}`}>
-                <span className="material-symbols-outlined text-[22px]">{isBirthday ? 'cake' : 'waving_hand'}</span>
+              <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[15px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-midnight-navy/[0.08] text-midnight-navy'}`}>
+                <span className={`material-symbols-outlined text-[23px] ${isBirthday ? '' : 'admin-wave'}`}>{isBirthday ? 'cake' : 'waving_hand'}</span>
               </span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                   <span>The Gospel Network</span><span>/</span><span className="text-midnight-navy/60">{authorTier}</span>
                 </div>
-                <h1 className="truncate text-[17px] font-semibold tracking-[-0.018em] text-slate-900">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
+                <h1 className="admin-greeting-copy truncate text-[19px] font-semibold tracking-[-0.025em] text-slate-900">{isBirthday ? `Happy birthday, ${firstName}!` : `${greeting}, ${firstName}`}</h1>
                 <p className="mt-0.5 hidden text-xs text-slate-400 md:block">{isBirthday ? 'Wishing you a joyful celebration from the editorial team. 🎈' : 'Welcome to your editorial workspace.'}</p>
               </div>
               <span className="ml-2 hidden h-8 w-px bg-slate-100 2xl:block" />
@@ -366,7 +380,18 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
             </div>
             </div>
           </header>
-          {children}
+          <div className="flex min-h-0 flex-1 flex-col">
+            <section className="admin-page-heading mx-5 mt-5 shrink-0 overflow-hidden rounded-[26px] bg-gradient-to-br from-[#07182d] via-midnight-navy to-[#24486f] px-6 py-5 text-white shadow-[0_18px_50px_rgba(13,34,64,0.16)] md:mx-8 md:px-8 xl:mx-10">
+              <div className="flex items-center gap-4">
+                <span className="h-8 w-1 rounded-full bg-white/75" />
+                <div>
+                  <h2 className="text-xl font-semibold tracking-[-0.025em] text-white md:text-2xl">{pageTitle}</h2>
+                  <p className="mt-1 text-xs leading-5 text-white/55 md:text-sm">{pageDescription}</p>
+                </div>
+              </div>
+            </section>
+            {children}
+          </div>
         </div>
       </div>
     </div>

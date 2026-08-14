@@ -261,10 +261,12 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <header className="admin-topbar sticky top-0 z-30 isolate min-h-[118px] overflow-hidden border-b border-white/10 bg-[#07182d] px-6 py-6 text-white shadow-[0_20px_55px_rgba(13,34,64,0.18)] xl:px-10 xl:py-7">
-            <span className="admin-topbar-orb admin-topbar-orb-one" aria-hidden="true" />
-            <span className="admin-topbar-orb admin-topbar-orb-two" aria-hidden="true" />
-            <span className="admin-topbar-grid" aria-hidden="true" />
+          <header className="admin-topbar sticky top-0 z-30 isolate min-h-[118px] border-b border-white/10 bg-[#07182d] px-6 py-6 text-white shadow-[0_20px_55px_rgba(13,34,64,0.18)] xl:px-10 xl:py-7">
+            <span className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+              <span className="admin-topbar-orb admin-topbar-orb-one" />
+              <span className="admin-topbar-orb admin-topbar-orb-two" />
+              <span className="admin-topbar-grid" />
+            </span>
             <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="admin-greeting flex min-w-0 items-center gap-4">
               <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[15px] shadow-sm ${isBirthday ? 'bg-heritage-gold text-white' : 'bg-white/10 text-white'}`}>

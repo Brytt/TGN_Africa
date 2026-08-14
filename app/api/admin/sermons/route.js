@@ -27,7 +27,7 @@ function sermonRow(body, userId) {
     media_type: mediaType,
     audio_url: mediaType === 'video' ? null : body.audioUrl.trim(),
     video_url: mediaType === 'audio' ? null : body.videoUrl.trim(),
-    cover_path: mediaType === 'audio' ? null : (body.image?.trim() || null),
+    cover_path: body.image?.trim() || null,
     status: ['draft', 'published', 'archived'].includes(body.status?.toLowerCase()) ? body.status.toLowerCase() : 'draft',
     preached_at: body.preachedAt,
     published_at: body.status?.toLowerCase() === 'published' ? (body.publishedAt || new Date().toISOString()) : null,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createPublicClient } from '../../../../../src/lib/supabase/public'
+import { createClient } from '../../../../../src/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -8,11 +8,10 @@ const proxiedAudioHosts = new Set(['cpmfiles1.com'])
 export async function GET(request, { params }) {
   const { id } = await params
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return NextResponse.json({ error: 'Invalid sermon.' }, { status: 400 })
-  const { data: sermon, error } = await createPublicClient()
+  const { data: sermon, error } = await (await createClient())
     .from('sermons')
     .select('audio_url')
     .eq('id', id)
-    .eq('status', 'published')
     .maybeSingle()
   if (error || !sermon?.audio_url) return NextResponse.json({ error: 'Audio not found.' }, { status: 404 })
 

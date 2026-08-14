@@ -27,7 +27,7 @@ export async function PATCH(request, { params }) {
     scripture: body.scripture?.trim() || null, series: body.series?.trim() || null,
     description: body.description?.trim() || null, media_type: mediaType,
     audio_url: mediaType === 'video' ? null : body.audioUrl.trim(),
-    video_url: mediaType === 'audio' ? null : body.videoUrl.trim(), cover_path: mediaType === 'audio' ? null : (body.image?.trim() || null),
+    video_url: mediaType === 'audio' ? null : body.videoUrl.trim(), cover_path: body.image?.trim() || null,
     status, preached_at: body.preachedAt,
     published_at: status === 'published' ? (body.publishedAt || new Date().toISOString()) : null,
     updated_by: auth.user.id,

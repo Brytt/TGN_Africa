@@ -67,3 +67,24 @@ export async function notifySubscribers(publication) {
   failed.forEach((result) => console.error(result.reason))
   return { sent: results.length - failed.length, failed: failed.length }
 }
+
+export async function sendSubscriberUpdate({ subject, preheader = '', message }) {
+  const configuration = emailConfiguration()
+  if (!configuration) return { skipped: true, sent: 0, failed: 0 }
+  const admin = createAdminClient()
+  const { data, error } = await admin.from('newsletter_subscribers').select('email, unsubscribe_token').eq('status', 'active')
+  if (error) throw error
+  const paragraphs = String(message)
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p style="margin:0 0 18px;font:17px/1.75 Georgia,serif;color:#4b5563">${escapeHtml(paragraph).replaceAll('\n', '<br>')}</p>`)
+    .join('')
+  const sends = (data || []).map(({ email, unsubscribe_token: token }) => sendEmail({
+    to: email,
+    subject,
+    html: emailFrame(`${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(preheader)}</div>` : ''}<p style="margin:0 0 8px;font:700 11px Arial,sans-serif;text-transform:uppercase;letter-spacing:1.8px;color:#c5a059">Network update</p><h1 style="margin:0 0 24px;font:600 36px/1.12 Georgia,serif;color:#0d2240">${escapeHtml(subject)}</h1>${paragraphs}`, `${configuration.siteUrl}/api/unsubscribe?token=${token}`),
+  }))
+  const results = await Promise.allSettled(sends)
+  const failed = results.filter((result) => result.status === 'rejected')
+  failed.forEach((result) => console.error(result.reason))
+  return { sent: results.length - failed.length, failed: failed.length }
+}

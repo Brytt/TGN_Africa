@@ -182,6 +182,48 @@ export async function getPublications({ admin = false, limit, summary = false } 
   return (data || []).map((row) => mapPublication({ ...row, metrics: metricsById.get(row.id) }))
 }
 
+export function mapSermon(row) {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    speaker: row.speaker,
+    scripture: row.scripture || '',
+    series: row.series || '',
+    description: row.description || '',
+    mediaType: row.media_type,
+    audioUrl: row.audio_url || '',
+    videoUrl: row.video_url || '',
+    image: row.cover_path || '/images/publications/fallbacks/pastoral-teaching.jpg',
+    status: row.status.replace(/^\w/, (letter) => letter.toUpperCase()),
+    preachedAt: row.preached_at,
+    publishedAt: row.published_at,
+    date: new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(`${row.preached_at}T12:00:00`)),
+  }
+}
+
+export async function getSermons({ admin = false } = {}) {
+  const supabase = admin ? await createClient() : createPublicClient()
+  let query = supabase.from('sermons').select('*').order('preached_at', { ascending: false })
+  if (!admin) query = query.eq('status', 'published')
+  const { data, error } = await query
+  if (error) return schemaFallback(error, [])
+  return (data || []).map(mapSermon)
+}
+
+export async function getSermonBySlug(slug) {
+  const { data, error } = await createPublicClient().from('sermons').select('*').eq('slug', slug).eq('status', 'published').maybeSingle()
+  if (error) return schemaFallback(error, null)
+  return data ? mapSermon(data) : null
+}
+
+export async function getEmailUpdates() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('email_updates').select('*').order('sent_at', { ascending: false }).limit(50)
+  if (error) return schemaFallback(error, [])
+  return data || []
+}
+
 export async function getPublicationBySlug(slug) {
   const supabase = createPublicClient()
   let { data, error } = await supabase

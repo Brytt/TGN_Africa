@@ -11,6 +11,7 @@ const navGroups = [
     items: [
       { label: 'Analytics', icon: 'monitoring', href: '/admin', permission: 'analytics' },
       { label: 'Content', icon: 'article', href: '/admin/content', permission: 'content' },
+      { label: 'Sermons', icon: 'podcasts', href: '/admin/sermons', permission: 'content' },
       { label: 'Comments', icon: 'forum', href: '/admin/comments', permission: 'comments' },
     ],
   },
@@ -19,6 +20,7 @@ const navGroups = [
     items: [
       { label: 'Authors', icon: 'group', href: '/admin/authors', permission: 'authors' },
       { label: 'Subscribers', icon: 'mark_email_read', href: '/admin/subscribers', permission: 'subscribers' },
+      { label: 'Email updates', icon: 'outgoing_mail', href: '/admin/email-updates', permission: 'subscribers' },
       { label: 'Topics', icon: 'category', href: '/admin/topics', permission: 'topics' },
       { label: 'My account', icon: 'manage_accounts', href: '/admin/account' },
       { label: 'General settings', icon: 'settings', href: '/admin/settings', permission: 'settings' },

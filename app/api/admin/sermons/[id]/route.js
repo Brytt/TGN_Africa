@@ -12,13 +12,20 @@ export async function PATCH(request, { params }) {
   if (!body.title?.trim() || !body.speaker?.trim() || !body.preachedAt || !mediaType) return failure('Title, speaker, date, and media type are required.')
   if ((mediaType === 'audio' || mediaType === 'both') && !body.audioUrl?.trim()) return failure('Add an audio URL for this media type.')
   if ((mediaType === 'video' || mediaType === 'both') && !body.videoUrl?.trim()) return failure('Add a video URL for this media type.')
+  for (const value of [body.audioUrl, body.videoUrl].filter(Boolean)) {
+    try {
+      new URL(value)
+    } catch {
+      return failure('Add a valid media URL before saving.')
+    }
+  }
   const status = ['draft', 'published', 'archived'].includes(body.status?.toLowerCase()) ? body.status.toLowerCase() : 'draft'
   const row = {
     slug: body.slug?.trim() || slugify(body.title), title: body.title.trim(), speaker: body.speaker.trim(),
     scripture: body.scripture?.trim() || null, series: body.series?.trim() || null,
     description: body.description?.trim() || null, media_type: mediaType,
     audio_url: mediaType === 'video' ? null : body.audioUrl.trim(),
-    video_url: mediaType === 'audio' ? null : body.videoUrl.trim(), cover_path: body.image?.trim() || null,
+    video_url: mediaType === 'audio' ? null : body.videoUrl.trim(), cover_path: mediaType === 'audio' ? null : (body.image?.trim() || null),
     status, preached_at: body.preachedAt,
     published_at: status === 'published' ? (body.publishedAt || new Date().toISOString()) : null,
     updated_by: auth.user.id,

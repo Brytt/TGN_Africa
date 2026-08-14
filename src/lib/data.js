@@ -194,7 +194,7 @@ export function mapSermon(row) {
     mediaType: row.media_type,
     audioUrl: row.audio_url || '',
     videoUrl: row.video_url || '',
-    image: row.cover_path || '/images/publications/fallbacks/pastoral-teaching.jpg',
+    image: row.cover_path || '',
     status: row.status.replace(/^\w/, (letter) => letter.toUpperCase()),
     preachedAt: row.preached_at,
     publishedAt: row.published_at,

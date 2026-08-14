@@ -8,6 +8,13 @@ function sermonRow(body, userId) {
   if (!body.title?.trim() || !body.speaker?.trim() || !body.preachedAt || !mediaType) return { error: 'Title, speaker, date, and media type are required.' }
   if ((mediaType === 'audio' || mediaType === 'both') && !body.audioUrl?.trim()) return { error: 'Add an audio URL for this media type.' }
   if ((mediaType === 'video' || mediaType === 'both') && !body.videoUrl?.trim()) return { error: 'Add a video URL for this media type.' }
+  for (const value of [body.audioUrl, body.videoUrl].filter(Boolean)) {
+    try {
+      new URL(value)
+    } catch {
+      return { error: 'Add a valid media URL before saving.' }
+    }
+  }
   return {
     slug: body.slug?.trim() || slugify(body.title),
     title: body.title.trim(),
@@ -18,7 +25,7 @@ function sermonRow(body, userId) {
     media_type: mediaType,
     audio_url: mediaType === 'video' ? null : body.audioUrl.trim(),
     video_url: mediaType === 'audio' ? null : body.videoUrl.trim(),
-    cover_path: body.image?.trim() || null,
+    cover_path: mediaType === 'audio' ? null : (body.image?.trim() || null),
     status: ['draft', 'published', 'archived'].includes(body.status?.toLowerCase()) ? body.status.toLowerCase() : 'draft',
     preached_at: body.preachedAt,
     published_at: body.status?.toLowerCase() === 'published' ? (body.publishedAt || new Date().toISOString()) : null,

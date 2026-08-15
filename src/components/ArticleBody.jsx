@@ -4,8 +4,8 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { sanitizeArticleHtml } from '../lib/article-html'
 import ScriptureModal from './ScriptureModal'
 
-const BOOKS = String.raw`(?:[1-3]\s*)?(?:Genesis|Gen\.?|Exodus|Exod\.?|Leviticus|Lev\.?|Numbers|Num\.?|Deuteronomy|Deut\.?|Joshua|Josh\.?|Judges|Judg\.?|Ruth|Samuel|Sam\.?|Kings|Kgs\.?|Chronicles|Chron\.?|Ezra|Nehemiah|Neh\.?|Esther|Esth\.?|Job|Psalms?|Ps\.?|Proverbs|Prov\.?|Ecclesiastes|Eccl\.?|Song of Solomon|Song of Songs|Isaiah|Isa\.?|Jeremiah|Jer\.?|Lamentations|Lam\.?|Ezekiel|Ezek\.?|Daniel|Dan\.?|Hosea|Hos\.?|Joel|Amos|Obadiah|Obad\.?|Jonah|Micah|Mic\.?|Nahum|Nah\.?|Habakkuk|Hab\.?|Zephaniah|Zeph\.?|Haggai|Hag\.?|Zechariah|Zech\.?|Malachi|Mal\.?|Matthew|Matt\.?|Mark|Luke|John|Acts|Romans|Rom\.?|Corinthians|Cor\.?|Galatians|Gal\.?|Ephesians|Eph\.?|Philippians|Phil\.?|Colossians|Col\.?|Thessalonians|Thess\.?|Timothy|Tim\.?|Titus|Philemon|Philem\.?|Hebrews|Heb\.?|James|Jas\.?|Peter|Pet\.?|Jude|Revelation|Rev\.?)`
-const scriptureRegex = () => new RegExp(String.raw`\b${BOOKS}\s*\d{1,3}(?::\d{1,3}(?:\s*[-–—]\s*\d{1,3})?)?(?:\s*[-–—]\s*\d{1,3}(?::\d{1,3})?)?`, 'gi')
+const BOOKS = String.raw`(?:[1-3]\s*)?(?:Genesis|Gen\.?|Exodus|Exod\.?|Leviticus|Lev\.?|Numbers|Num\.?|Deuteronomy|Deut\.?|Joshua|Josh\.?|Judges|Judg\.?|Ruth|Samuel|Sam\.?|Kings|Kgs\.?|Chronicles|Chron\.?|Ezra|Nehemiah|Neh\.?|Esther|Esth\.?|Job|Psalms?|Ps\.?|Proverbs|Prov\.?|Ecclesiastes|Eccl\.?|Song of Solomon|Song of Songs|Isaiah|Isa\.?|Jeremiah|Jer\.?|Lamentations|Lam\.?|Ezekiel|Ezek\.?|Daniel|Dan\.?|Hosea|Hos\.?|Joel|Amos|Obadiah|Obad\.?|Jonah|Micah|Mic\.?|Nahum|Nah\.?|Habakkuk|Hab\.?|Zephaniah|Zeph\.?|Haggai|Hag\.?|Zechariah|Zech\.?|Malachi|Mal\.?|Matthew|Matt\.?|Mt\.?|Mark|Mk\.?|Luke|Lk\.?|John|Jn\.?|Acts|Romans|Rom\.?|Corinthians|Cor\.?|Galatians|Gal\.?|Ephesians|Eph\.?|Philippians|Phil\.?|Colossians|Col\.?|Thessalonians|Thess\.?|Timothy|Tim\.?|Titus|Philemon|Philem\.?|Hebrews|Heb\.?|James|Jas\.?|Peter|Pet\.?|Jude|Revelation|Rev\.?)`
+const scriptureRegex = () => new RegExp(String.raw`\b${BOOKS}\s*\d{1,3}(?::\d{1,3}(?:\s*[-–—]\s*\d{1,3})?)?(?:\s*[-–—]\s*\d{1,3}(?::\d{1,3})?)?(?:\s*[,;]\s*\d{1,3}(?::\d{1,3})?(?:\s*[-–—]\s*\d{1,3})?)*`, 'gi')
 
 export default function ArticleBody({ body, bodyFormat = 'html', emptyMessage = 'This article does not have body content yet.' }) {
   const html = sanitizeArticleHtml(body, { plain: bodyFormat === 'plain' })
@@ -39,7 +39,11 @@ export default function ArticleBody({ body, bodyFormat = 'html', emptyMessage = 
     const show = async (target) => {
       const reference = target.dataset.scriptureReference
       window.dispatchEvent(new CustomEvent('tgn-scripture-open', { detail: id }))
-      setPreview({ reference, status: 'loading' })
+      const rect = target.getBoundingClientRect()
+      const width = Math.min(360, window.innerWidth - 24)
+      const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12)) + window.scrollX
+      const top = rect.bottom + window.scrollY + 8
+      setPreview({ reference, status: 'loading', position: { left, top, width } })
       if (!cache.current.has(reference)) {
         const response = await fetch(`/api/esv?reference=${encodeURIComponent(reference)}`)
         const result = await response.json().catch(() => ({}))

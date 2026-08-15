@@ -1159,20 +1159,20 @@ section[aria-label='Filter published sermons'] input:focus {
 .tgn-inline-scripture {
   display: inline;
   border-radius: 0.3rem;
-  background: rgb(197 160 89 / 14%);
-  box-shadow: inset 0 -1px 0 rgb(197 160 89 / 48%);
+  background: rgb(255 255 255 / 72%);
+  box-shadow: inset 0 -1px 0 rgb(13 34 64 / 12%);
   color: #0d2240;
   cursor: help;
   font: inherit;
-  font-weight: 600;
-  padding: 0.06em 0.2em;
+  font-weight: inherit;
+  padding: 0.03em 0.12em;
   transition: background-color 160ms ease, box-shadow 160ms ease;
 }
 
 .tgn-inline-scripture:hover,
 .tgn-inline-scripture:focus-visible {
-  background: rgb(197 160 89 / 25%);
-  box-shadow: inset 0 -2px 0 rgb(197 160 89 / 72%);
+  background: rgb(13 34 64 / 5%);
+  box-shadow: inset 0 -1px 0 rgb(13 34 64 / 24%);
   outline: none;
 }
 

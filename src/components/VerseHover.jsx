@@ -37,5 +37,5 @@ export default function VerseHover({ reference, className = '' }) {
     } catch { setStatus('error') }
   }
 
-  return <><span className={`relative inline-flex ${className}`}><button type="button" onMouseEnter={show} onFocus={show} onClick={show} className="inline-flex items-center gap-1 rounded-md bg-heritage-gold/10 px-1.5 py-0.5 font-semibold text-midnight-navy ring-1 ring-inset ring-heritage-gold/25 transition-colors hover:bg-heritage-gold/20"><span>{reference}</span><span className="material-symbols-outlined text-[14px] opacity-50">menu_book</span></button></span>{open && position && <ScriptureModal preview={{ reference, passage, status, position }} onClose={() => setOpen(false)} />}</>
+  return <><span className={`relative inline-flex ${className}`}><button type="button" onMouseEnter={show} onFocus={show} onClick={show} className="inline-flex items-center gap-1 rounded px-1 py-0.5 font-semibold text-midnight-navy ring-1 ring-inset ring-midnight-navy/[0.07] transition-colors hover:bg-midnight-navy/[0.045]"><span>{reference}</span><span className="material-symbols-outlined text-[14px] opacity-35">menu_book</span></button></span>{open && position && <ScriptureModal preview={{ reference, passage, status, position }} onClose={() => setOpen(false)} />}</>
 }

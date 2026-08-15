@@ -132,7 +132,7 @@ function DateRangePicker({ from, to, onFromChange, onToChange }) {
   )
 }
 
-export default function AnalyticsManager({ publications = [], editorialTasks = [], authors = [], analyticsEvents = [], sermonAnalyticsEvents = [], subscribers = [] }) {
+export default function AnalyticsManager({ publications = [], editorialTasks = [], authors = [], analyticsEvents = [], sermonAnalyticsEvents = [], subscribers = [], dailyScripture = null }) {
   const [period, setPeriod] = useState('This year')
   const [metric, setMetric] = useState('Views')
   const todayValue = toDateValue(new Date())
@@ -274,6 +274,8 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
           </div>
           <div className="mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-6"><div><strong className="block text-2xl font-semibold"><AnimatedNumber value={report.views} /></strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Total views</span></div><div><strong className="block text-2xl font-semibold"><AnimatedNumber value={report.published} /></strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Published</span></div><div><strong className="block text-2xl font-semibold"><AnimatedNumber value={activeSubscribers.length} /></strong><span className="mt-1 block text-[9px] uppercase tracking-[0.13em] text-white/40">Subscribers</span></div></div>
         </div>
+
+        {dailyScripture && <section className="admin-stat-card mb-6 overflow-hidden rounded-3xl border border-midnight-navy/10 bg-gradient-to-br from-white via-white to-[#edf4fb] p-6 shadow-sm md:p-8"><div className="flex items-start gap-5"><span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-midnight-navy text-white shadow-lg"><span className="material-symbols-outlined">auto_stories</span></span><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-2"><p className="text-[10px] font-bold uppercase tracking-[0.15em] text-midnight-navy/45">Daily Scripture · ESV</p><span className="text-[10px] font-semibold text-midnight-navy/40">{dailyScripture.reference}</span></div><div className="mt-4 font-display text-xl leading-8 text-midnight-navy/80 md:text-2xl md:leading-9 [&_.copyright]:mt-4 [&_.copyright]:font-sans [&_.copyright]:text-[8px] [&_.copyright]:leading-4 [&_.copyright]:text-midnight-navy/35 [&_.verse-num]:mr-1 [&_.verse-num]:font-sans [&_.verse-num]:text-[9px]" dangerouslySetInnerHTML={{ __html: dailyScripture.html }} /><a href="https://www.esv.org/" target="_blank" rel="noreferrer" className="mt-4 inline-block text-[9px] font-bold uppercase tracking-[0.12em] text-midnight-navy underline underline-offset-4">Read on ESV.org</a></div></div></section>}
 
         <header className="admin-print-header mb-6 hidden border-b-2 border-midnight-navy pb-5">
           <div className="flex items-center justify-between">

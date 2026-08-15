@@ -5,6 +5,7 @@ import AnnouncementBar from '../components/AnnouncementBar'
 import ArticleBody from '../components/ArticleBody'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
+import VerseHover from '../components/VerseHover'
 
 function fullDate(value) {
   const date = new Date(value)
@@ -169,6 +170,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
               </a>
               <h1 className="tgn-article-serif mt-5 text-[clamp(2.5rem,6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-midnight-navy">{article.title}</h1>
               {article.subtitle && <p className="tgn-article-subtitle tgn-article-serif mt-5 max-w-[760px] text-[clamp(1.2rem,2.5vw,1.55rem)] leading-[1.4]">{article.subtitle}</p>}
+              {article.scripture && <div className="tgn-article-sans mt-5 text-xs font-semibold text-midnight-navy/60"><VerseHover reference={article.scripture} /></div>}
 
               <div className="tgn-article-sans mt-8 flex flex-wrap items-center gap-4">
                 {article.authorImage

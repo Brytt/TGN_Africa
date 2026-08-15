@@ -7,7 +7,7 @@ import { createClient } from '../../lib/supabase/browser'
 const initialSettings = {
   siteName: 'The Gospel Network Africa',
   siteDescription: 'Theological resources for the African church.',
-  contactEmail: 'editorial@tgnafrica.org',
+  contactEmail: 'info@tgnafrica.com',
   timezone: 'Africa/Lagos',
   defaultStatus: 'Draft',
   reviewRequired: true,

@@ -2,6 +2,8 @@ import 'server-only'
 import { createAdminClient } from './supabase/admin'
 /* global process */
 
+const CONTACT_EMAIL = 'info@tgnafrica.com'
+
 const escapeHtml = (value = '') => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character])
 
 function emailConfiguration() {
@@ -9,6 +11,7 @@ function emailConfiguration() {
   return {
     apiKey: process.env.RESEND_API_KEY,
     from: process.env.NEWSLETTER_FROM_EMAIL,
+    replyTo: CONTACT_EMAIL,
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://tgn-africa-xi.vercel.app',
   }
 }
@@ -22,7 +25,7 @@ async function sendEmail({ to, subject, html }) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${configuration.apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: configuration.from, to, subject, html }),
+    body: JSON.stringify({ from: configuration.from, to, subject, html, reply_to: configuration.replyTo }),
   })
   if (!response.ok) {
     const detail = await response.text()
@@ -32,7 +35,7 @@ async function sendEmail({ to, subject, html }) {
 }
 
 function emailFrame(content, unsubscribeUrl) {
-  return `<div style="margin:0;background:#f4f5f7;padding:36px 16px"><div style="max-width:620px;margin:auto;background:#ffffff;border-top:5px solid #0d2240;padding:38px 34px;color:#172033"><p style="margin:0 0 28px;font:700 11px Arial,sans-serif;text-transform:uppercase;letter-spacing:2.2px;color:#0d2240">The Gospel Network</p>${content}<hr style="border:0;border-top:1px solid #e5e7eb;margin:36px 0 20px"><p style="margin:0;font:11px/1.6 Arial,sans-serif;color:#8a919d">Declaring the Whole Counsel of God for the Saints of Africa.</p>${unsubscribeUrl ? `<p style="margin:8px 0 0;font:11px/1.6 Arial,sans-serif;color:#8a919d">You subscribed to publication emails. <a href="${unsubscribeUrl}" style="color:#0d2240">Unsubscribe</a></p>` : ''}</div></div>`
+  return `<div style="margin:0;background:#f4f5f7;padding:36px 16px"><div style="max-width:620px;margin:auto;background:#ffffff;border-top:5px solid #0d2240;padding:38px 34px;color:#172033"><p style="margin:0 0 28px;font:700 11px Arial,sans-serif;text-transform:uppercase;letter-spacing:2.2px;color:#0d2240">The Gospel Network</p>${content}<hr style="border:0;border-top:1px solid #e5e7eb;margin:36px 0 20px"><p style="margin:0;font:11px/1.6 Arial,sans-serif;color:#8a919d">Declaring the Whole Counsel of God for the Saints of Africa.</p><p style="margin:8px 0 0;font:11px/1.6 Arial,sans-serif;color:#8a919d">Questions or feedback? <a href="mailto:${CONTACT_EMAIL}" style="color:#0d2240;text-decoration:none">${CONTACT_EMAIL}</a></p>${unsubscribeUrl ? `<p style="margin:8px 0 0;font:11px/1.6 Arial,sans-serif;color:#8a919d">You subscribed to publication emails. <a href="${unsubscribeUrl}" style="color:#0d2240">Unsubscribe</a></p>` : ''}</div></div>`
 }
 
 export async function sendWelcomeEmail({ email, displayName, unsubscribeToken }) {

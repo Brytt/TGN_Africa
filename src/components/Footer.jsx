@@ -54,6 +54,7 @@ export default function Footer() {
               <span className="eyebrow mb-5 block text-white">Resources</span>
               <ul className="space-y-3 text-sm text-parchment-ivory/55">
                 <li><a href="/about/statement-of-faith" className="transition-colors hover:text-parchment-ivory">Statement of Faith</a></li>
+                <li><a href="mailto:info@tgnafrica.com" className="transition-colors hover:text-parchment-ivory">info@tgnafrica.com</a></li>
                 <li><a href="#privacy" className="transition-colors hover:text-parchment-ivory">Privacy Policy</a></li>
               </ul>
             </div>

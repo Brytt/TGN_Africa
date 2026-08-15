@@ -124,7 +124,7 @@ await assert(await supabase.from('editorial_tasks').insert(tasks), 'editorial ta
 await assert(await supabase.from('site_settings').upsert([
   { key: 'siteName', value: 'The Gospel Network Africa' },
   { key: 'siteDescription', value: 'Theological resources for the African church.' },
-  { key: 'contactEmail', value: 'editorial@tgnafrica.org' },
+  { key: 'contactEmail', value: 'info@tgnafrica.com' },
   { key: 'timezone', value: 'Africa/Lagos' },
   { key: 'defaultStatus', value: 'Draft' },
   { key: 'reviewRequired', value: true },

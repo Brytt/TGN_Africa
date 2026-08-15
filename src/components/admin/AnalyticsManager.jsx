@@ -298,23 +298,13 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
           </section>
         )}
 
-        <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Performance summary">
-          {[
-            { label: 'Total views', value: report.views, icon: 'visibility' },
-            { label: 'Published', value: report.published, icon: 'task_alt' },
-            { label: 'Completed reads', value: report.engaged, icon: 'group' },
-            { label: 'Active subscribers', value: activeSubscribers.length, icon: 'mark_email_read', detail: `${newSubscribers.toLocaleString()} joined in period` },
-            { label: 'Average read time', value: report.avgRead, decimals: 1, suffix: ' min', icon: 'schedule' },
+        <section className="admin-stat-card mb-6 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-6" aria-label="Sermon engagement">
+          <div className="flex flex-col justify-between gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:items-center"><div><p className="text-[10px] font-bold uppercase tracking-[0.13em] text-midnight-navy/45">Sermon engagement</p><h3 className="mt-1 font-semibold text-slate-900">Listening and viewing activity</h3></div><span className="text-[10px] font-medium text-slate-400">{periodLabel}</span></div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">{[
             { label: 'Sermon page views', value: sermonViews, icon: 'podcasts' },
             { label: 'Sermons listened', value: sermonListens, icon: 'headphones' },
             { label: 'Sermons watched', value: sermonWatches, icon: 'smart_display' },
-          ].map((item, index) => (
-            <article key={item.label} className="admin-stat-card rounded-3xl border border-slate-100 bg-white p-5 shadow-sm" style={{ '--card-delay': `${index * 65}ms` }}>
-              <div className="flex items-start justify-between"><span className="admin-stat-icon grid h-10 w-10 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[21px]">{item.icon}</span></span><span className="max-w-[150px] text-right text-[10px] font-medium text-slate-400">{item.detail || periodLabel}</span></div>
-              <strong className="mt-5 block text-3xl font-semibold tracking-tight text-slate-900"><AnimatedNumber value={item.value} decimals={item.decimals} suffix={item.suffix} /></strong>
-              <p className="mt-1 text-xs text-slate-500">{item.label}</p>
-            </article>
-          ))}
+          ].map((item) => <div key={item.label} className="flex items-center gap-4 border-slate-100 py-2 sm:border-r sm:last:border-0"><span className="admin-stat-icon grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[20px]">{item.icon}</span></span><span><strong className="block text-2xl font-semibold tracking-tight text-slate-900"><AnimatedNumber value={item.value} /></strong><span className="mt-0.5 block text-xs text-slate-500">{item.label}</span></span></div>)}</div>
         </section>
 
         <section className="mb-6 grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">

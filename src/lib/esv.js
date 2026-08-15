@@ -7,12 +7,13 @@ export async function getEsvPassage(reference = '') {
 
   const parameters = new URLSearchParams({
     q: query,
-    'include-passage-references': 'true',
+    'include-passage-references': 'false',
     'include-verse-numbers': 'true',
     'include-footnotes': 'false',
-    'include-headings': 'true',
-    'include-copyright': 'true',
-    'include-short-copyright': 'false',
+    'include-headings': 'false',
+    'include-audio-link': 'false',
+    'include-copyright': 'false',
+    'include-short-copyright': 'true',
   })
 
   try {

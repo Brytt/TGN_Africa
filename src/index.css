@@ -1147,6 +1147,27 @@ section[aria-label='Filter published sermons'] input:focus {
   animation-delay: 340ms;
 }
 
+.admin-scripture-marquee-track {
+  animation: admin-scripture-drift 24s linear infinite;
+  padding-left: 100%;
+}
+
+.admin-scripture-marquee:hover .admin-scripture-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes admin-scripture-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-scripture-marquee-track {
+    animation: none;
+    padding-left: 0;
+  }
+}
+
 @keyframes hero-settle {
   from { transform: scale(1.04); }
   to { transform: scale(1); }

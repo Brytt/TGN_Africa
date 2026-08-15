@@ -1,29 +1,17 @@
 import { signIn } from '../../auth/actions'
+import AdminLoginForm from '../../../src/components/admin/AdminLoginForm'
 
 export const metadata = { title: 'Admin Login' }
 
 export default async function AdminLoginPage({ searchParams }) {
   const params = await searchParams
   return (
-    <main className="grid min-h-screen place-items-center bg-slate-50 px-6 py-12 font-sans">
-      <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-7 shadow-xl md:p-9">
-        <a href="/" className="inline-flex items-center gap-3 text-midnight-navy">
-          <span className="relative block h-20 w-16 shrink-0">
-            <img src="/images/brand/the-gospel-network-logo.jpeg" alt="" className="absolute inset-0 h-full w-full object-contain" />
-          </span>
-          <span><span className="block font-bold">TGN Africa</span><span className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Editorial platform</span></span>
-        </a>
-        <h1 className="mt-8 text-3xl font-semibold text-midnight-navy">Welcome back</h1>
-        <p className="mt-2 text-sm text-slate-500">Sign in with your invited staff account.</p>
-        {params?.error && <p className="mt-5 rounded-xl bg-red-50 p-3 text-sm text-red-600">{params.error}</p>}
-        <form action={signIn} className="mt-7 space-y-5">
-          <input type="hidden" name="next" value={params?.next || '/admin'} />
-          <label className="block text-xs font-semibold text-slate-500">Email address<input required type="email" name="email" className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-midnight-navy/30 focus:ring-2 focus:ring-midnight-navy/10" /></label>
-          <label className="block text-xs font-semibold text-slate-500">Password<input required type="password" name="password" minLength={8} className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-midnight-navy/30 focus:ring-2 focus:ring-midnight-navy/10" /></label>
-          <button className="w-full rounded-full bg-midnight-navy px-5 py-3 text-sm font-semibold text-white">Sign in</button>
-        </form>
-        <a href="/account/forgot-password" className="mt-5 block text-center text-xs font-medium text-midnight-navy">Forgot your password?</a>
-      </div>
+    <main className="relative grid min-h-screen place-items-center overflow-hidden bg-[#f2f2f4] px-5 py-10 font-sans text-slate-800 md:px-8">
+      <div className="pointer-events-none absolute -left-24 -top-24 size-80 rounded-full bg-[#dfe8f2]/80 blur-3xl" /><div className="pointer-events-none absolute -bottom-32 -right-20 size-96 rounded-full bg-[#e7dfcf]/70 blur-3xl" />
+      <section className="relative grid w-full max-w-[1040px] overflow-hidden rounded-[36px] border border-white/80 bg-white shadow-[0_35px_100px_rgba(15,23,42,0.14)] lg:min-h-[650px] lg:grid-cols-[0.92fr_1.08fr]">
+        <aside className="relative hidden overflow-hidden bg-[#07182d] p-10 text-white lg:flex lg:flex-col lg:justify-between"><div className="absolute -right-32 -top-40 size-[420px] rounded-full bg-[#376c9f]/30 blur-2xl" /><div className="absolute -bottom-44 -left-24 size-[360px] rounded-full bg-heritage-gold/15 blur-3xl" /><div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,0.34)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:linear-gradient(to_bottom_right,transparent,black,transparent)]" /><a href="/" className="relative inline-flex w-fit items-center gap-3"><span className="grid size-14 place-items-center overflow-hidden rounded-2xl bg-white"><img src="/images/brand/the-gospel-network-logo.jpeg" alt="The Gospel Network" className="size-16 max-w-none object-contain" /></span><span><span className="block text-sm font-semibold">The Gospel Network</span><span className="mt-1 block text-[9px] uppercase tracking-[0.16em] text-white/40">Editorial administration</span></span></a><div className="relative"><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">A calm publishing workspace</p><h2 className="mt-5 max-w-sm text-4xl font-semibold leading-[1.08] tracking-[-0.04em]">Thoughtful tools for faithful editorial work.</h2><p className="mt-5 max-w-sm text-sm leading-7 text-white/50">Manage publications, sermons, authors, subscribers, and audience insights from one secure workspace.</p></div><p className="relative text-[10px] text-white/30">Authorised staff access only · Secure authentication</p></aside>
+        <div className="flex flex-col justify-center p-7 sm:p-10 md:p-14 lg:p-16"><a href="/" className="mb-10 inline-flex items-center gap-3 lg:hidden"><img src="/images/brand/the-gospel-network-logo.jpeg" alt="The Gospel Network" className="size-14 object-contain mix-blend-multiply" /><span className="text-sm font-semibold text-midnight-navy">The Gospel Network</span></a><div className="max-w-md"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-midnight-navy/40">Editorial workspace</p><h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-midnight-navy md:text-[2.75rem]">Welcome back.</h1><p className="mt-3 text-sm leading-6 text-slate-500">Sign in with your invited staff account to continue.</p><AdminLoginForm action={signIn} error={params?.error} next={params?.next || '/admin'} /></div><p className="mt-9 text-[10px] leading-5 text-slate-400">By continuing, you confirm that you are authorised to access The Gospel Network editorial platform.</p></div>
+      </section>
     </main>
   )
 }

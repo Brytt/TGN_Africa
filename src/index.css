@@ -546,6 +546,17 @@ section[aria-label='Filter published sermons'] input:focus {
   to { transform: scaleY(1); opacity: 1; }
 }
 
+@keyframes admin-login-progress {
+  0% { transform: translateX(-110%) scaleX(0.55); }
+  55% { transform: translateX(145%) scaleX(1); }
+  100% { transform: translateX(330%) scaleX(0.55); }
+}
+
+.admin-login-progress {
+  animation: admin-login-progress 1.05s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-origin: left;
+}
+
 .admin-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;

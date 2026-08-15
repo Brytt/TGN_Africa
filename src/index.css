@@ -436,6 +436,16 @@ a:focus-visible {
   mask-image: linear-gradient(to right, transparent, black 45%, black 90%, transparent);
 }
 
+.sermon-preview > header,
+.sermon-preview #sermon-player > div,
+.sermon-preview #sermon-player + section + section a.group {
+  border-radius: 0 !important;
+}
+
+.sermon-preview #sermon-player + section {
+  display: none;
+}
+
 .admin-stat-card {
   animation: admin-card-enter 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--card-delay, 0ms);

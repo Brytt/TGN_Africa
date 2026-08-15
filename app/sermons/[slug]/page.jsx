@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Navbar from '../../../src/components/Navbar'
 import Footer from '../../../src/components/Footer'
+import { SermonViewTracker } from '../../../src/components/SermonAnalytics'
 import { getSermonBySlug, getSermons } from '../../../src/lib/data'
 
 export const revalidate = 60
@@ -52,7 +53,7 @@ export default async function SermonPage({ params }) {
   const embedUrl = embedVideoUrl(sermon.videoUrl)
   const related = (await getSermons()).filter((item) => item.id !== sermon.id && (item.series === sermon.series || item.speaker === sermon.speaker)).slice(0, 3)
   const primaryAction = sermon.videoUrl ? 'Watch sermon' : 'Listen to sermon'
-  return <><Navbar /><main className="min-h-screen bg-[#f7f7f6] pb-20 pt-32 font-sans md:pt-40"><article className="page-shell">
+  return <><Navbar /><SermonViewTracker sermonId={sermon.id} primaryEvent={sermon.videoUrl ? 'watch' : 'listen'} /><main className="min-h-screen bg-[#f7f7f6] pb-20 pt-32 font-sans md:pt-40"><article className="sermon-preview page-shell">
     <a href="/sermons" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-midnight-navy/50 transition hover:text-midnight-navy">← Sermon archive</a>
 
     <header className="mt-7 grid overflow-hidden rounded-[32px] border border-midnight-navy/[0.08] bg-white shadow-[0_24px_70px_rgba(13,34,64,0.11)] lg:grid-cols-[1.12fr_0.88fr]">

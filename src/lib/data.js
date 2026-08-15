@@ -346,13 +346,29 @@ export async function getEditorialTasks() {
 export async function getAnalyticsEvents() {
   const supabase = await createClient()
   const start = new Date(new Date().getFullYear(), 0, 1).toISOString()
-  const { data, error } = await supabase
-    .from('analytics_events')
-    .select('publication_id, event_type, created_at')
-    .gte('created_at', start)
-    .order('created_at')
-  if (error) return schemaFallback(error, [])
-  return data || []
+  const rows = []
+  const pageSize = 1000
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase.from('analytics_events').select('publication_id, event_type, created_at').gte('created_at', start).order('created_at').range(from, from + pageSize - 1)
+    if (error) return schemaFallback(error, rows)
+    rows.push(...(data || []))
+    if (!data || data.length < pageSize) break
+  }
+  return rows
+}
+
+export async function getSermonAnalyticsEvents() {
+  const supabase = await createClient()
+  const start = new Date(new Date().getFullYear(), 0, 1).toISOString()
+  const rows = []
+  const pageSize = 1000
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase.from('sermon_analytics_events').select('sermon_id, event_type, created_at').gte('created_at', start).order('created_at').range(from, from + pageSize - 1)
+    if (error) return schemaFallback(error, rows)
+    rows.push(...(data || []))
+    if (!data || data.length < pageSize) break
+  }
+  return rows
 }
 
 export async function getSettings() {

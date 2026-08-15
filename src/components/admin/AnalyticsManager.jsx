@@ -132,7 +132,7 @@ function DateRangePicker({ from, to, onFromChange, onToChange }) {
   )
 }
 
-export default function AnalyticsManager({ publications = [], editorialTasks = [], authors = [], analyticsEvents = [], subscribers = [] }) {
+export default function AnalyticsManager({ publications = [], editorialTasks = [], authors = [], analyticsEvents = [], sermonAnalyticsEvents = [], subscribers = [] }) {
   const [period, setPeriod] = useState('This year')
   const [metric, setMetric] = useState('Views')
   const todayValue = toDateValue(new Date())
@@ -198,6 +198,13 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
     return `${x},${y}`
   }).join(' ')
   const activeSubscribers = subscribers.filter((subscriber) => subscriber.status === 'active')
+  const sermonEventsInRange = sermonAnalyticsEvents.filter((event) => {
+    const date = new Date(event.created_at)
+    return date >= range.start && date <= range.end
+  })
+  const sermonListens = sermonEventsInRange.filter((event) => event.event_type === 'listen').length
+  const sermonWatches = sermonEventsInRange.filter((event) => event.event_type === 'watch').length
+  const sermonViews = sermonEventsInRange.filter((event) => event.event_type === 'page_view').length
   const newSubscribers = activeSubscribers.filter((subscriber) => {
     const date = new Date(subscriber.consented_at || subscriber.created_at)
     return date >= range.start && date <= range.end
@@ -224,6 +231,9 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
       ['Published', report.published],
       ['Drafts', report.drafts],
       ['Engaged readers', report.engaged],
+      ['Sermon page views', sermonViews],
+      ['Sermons listened', sermonListens],
+      ['Sermons watched', sermonWatches],
       ['Active subscribers', activeSubscribers.length],
       ['New subscribers in period', newSubscribers],
       [],
@@ -288,13 +298,16 @@ export default function AnalyticsManager({ publications = [], editorialTasks = [
           </section>
         )}
 
-        <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="Performance summary">
+        <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Performance summary">
           {[
             { label: 'Total views', value: report.views, icon: 'visibility' },
             { label: 'Published', value: report.published, icon: 'task_alt' },
             { label: 'Completed reads', value: report.engaged, icon: 'group' },
             { label: 'Active subscribers', value: activeSubscribers.length, icon: 'mark_email_read', detail: `${newSubscribers.toLocaleString()} joined in period` },
             { label: 'Average read time', value: report.avgRead, decimals: 1, suffix: ' min', icon: 'schedule' },
+            { label: 'Sermon page views', value: sermonViews, icon: 'podcasts' },
+            { label: 'Sermons listened', value: sermonListens, icon: 'headphones' },
+            { label: 'Sermons watched', value: sermonWatches, icon: 'smart_display' },
           ].map((item, index) => (
             <article key={item.label} className="admin-stat-card rounded-3xl border border-slate-100 bg-white p-5 shadow-sm" style={{ '--card-delay': `${index * 65}ms` }}>
               <div className="flex items-start justify-between"><span className="admin-stat-icon grid h-10 w-10 place-items-center rounded-xl bg-midnight-navy/5 text-midnight-navy"><span className="material-symbols-outlined text-[21px]">{item.icon}</span></span><span className="max-w-[150px] text-right text-[10px] font-medium text-slate-400">{item.detail || periodLabel}</span></div>

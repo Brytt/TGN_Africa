@@ -224,7 +224,7 @@ export default function ArticlePage({ article, related = [], initialComments = [
               <p className="tgn-article-sans text-[10px] font-bold uppercase tracking-[0.16em] text-midnight-navy/45">Continue reading</p>
               <h2 className="tgn-article-serif mt-2 text-3xl font-semibold text-midnight-navy">Related articles</h2>
               <div className="mt-8 grid gap-5 md:grid-cols-3">
-                {related.map((item) => <a key={item.id} href={`/articles/${item.slug}`} className="group border-t-2 border-midnight-navy bg-white p-6"><p className="tgn-article-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-midnight-navy/45">{item.topic}</p><h3 className="tgn-article-serif mt-4 text-xl font-semibold leading-snug text-midnight-navy group-hover:underline">{item.title}</h3><p className="tgn-article-sans mt-5 text-xs text-midnight-navy/45">{item.author} · {fullDate(item.publishedAt)}</p></a>)}
+                {related.map((item) => <a key={item.id} href={`/articles/${item.slug}`} className="group border-t-2 border-midnight-navy bg-white p-6"><p className="tgn-article-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-midnight-navy/45">{item.topic}</p><h3 className="tgn-article-serif mt-4 text-xl font-semibold leading-snug text-midnight-navy group-hover:underline">{item.title}</h3>{item.scripture && <div className="tgn-article-sans mt-3 text-[9px]"><VerseHover reference={item.scripture} /></div>}<p className="tgn-article-sans mt-5 text-xs text-midnight-navy/45">{item.author} · {fullDate(item.publishedAt)}</p></a>)}
               </div>
             </div>
           </section>

@@ -1156,6 +1156,26 @@ section[aria-label='Filter published sermons'] input:focus {
   animation-play-state: paused;
 }
 
+.tgn-inline-scripture {
+  display: inline;
+  border-radius: 0.3rem;
+  background: rgb(197 160 89 / 14%);
+  box-shadow: inset 0 -1px 0 rgb(197 160 89 / 48%);
+  color: #0d2240;
+  cursor: help;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.06em 0.2em;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.tgn-inline-scripture:hover,
+.tgn-inline-scripture:focus-visible {
+  background: rgb(197 160 89 / 25%);
+  box-shadow: inset 0 -2px 0 rgb(197 160 89 / 72%);
+  outline: none;
+}
+
 @keyframes admin-scripture-drift {
   from { transform: translateX(0); }
   to { transform: translateX(-100%); }

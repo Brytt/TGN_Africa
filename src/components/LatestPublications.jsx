@@ -1,4 +1,5 @@
 import Reveal from './Reveal'
+import VerseHover from './VerseHover'
 
 export default function LatestPublications({ publications = [] }) {
   const displayed = publications.slice(0, 12)
@@ -18,6 +19,7 @@ export default function LatestPublications({ publications = [] }) {
                 <div className="flex grow flex-col p-4">
                   <span className="text-[9px] font-medium uppercase tracking-[0.1em] text-black/40">{publication.date} · {publication.readingTime}</span>
                   <h3 className="mt-3 line-clamp-2 text-[16px] font-semibold leading-[1.3] text-black">{publication.title}</h3>
+                  {publication.scripture && <div className="mt-2 text-[9px]"><VerseHover reference={publication.scripture} /></div>}
                   <p className="mt-2 line-clamp-3 text-[12px] leading-5 text-black/55">{publication.excerpt}</p>
                   <div className="mt-auto flex items-center gap-2 pt-5">
                     {publication.authorImage ? <img src={publication.authorImage} alt="" className="h-7 w-7 rounded-full object-cover" /> : <span className="grid h-7 w-7 place-items-center rounded-full bg-black/5 text-[9px] font-semibold text-black">{publication.author.charAt(0)}</span>}

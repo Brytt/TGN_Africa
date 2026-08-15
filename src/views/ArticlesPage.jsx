@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import AnnouncementBar from '../components/AnnouncementBar'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import VerseHover from '../components/VerseHover'
 
 const PAGE_SIZE = 24
 const categories = ['All', 'Article', 'Devotional', 'Bible Study', 'Sermon', 'Poem']
@@ -51,7 +52,7 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
             {featured.length > 0 && <div className="mt-10 grid gap-5 lg:grid-cols-[minmax(0,2.15fr)_minmax(280px,0.85fr)]">
               {featured.map((article, index) => <a key={article.id} href={`/articles/${article.slug}`} className={`group overflow-hidden border border-black/10 bg-white ${index === 0 && article.image ? 'grid md:grid-cols-[1.2fr_0.8fr]' : 'flex flex-col'}`}>
                 {article.image && <img src={article.image} alt="" className={`w-full object-cover transition-transform duration-500 group-hover:scale-[1.02] ${index === 0 ? 'h-full min-h-[300px]' : 'aspect-[16/9]'}`} />}
-                <div className="flex flex-1 flex-col p-5 md:p-6"><p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-black/40">{article.type}</p><h2 className={`${index === 0 ? 'mt-8 text-2xl' : 'mt-4 text-xl'} font-semibold leading-tight text-black`}>{article.title}</h2>{article.subtitle && <p className="mt-2 text-sm font-medium text-black/60">{article.subtitle}</p>}<p className="mt-4 line-clamp-4 text-xs leading-5 text-black/55">{article.excerpt}</p><div className="mt-auto flex items-center gap-2 pt-7">{article.authorImage && <img src={article.authorImage} alt="" className="h-7 w-7 rounded-full object-cover" />}<span className="text-[10px] text-black/55">{article.author} · {article.date}</span></div></div>
+                <div className="flex flex-1 flex-col p-5 md:p-6"><p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-black/40">{article.type}</p><h2 className={`${index === 0 ? 'mt-8 text-2xl' : 'mt-4 text-xl'} font-semibold leading-tight text-black`}>{article.title}</h2>{article.subtitle && <p className="mt-2 text-sm font-medium text-black/60">{article.subtitle}</p>}{article.scripture && <div className="mt-3 text-[10px]"><VerseHover reference={article.scripture} /></div>}<p className="mt-4 line-clamp-4 text-xs leading-5 text-black/55">{article.excerpt}</p><div className="mt-auto flex items-center gap-2 pt-7">{article.authorImage && <img src={article.authorImage} alt="" className="h-7 w-7 rounded-full object-cover" />}<span className="text-[10px] text-black/55">{article.author} · {article.date}</span></div></div>
               </a>)}
             </div>}
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 border-y border-black/10 py-4" aria-label="Filter publications">
@@ -66,6 +67,7 @@ export default function ArticlesPage({ articles = [], authors = [], topics = [] 
                     <div className="flex grow flex-col p-4">
                       <p className="text-[9px] uppercase tracking-wide text-black/40">{article.date} · {article.readingTime}</p>
                       <h2 className="mt-3 line-clamp-3 text-[15px] font-semibold leading-[1.35] text-black">{article.title}</h2>
+                      {article.scripture && <div className="mt-2 text-[9px]"><VerseHover reference={article.scripture} /></div>}
                       <p className="mt-2 line-clamp-3 text-[11px] leading-5 text-black/55">{article.excerpt}</p>
                       <p className="mt-auto pt-5 text-[10px] font-medium text-black/55">{article.author}</p>
                     </div>

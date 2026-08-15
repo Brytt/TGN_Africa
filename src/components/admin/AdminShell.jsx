@@ -22,6 +22,7 @@ const navGroups = [
       { label: 'Subscribers', icon: 'mark_email_read', href: '/admin/subscribers', permission: 'subscribers' },
       { label: 'Email updates', icon: 'outgoing_mail', href: '/admin/email-updates', permission: 'subscribers' },
       { label: 'Topics', icon: 'category', href: '/admin/topics', permission: 'topics' },
+      { label: 'Activity', icon: 'history', href: '/admin/activity', permission: 'analytics' },
       { label: 'My account', icon: 'manage_accounts', href: '/admin/account' },
       { label: 'General settings', icon: 'settings', href: '/admin/settings', permission: 'settings' },
     ],
@@ -38,6 +39,7 @@ const pageHeaders = {
   '/admin/subscribers': ['Subscribers', 'Understand and manage your growing audience'],
   '/admin/email-updates': ['Email updates', 'Create and send updates to your subscribers'],
   '/admin/topics': ['Categories & topics', 'Organise the subjects across your publication'],
+  '/admin/activity': ['Activity', 'Review administrative changes and the people who made them'],
   '/admin/account': ['My account', 'Manage your profile and personal preferences'],
   '/admin/settings': ['Settings', 'Configure your editorial platform and permissions'],
 }

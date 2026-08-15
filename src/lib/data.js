@@ -371,6 +371,17 @@ export async function getSermonAnalyticsEvents() {
   return rows
 }
 
+export async function getAdminActivity(limit = 250) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('admin_activity_log')
+    .select('id, action, entity_type, entity_id, entity_label, old_data, new_data, created_at, actor:profiles(display_name, role)')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) return schemaFallback(error, [])
+  return data || []
+}
+
 export async function getSettings() {
   const supabase = await createClient()
   const { data, error } = await supabase.from('site_settings').select('key, value')

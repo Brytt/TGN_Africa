@@ -44,6 +44,17 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', closeOnResize)
   }, [])
 
+  useEffect(() => {
+    if (!open) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [open])
+
   const toggleTheme = () => {
     setDarkMode((current) => {
       const next = !current
@@ -118,7 +129,7 @@ export default function Navbar() {
 
   return (
     <>
-    <nav className="tgn-navbar fixed inset-x-0 top-0 z-50 border-b border-black/10 bg-white/95 shadow-[0_6px_24px_rgba(13,34,64,0.06)] backdrop-blur-xl">
+    <nav className="tgn-navbar fixed inset-x-0 top-0 z-50 border-b border-black/10 bg-white shadow-[0_6px_24px_rgba(13,34,64,0.06)] lg:bg-white/95 lg:backdrop-blur-xl">
       <div className="page-shell relative flex h-20 items-center justify-between md:h-[88px]">
         <div className="flex min-w-0 items-center gap-4 xl:gap-6">
           <a href="/" className="flex shrink-0 items-center gap-3" aria-label="TGN Africa home">
@@ -443,8 +454,11 @@ export default function Navbar() {
       )}
 
       {open && (
-        <div id="mobile-navigation" className="border-t border-midnight-navy/10 bg-parchment-ivory lg:hidden">
-          <div className="page-shell flex flex-col py-6">
+        <div
+          id="mobile-navigation"
+          className="max-h-[calc(100dvh-5rem)] touch-pan-y overflow-y-auto overscroll-contain border-t border-midnight-navy/10 bg-parchment-ivory [contain:layout_paint] [-webkit-overflow-scrolling:touch] lg:hidden"
+        >
+          <div className="page-shell flex flex-col pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6">
             {navItems.map((item) => (
               item.label === 'Categories' ? (
                 <div key={item.label} className="border-b border-midnight-navy/10">

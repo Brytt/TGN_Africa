@@ -7,7 +7,7 @@ export const metadata = {
 
 export default async function AdminAnalyticsPage() {
   const [publications, tasks, authors, analyticsEvents, sermonAnalyticsEvents, subscribers] = await Promise.all([
-    getPublications({ admin: true }),
+    getPublications({ admin: true, summary: true }),
     getEditorialTasks(),
     getAuthors({ admin: true }),
     getAnalyticsEvents(),

@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../../src/lib/http'
 
@@ -18,6 +19,7 @@ export async function PATCH(request, { params }) {
     .single()
 
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ data })
 }
 
@@ -28,5 +30,6 @@ export async function DELETE(_request, { params }) {
   const { id } = await params
   const { error } = await auth.supabase.from('topics').delete().eq('id', id)
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ ok: true })
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { startNotificationPolling } from '../../lib/notification-polling'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from '../../../app/auth/actions'
@@ -46,6 +47,7 @@ const pageHeaders = {
 
 export default function AdminShell({ children, profile, authorTier = 'Guest Author', menuAccess = [], dateOfBirth = '' }) {
   const pathname = usePathname()
+  const isLoginPage = pathname === '/admin/login'
   const router = useRouter()
   const searchRef = useRef(null)
   const profileRef = useRef(null)
@@ -124,25 +126,17 @@ export default function AdminShell({ children, profile, authorTier = 'Guest Auth
   }, [query, searchOpen])
 
   useEffect(() => {
-    let active = true
-    const loadNotifications = async () => {
-      try {
-        const response = await fetch('/api/admin/notifications', { cache: 'no-store' })
-        const result = await response.json()
-        if (active && response.ok) setNotifications(result.data || [])
-      } catch {
-        if (active) setNotifications([])
-      } finally {
-        if (active) setNotificationsLoading(false)
-      }
+    setNotifications([])
+    if (!profile?.id || isLoginPage) {
+      setNotificationsLoading(false)
+      return undefined
     }
-    loadNotifications()
-    const interval = window.setInterval(loadNotifications, 30000)
-    return () => {
-      active = false
-      window.clearInterval(interval)
-    }
-  }, [])
+    setNotificationsLoading(true)
+    return startNotificationPolling({
+      onData: setNotifications,
+      onSettled: () => setNotificationsLoading(false),
+    })
+  }, [profile?.id, isLoginPage])
 
   const unreadNotifications = notifications.filter((item) => !item.read).length
   const [pageTitle, pageDescription] = pageHeaders[pathname] || ['Editorial workspace', 'Manage The Gospel Network publishing platform']

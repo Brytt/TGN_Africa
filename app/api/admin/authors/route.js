@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../src/lib/http'
 
@@ -37,6 +38,7 @@ export async function POST(request) {
   if (!body.email?.trim()) return failure('Add the guest contributor’s email address.')
   const { data, error } = await auth.supabase.from('authors').insert(authorRow(body)).select('id').single()
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ data }, { status: 201 })
 }
 

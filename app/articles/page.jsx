@@ -9,6 +9,6 @@ export const metadata = {
 }
 
 export default async function Page() {
-  const [articles, authors, topics] = await Promise.all([getPublications(), getAuthors(), getTopicTree()])
+  const [articles, authors, topics] = await Promise.all([getPublications({ summary: true }), getAuthors(), getTopicTree()])
   return <ArticlesPage articles={articles} authors={authors} topics={topics} />
 }

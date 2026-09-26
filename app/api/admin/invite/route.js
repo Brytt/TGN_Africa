@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '../../../../src/lib/supabase/admin'
 import { failure, requireStaff } from '../../../../src/lib/http'
@@ -59,5 +60,6 @@ export async function POST(request) {
     await admin.auth.admin.deleteUser(data.user.id)
     return failure(authorError)
   }
+  invalidatePublicContent()
   return NextResponse.json({ success: true })
 }

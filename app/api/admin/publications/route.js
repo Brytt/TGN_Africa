@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../src/lib/http'
 import { notifySubscribers } from '../../../../src/lib/newsletter'
@@ -58,6 +59,7 @@ export async function POST(request) {
   const { data, error } = await auth.supabase.from('publications').insert(row).select('id').single()
   if (error?.code === '23505' && error.message?.includes('slug')) return failure('An article with this link already exists. Please use a distinct title.', 409)
   if (error) return failure(error)
+  invalidatePublicContent()
   if (body.status === 'Published') {
     try {
       await notifySubscribers({ slug: row.slug, title: row.title, excerpt: row.excerpt })

@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../src/lib/http'
 
@@ -38,11 +39,13 @@ export async function PUT(request) {
   }
   const authorUpdate = await auth.supabase.from('authors').update(authorValues).eq('profile_id', auth.user.id)
   if (authorUpdate.error) return failure(authorUpdate.error)
+  invalidatePublicContent()
   const socialUpdate = await auth.supabase.from('authors').update({
     linkedin_url: String(body.linkedin || '').trim() || null,
     instagram_url: String(body.instagram || '').trim() || null,
     facebook_url: String(body.facebook || '').trim() || null,
   }).eq('profile_id', auth.user.id)
+  if (!socialUpdate.error) invalidatePublicContent()
   const socialSchemaMissing = socialUpdate.error && (
     socialUpdate.error.message?.includes('linkedin_url') ||
     socialUpdate.error.code === 'PGRST204'

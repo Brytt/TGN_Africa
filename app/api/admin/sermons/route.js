@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../src/lib/http'
 
@@ -44,5 +45,6 @@ export async function POST(request) {
   const { data, error } = await auth.supabase.from('sermons').insert(row).select('id').single()
   if (error?.code === '23505') return failure('A sermon with this title/link already exists.', 409)
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ data }, { status: 201 })
 }

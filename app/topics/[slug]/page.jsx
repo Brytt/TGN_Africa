@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const { slug } = await params
-  const [topics, publications] = await Promise.all([getTopicTree(), getPublications()])
+  const [topics, publications] = await Promise.all([getTopicTree(), getPublications({ summary: true })])
   let topic = topics.find((item) => item.slug === slug)
   let topicIds = []
   if (topic) {

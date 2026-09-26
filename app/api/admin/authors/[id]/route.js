@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { authorRow } from '../route'
 import { failure, requireStaff } from '../../../../../src/lib/http'
@@ -20,6 +21,7 @@ export async function PATCH(request, { params }) {
       .maybeSingle()
     if (error) return failure(error)
     if (!author) return failure('Author not found.', 404)
+    invalidatePublicContent()
     if (author.profile_id) {
       const { error: profileError } = await auth.supabase
         .from('profiles')
@@ -35,6 +37,7 @@ export async function PATCH(request, { params }) {
     const menuAccess = [...new Set(Array.isArray(body.menuAccess) ? body.menuAccess : [])].filter((item) => allowed.includes(item))
     const { error } = await auth.supabase.from('authors').update({ admin_menu_access: menuAccess }).eq('id', id).eq('is_staff', true)
     if (error) return failure(error)
+    invalidatePublicContent()
     return NextResponse.json({ success: true })
   }
   if (!['Founder', 'Managing Editor', 'Deputy Editor'].includes(actingAuthor?.editorial_role)) {
@@ -42,6 +45,7 @@ export async function PATCH(request, { params }) {
   }
   const { error } = await auth.supabase.from('authors').update(authorRow(body)).eq('id', id)
   if (error) return failure(error)
+  invalidatePublicContent()
   const { data: author, error: authorError } = await auth.supabase.from('authors').select('profile_id, editorial_role').eq('id', id).maybeSingle()
   if (authorError) return failure(authorError)
   if (author?.profile_id) {
@@ -73,5 +77,6 @@ export async function DELETE(_request, { params }) {
 
   const { error: deleteError } = await admin.from('authors').delete().eq('id', id)
   if (deleteError) return failure(deleteError)
+  invalidatePublicContent()
   return NextResponse.json({ success: true })
 }

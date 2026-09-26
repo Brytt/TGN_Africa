@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../../src/lib/http'
 import { notifySubscribers } from '../../../../../src/lib/newsletter'
@@ -36,6 +37,7 @@ export async function PATCH(request, { params }) {
   row.updated_by = auth.user.id
   const { data, error } = await auth.supabase.from('publications').update(row).eq('id', id).select('status, published_at').single()
   if (error) return failure(error)
+  invalidatePublicContent()
   if (body.status === 'Published' && existing?.status !== 'published') {
     try {
       await notifySubscribers({
@@ -56,5 +58,6 @@ export async function DELETE(_request, { params }) {
   const { id } = await params
   const { error } = await auth.supabase.from('publications').delete().eq('id', id)
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ success: true })
 }

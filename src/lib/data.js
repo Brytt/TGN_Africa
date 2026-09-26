@@ -1,4 +1,7 @@
 import 'server-only'
+import { cache } from 'react'
+import { after } from 'next/server'
+import { cachePublicContent, invalidatePublicContent } from './public-content-cache'
 import { createClient } from './supabase/server'
 import { createPublicClient } from './supabase/public'
 
@@ -30,6 +33,11 @@ const PUBLICATION_SUMMARY_SELECT = `
   published_at, created_at, updated_at,
   author:authors(id, name, slug, avatar_path),
   topic:topics(id, title, slug, level)
+`
+
+const SERMON_SELECT = `
+  id, slug, title, speaker, scripture, series, description, media_type,
+  audio_url, video_url, cover_path, status, preached_at, published_at
 `
 
 const PUBLICATION_FALLBACK_IMAGES = [
@@ -97,7 +105,7 @@ function sharedTermCount(left, right) {
   return [...normalizedTerms(left)].filter((term) => rightTerms.has(term)).length
 }
 
-export async function getRelatedPublications(publication, limit = 3) {
+async function loadRelatedPublications(publication, limit = 3) {
   const supabase = createPublicClient()
   const { data, error } = await supabase
     .from('publications')
@@ -107,7 +115,7 @@ export async function getRelatedPublications(publication, limit = 3) {
     .order('published_at', { ascending: false, nullsFirst: false })
     .limit(250)
 
-  if (error) return schemaFallback(error, [])
+  if (error) throw error
 
   return (data || [])
     .map(mapPublication)
@@ -159,11 +167,15 @@ export function mapAuthor(row) {
   }
 }
 
-export async function getPublications({ admin = false, limit, summary = false } = {}) {
+async function loadPublications({ admin = false, limit, summary = false } = {}) {
   const supabase = admin ? await createClient() : createPublicClient()
   // Keep public reads to one database round trip. Publishing scheduled work is
   // handled when staff load the editorial workspace.
-  if (admin) await supabase.rpc('publish_due_publications')
+  if (admin) {
+    const { data: publishedCount, error } = await supabase.rpc('publish_due_publications')
+    // Revalidation is not allowed during Server Component rendering.
+    if (!error && publishedCount > 0) after(() => invalidatePublicContent())
+  }
   let query = supabase
     .from('publications')
     .select(summary ? PUBLICATION_SUMMARY_SELECT : PUBLICATION_SELECT)
@@ -172,11 +184,14 @@ export async function getPublications({ admin = false, limit, summary = false } 
   if (!admin) query = query.eq('status', 'published')
   if (limit) query = query.limit(limit)
   const { data, error } = await query
-  if (error) return schemaFallback(error, [])
+  if (error) {
+    if (admin) return schemaFallback(error, [])
+    throw error
+  }
   if (!admin) return (data || []).map(mapPublication)
   const ids = (data || []).map((row) => row.id)
   const metrics = ids.length
-    ? await supabase.from('publication_metrics').select('id, views, likes, comments').in('id', ids)
+    ? await supabase.from('publication_metrics').select('id, views').in('id', ids)
     : { data: [] }
   const metricsById = new Map((metrics.data || []).map((row) => [row.id, row]))
   return (data || []).map((row) => mapPublication({ ...row, metrics: metricsById.get(row.id) }))
@@ -202,18 +217,21 @@ export function mapSermon(row) {
   }
 }
 
-export async function getSermons({ admin = false } = {}) {
+async function loadSermons({ admin = false } = {}) {
   const supabase = admin ? await createClient() : createPublicClient()
-  let query = supabase.from('sermons').select('*').order('preached_at', { ascending: false })
+  let query = supabase.from('sermons').select(SERMON_SELECT).order('preached_at', { ascending: false })
   if (!admin) query = query.eq('status', 'published')
   const { data, error } = await query
-  if (error) return schemaFallback(error, [])
+  if (error) {
+    if (admin) return schemaFallback(error, [])
+    throw error
+  }
   return (data || []).map(mapSermon)
 }
 
-export async function getSermonBySlug(slug) {
-  const { data, error } = await createPublicClient().from('sermons').select('*').eq('slug', slug).eq('status', 'published').maybeSingle()
-  if (error) return schemaFallback(error, null)
+async function loadSermonBySlug(slug) {
+  const { data, error } = await createPublicClient().from('sermons').select(SERMON_SELECT).eq('slug', slug).eq('status', 'published').maybeSingle()
+  if (error) throw error
   return data ? mapSermon(data) : null
 }
 
@@ -224,7 +242,7 @@ export async function getEmailUpdates() {
   return data || []
 }
 
-export async function getPublicationBySlug(slug) {
+async function loadPublicationBySlug(slug) {
   const supabase = createPublicClient()
   let { data, error } = await supabase
     .from('publications')
@@ -240,7 +258,7 @@ export async function getPublicationBySlug(slug) {
       .eq('status', 'published')
       .maybeSingle())
   }
-  if (error) return schemaFallback(error, null)
+  if (error) throw error
   if (!data) return null
   const { data: social } = data.author?.id
     ? await supabase.from('authors').select('linkedin_url, instagram_url, facebook_url').eq('id', data.author.id).maybeSingle()
@@ -280,7 +298,7 @@ export async function getArticleInteractions(publicationId) {
   }
 }
 
-export async function getAuthors({ admin = false } = {}) {
+async function loadAuthors({ admin = false } = {}) {
   const supabase = admin ? await createClient() : createPublicClient()
   let query = supabase
     .from('authors')
@@ -288,19 +306,22 @@ export async function getAuthors({ admin = false } = {}) {
     .order('name')
   if (!admin) query = query.eq('status', 'active')
   const { data, error } = await query
-  if (error) return schemaFallback(error, [])
+  if (error) {
+    if (admin) return schemaFallback(error, [])
+    throw error
+  }
   const authors = (data || []).map(mapAuthor)
   return admin ? authors : authors.filter((author) => !/\bodame\s+bright\b|\bbright\s+odame\b/i.test(author.name))
 }
 
-export async function getTopicTree() {
+async function loadTopicTree() {
   const supabase = createPublicClient()
   const { data, error } = await supabase
     .from('topics')
     .select('id, title, slug, level, parent_id, sort_order')
     .order('sort_order')
     .order('title')
-  if (error) return schemaFallback(error, [])
+  if (error) throw error
   const rows = data || []
   const children = new Map()
   rows.forEach((row) => {
@@ -375,7 +396,7 @@ export async function getAdminActivity(limit = 250) {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('admin_activity_log')
-    .select('id, action, entity_type, entity_id, entity_label, old_data, new_data, created_at, actor:profiles(display_name, role)')
+    .select('id, action, entity_type, entity_id, entity_label, created_at, actor:profiles(display_name, role)')
     .order('created_at', { ascending: false })
     .limit(limit)
   if (error) return schemaFallback(error, [])
@@ -393,7 +414,7 @@ export async function getModerationComments() {
   const supabase = await createClient()
   let { data, error } = await supabase
     .from('comments')
-    .select('id, body, author_name, status, created_at, parent:comments!parent_id(id, author_name, body), comment_likes(user_id), publication:publications(id, title, slug)')
+    .select('id, body, author_name, status, created_at, parent:comments!parent_id(id, author_name, body), publication:publications(id, title, slug)')
     .order('created_at', { ascending: false })
   if (error && (error.message?.includes('parent_id') || error.message?.includes('comment_likes'))) {
     const fallback = await supabase
@@ -432,4 +453,47 @@ export async function getCurrentAuthor() {
   const { data, error } = await supabase.from('authors').select('*, publications:publications(count)').eq('profile_id', user.id).maybeSingle()
   if (error) return schemaFallback(error, null)
   return data ? mapAuthor(data) : null
+}
+
+async function publicResult(read, fallback) {
+  try {
+    return await read()
+  } catch (error) {
+    return schemaFallback(error, fallback)
+  }
+}
+
+const cachedPublications = cachePublicContent('publications', (limit, summary) => loadPublications({ limit, summary }))
+const cachedSermons = cachePublicContent('sermons', () => loadSermons())
+const cachedAuthors = cachePublicContent('authors', () => loadAuthors())
+const cachedTopics = cachePublicContent('topics', loadTopicTree)
+const cachedPublication = cachePublicContent('publication', loadPublicationBySlug)
+const cachedSermon = cachePublicContent('sermon', loadSermonBySlug)
+const cachedRelated = cachePublicContent('related-publications', loadRelatedPublications)
+
+export function getPublications({ admin = false, limit, summary = false } = {}) {
+  if (admin) return loadPublications({ admin, limit, summary })
+  return publicResult(() => cachedPublications(limit ?? null, summary), [])
+}
+
+export function getSermons({ admin = false } = {}) {
+  return admin ? loadSermons({ admin }) : publicResult(cachedSermons, [])
+}
+
+export function getAuthors({ admin = false } = {}) {
+  return admin ? loadAuthors({ admin }) : publicResult(cachedAuthors, [])
+}
+
+export function getTopicTree() {
+  return publicResult(cachedTopics, [])
+}
+
+// Metadata and the page share a detail read within the current render as well.
+export const getPublicationBySlug = cache((slug) => publicResult(() => cachedPublication(slug), null))
+export const getSermonBySlug = cache((slug) => publicResult(() => cachedSermon(slug), null))
+
+export function getRelatedPublications(publication, limit = 3) {
+  // Avoid including the full article body in the cache key.
+  const { id, tags, categories, topicId, type, authorId } = publication
+  return publicResult(() => cachedRelated({ id, tags, categories, topicId, type, authorId }, limit), [])
 }

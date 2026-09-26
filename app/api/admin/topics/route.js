@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../src/lib/http'
 
@@ -14,5 +15,6 @@ export async function POST(request) {
     parent_id: body.parentId || null,
   }).select('*').single()
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ data }, { status: 201 })
 }

@@ -1,3 +1,4 @@
+import { invalidatePublicContent } from '../../../../../src/lib/public-content-cache'
 import { NextResponse } from 'next/server'
 import { failure, requireStaff } from '../../../../../src/lib/http'
 
@@ -35,6 +36,7 @@ export async function PATCH(request, { params }) {
   const { error } = await auth.supabase.from('sermons').update(row).eq('id', id)
   if (error?.code === '23505') return failure('A sermon with this title/link already exists.', 409)
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ ok: true })
 }
 
@@ -44,5 +46,6 @@ export async function DELETE(_request, { params }) {
   const { id } = await params
   const { error } = await auth.supabase.from('sermons').delete().eq('id', id)
   if (error) return failure(error)
+  invalidatePublicContent()
   return NextResponse.json({ ok: true })
 }

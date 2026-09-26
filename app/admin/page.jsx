@@ -4,7 +4,7 @@ import { getDailyEsvPassage } from '../../src/lib/esv'
 
 export default async function AdminPage() {
   const [publications, tasks, authors, analyticsEvents, sermonAnalyticsEvents, subscribers, dailyScripture] = await Promise.all([
-    getPublications({ admin: true }),
+    getPublications({ admin: true, summary: true }),
     getEditorialTasks(),
     getAuthors({ admin: true }),
     getAnalyticsEvents(),
